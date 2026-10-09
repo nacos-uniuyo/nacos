@@ -2,28 +2,31 @@ export type Executive = {
   slug: string;
   name: string;
   role: string;
+  /** Portrait in /public/images/execs, cropped to 4:5. */
+  photo?: string;
   /** Officers listed first on the homepage and in the council grid. */
   principal?: boolean;
 };
 
 // 4th Executive Council, NACOS UNIUYO. Names follow the official inauguration flyer.
 export const executives: Executive[] = [
-  { slug: "president", name: "Banny Confidence Jack", role: "President", principal: true },
-  { slug: "vice-president", name: "Chukwuemeka, Salome A.", role: "Vice President", principal: true },
-  { slug: "secretary-general", name: "Bidong, Malachi O.", role: "Secretary General", principal: true },
-  { slug: "assistant-secretary-general", name: "Mkpidogho Emmanuel E.", role: "Assistant Secretary General" },
-  { slug: "financial-secretary", name: "Francis, Bright E.", role: "Financial Secretary" },
-  { slug: "treasurer", name: "Charles Prosper O.", role: "Treasurer" },
+  { slug: "president", photo: "/images/execs/president.webp", name: "Banny Confidence Jack", role: "President", principal: true },
+  { slug: "vice-president", photo: "/images/execs/vice-president.webp", name: "Chukwuemeka, Salome A.", role: "Vice President", principal: true },
+  { slug: "secretary-general", photo: "/images/execs/secretary-general.webp", name: "Bisong, Malachi O.", role: "Secretary General", principal: true },
+  { slug: "assistant-secretary-general", photo: "/images/execs/assistant-secretary-general.webp", name: "Mikpidogho Emmanuel E.", role: "Assistant Secretary General" },
+  { slug: "financial-secretary", photo: "/images/execs/financial-secretary.webp", name: "Francis, Bright E.", role: "Financial Secretary" },
+  { slug: "treasurer", photo: "/images/execs/treasurer.webp", name: "Charles Prosper O.", role: "Treasurer" },
   {
     slug: "director-of-information",
+    photo: "/images/execs/director-of-information.webp",
     name: "Vincent Clement",
     role: "Director of Information and Public Relations",
   },
-  { slug: "director-of-academics", name: "David Etuk", role: "Director of Academics" },
-  { slug: "director-of-software", name: "Emmanuel Akpan", role: "Director of Software", principal: true },
-  { slug: "director-of-socials", name: "Stephen, Wisdom G.", role: "Director of Socials" },
-  { slug: "director-of-sports", name: "Samuel Aniefiok", role: "Director of Sports" },
-  { slug: "director-of-environment", name: "Clement Paul T.", role: "Director of Environment" },
+  { slug: "director-of-academics", photo: "/images/execs/director-of-academics.webp", name: "David Etuk", role: "Director of Academics" },
+  { slug: "director-of-software", photo: "/images/execs/director-of-software.webp", name: "Emmanuel Akpan", role: "Director of Software", principal: true },
+  { slug: "director-of-socials", photo: "/images/execs/director-of-socials.webp", name: "Stephen, Wisdom G.", role: "Director of Socials" },
+  { slug: "director-of-sports", photo: "/images/execs/director-of-sports.webp", name: "Samuel Aniefiok", role: "Director of Sports" },
+  { slug: "director-of-environment", photo: "/images/execs/director-of-environment.webp", name: "Clement Paul T.", role: "Director of Environment" },
 ];
 
 export const president = executives[0];

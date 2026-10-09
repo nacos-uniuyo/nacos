@@ -31,7 +31,7 @@ All content lives in plain TypeScript files under `lib/`:
 - `lib/executives.ts`: council names and offices.
 - `lib/site.ts`: name, description and social links.
 
-Executive cards show initials for now. Portrait photos can replace them later.
+Executive portraits live in `public/images/execs/<slug>.webp`, cropped to 4:5 (at most 960x1200). To swap one, export a new 4:5 WebP under the same name. An officer without a `photo` falls back to an initials card.
 
 ## SEO
 
