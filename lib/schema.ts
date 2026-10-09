@@ -69,7 +69,12 @@ export function eventSchema(e: NacosEvent) {
       },
     },
     organizer: { "@type": "Organization", "@id": orgId, name: site.name, url: absoluteUrl("/") },
-    performer: executives.map((x) => ({ "@type": "Person", name: x.name, jobTitle: x.role })),
+    performer: executives.map((x) => ({
+      "@type": "Person",
+      name: x.name,
+      jobTitle: x.role,
+      image: x.photo ? absoluteUrl(x.photo) : undefined,
+    })),
     offers: {
       "@type": "Offer",
       price: 0,

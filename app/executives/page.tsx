@@ -50,7 +50,7 @@ export default function ExecutivesPage() {
           <ul className="exec-grid">
             {executives.map((x, i) => (
               <li key={x.slug} className="reveal">
-                <ExecCard exec={x} index={i} />
+                <ExecCard exec={x} index={i} priority={i < 4} />
               </li>
             ))}
           </ul>
@@ -78,6 +78,7 @@ export default function ExecutivesPage() {
                 "@type": "Person",
                 name: x.name,
                 jobTitle: x.role,
+                image: x.photo ? absoluteUrl(x.photo) : undefined,
                 url: absoluteUrl(`/executives#${x.slug}`),
                 worksFor: { "@id": absoluteUrl("/#organization") },
               },
