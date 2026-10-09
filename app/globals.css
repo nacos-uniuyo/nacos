@@ -299,9 +299,6 @@ a:hover {
   color: #fff;
   border-bottom-color: var(--gold);
 }
-.header-cta {
-  display: inline-flex;
-}
 .menu-btn {
   display: none;
   width: 46px;
@@ -319,8 +316,7 @@ a:hover {
 }
 
 @media (max-width: 1023px) {
-  .main-nav,
-  .header-cta {
+  .main-nav {
     display: none;
   }
   .menu-btn {
@@ -352,9 +348,6 @@ a:hover {
   }
   .mobile-nav li:last-child a {
     border: 0;
-    margin-top: 16px;
-    font-size: 15px;
-    padding: 0 22px;
   }
 }
 
