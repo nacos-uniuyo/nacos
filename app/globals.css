@@ -475,10 +475,16 @@ a:hover {
   text-align: right;
 }
 
+/* Masks the rise animation. The extra bottom padding (cancelled by the
+   negative margin) keeps descenders like g, y and p inside the mask, and
+   overflow-x stays visible so italic overhangs are not shaved off. */
 .line {
   display: block;
   overflow: hidden;
-  padding-bottom: 0.06em;
+  overflow-x: visible;
+  overflow-y: clip;
+  padding-bottom: 0.22em;
+  margin-bottom: -0.16em;
 }
 .line > span {
   display: inline-block;
