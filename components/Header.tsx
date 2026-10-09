@@ -9,7 +9,6 @@ import { Lock, Menu } from "./icons";
 const links = [
   { href: "/#about", label: "About" },
   { href: "/#priorities", label: "Priorities" },
-  { href: "/#open-track", label: "Open-Track" },
   { href: "/executives", label: "Executives" },
   { href: "/events", label: "Events" },
   { href: "/#news", label: "News" },

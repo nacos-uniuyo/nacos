@@ -303,7 +303,7 @@ export default function Home() {
                   {ev.title}
                 </h3>
                 <span className="sum">
-                  Twelve officers take the oath at 5 Arms, Permanent Site. Doors open 11:30 AM and we start at{" "}
+                  Twelve officers take the oath at 5 Arms, Permanent Site. Arrival and registration start at{" "}
                   {formatEventTime(ev.start)} sharp.
                 </span>
               </div>
@@ -318,7 +318,7 @@ export default function Home() {
                 <span className="copy">
                   <span className="kicker caps">Programme · 9 Oct</span>
                   <span className="title serif">The order of the day</span>
-                  <span className="sum">From the processional at noon to the group photographs. Plan your afternoon.</span>
+                  <span className="sum">The official order of events, from arrival at noon to the group photograph.</span>
                 </span>
               </Link>
               <Link className="news-item card reveal" href="/executives">
