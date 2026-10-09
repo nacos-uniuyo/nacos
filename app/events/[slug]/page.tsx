@@ -15,6 +15,7 @@ import {
   getEvent,
   googleCalendarUrl,
   mapsUrl,
+  startOf,
 } from "@/lib/events";
 import { executives } from "@/lib/executives";
 import { breadcrumbSchema, eventSchema } from "@/lib/schema";
@@ -195,7 +196,7 @@ export default async function EventPage({ params }: Props) {
               The big <span className="it gold">moments</span>
             </h2>
             <p style={{ margin: 0, color: "var(--mint-2)", lineHeight: 1.6, fontSize: 17 }}>
-              Doors open at 11:30 AM. Please be seated before the processional at noon.
+              Guests arrive from 12:00 PM. The processional of the new executives follows at {startOf(e, /Processional/)}.
             </p>
             <div>
               <Link className="btn btn-solid" href={`/events/${e.slug}/programme`}>
@@ -222,9 +223,9 @@ export default async function EventPage({ params }: Props) {
                 {e.venue.locality}, {e.venue.region} State
               </address>
               <ul className="notes">
-                <li>Arrive by 11:30 AM to get a good seat.</li>
-                <li>The ceremony starts at {formatEventTime(e.start)} prompt.</li>
-                <li>Refreshments and networking after the group photographs.</li>
+                <li>Arrival and registration open at {formatEventTime(e.start)}.</li>
+                <li>The processional begins at {startOf(e, /Processional/)}.</li>
+                <li>Refreshments and networking follow the official group photograph.</li>
               </ul>
               <div className="cta-row">
                 <a className="btn btn-dark" href={mapsUrl(e)} target="_blank" rel="noopener noreferrer">
