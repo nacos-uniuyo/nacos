@@ -537,6 +537,23 @@ a:hover {
   line-height: 1.08;
   letter-spacing: -0.01em;
 }
+.nowrap {
+  white-space: nowrap;
+}
+/* Desktop: exactly two lines. Each line is pinned and the type scales with
+   the column, so the longer line (14.12em in Instrument Serif) always fits. */
+@media (min-width: 961px) {
+  .mission .body {
+    container-type: inline-size;
+  }
+  .mission .statement {
+    font-size: min(64px, 6.8cqi);
+  }
+  .statement-line {
+    display: block;
+    white-space: nowrap;
+  }
+}
 .mission .body p:last-child {
   max-width: 640px;
   font-size: clamp(17px, 1.6vw, 19px);
