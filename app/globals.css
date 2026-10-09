@@ -1513,7 +1513,6 @@ a.tile.green:hover {
   font-size: clamp(21px, 2.1vw, 27px);
   line-height: 1.2;
 }
-.dark 
 .venue {
   padding: var(--section-y) 0;
 }
