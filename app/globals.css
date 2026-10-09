@@ -351,39 +351,6 @@ a:hover {
   }
 }
 
-/* Event strip under header */
-.strip {
-  background: var(--gold);
-  color: var(--forest);
-}
-.strip a {
-  color: inherit;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  min-height: 44px;
-  padding: 8px var(--gutter);
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  flex-wrap: wrap;
-}
-.strip .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--forest);
-}
-.strip a:hover .arrow {
-  transform: translateX(4px);
-}
-.strip .arrow {
-  transition: transform 0.3s;
-  display: inline-flex;
-}
-
 /* Hero */
 .hero {
   position: relative;
@@ -2026,13 +1993,6 @@ a.tile.green:hover {
   .countdown .l {
     font-size: 9px;
     letter-spacing: 0.06em;
-  }
-  .hide-sm {
-    display: none;
-  }
-  .strip a {
-    font-size: 13px;
-    gap: 8px;
   }
   .event-row {
     grid-template-columns: minmax(0, 1fr);
