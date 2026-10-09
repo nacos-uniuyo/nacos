@@ -103,8 +103,10 @@ export default function Home() {
           </h2>
           <div className="body">
             <p className="statement serif reveal">
-              We want to be known not just for studying Computing, but for{" "}
-              <span className="it accent">what we build with it.</span>
+              <span className="statement-line">We want to be known not just for studying</span>{" "}
+              <span className="statement-line">
+                Computing, but for <span className="it accent nowrap">what we build with it.</span>
+              </span>
             </p>
             <p className="lead reveal">
               NACOS UNIUYO brings together students of the Faculty of Computing to learn practical skills, compete at
