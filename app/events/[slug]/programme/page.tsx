@@ -22,13 +22,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!e) return {};
   const title = `Programme of Events, ${e.shortTitle}`;
   const description = `Full order of events for the ${e.title.toLowerCase()} of NACOS UNIUYO on ${formatEventDate(e.start)}, starting ${formatEventTime(e.start)} at ${e.venue.name}, ${e.venue.institution} ${e.venue.area}.`;
-  const images = [{ url: e.flyer.src, width: e.flyer.width, height: e.flyer.height, alt: e.flyer.alt }];
   return {
     title,
     description,
     alternates: { canonical: `/events/${e.slug}/programme` },
-    openGraph: { ...ogDefaults, title, description, url: `/events/${e.slug}/programme`, images },
-    twitter: { card: "summary_large_image", title, description, images: [e.flyer.src] },
+    openGraph: { ...ogDefaults, title, description, url: `/events/${e.slug}/programme` },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
