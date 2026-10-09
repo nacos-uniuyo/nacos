@@ -1543,6 +1543,13 @@ a.tile.green:hover {
   line-height: 1.6;
   color: var(--muted);
 }
+.venue-card .pin-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
 .venue-card .notes {
   list-style: none;
   margin: 0;

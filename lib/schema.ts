@@ -60,6 +60,8 @@ export function eventSchema(e: NacosEvent) {
     location: {
       "@type": "Place",
       name: `${e.venue.name}, ${e.venue.institution} ${e.venue.area}`,
+      geo: { "@type": "GeoCoordinates", latitude: e.venue.geo.lat, longitude: e.venue.geo.lng },
+      hasMap: e.venue.mapLink,
       address: {
         "@type": "PostalAddress",
         streetAddress: venueLine(e),

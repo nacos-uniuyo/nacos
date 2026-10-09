@@ -22,7 +22,9 @@ export type NacosEvent = {
     locality: string;
     region: string;
     country: string;
-    mapsQuery: string;
+    /** Exact pin shared by the organisers. */
+    geo: { lat: number; lng: number };
+    mapLink: string;
   };
   flyer: { src: string; width: number; height: number; alt: string };
   hashtags: string[];
@@ -49,7 +51,8 @@ export const events: NacosEvent[] = [
       locality: "Uyo",
       region: "Akwa Ibom",
       country: "NG",
-      mapsQuery: "5 Arms, University of Uyo Permanent Site, Uyo",
+      geo: { lat: 5.042836, lng: 7.977232 },
+      mapLink: "https://maps.app.goo.gl/Xsw46j3imr8MkfNk8",
     },
     flyer: {
       src: "/images/inauguration-flyer.jpg",
@@ -138,8 +141,14 @@ export function googleCalendarUrl(e: NacosEvent, pageUrl: string) {
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
-export function mapsUrl(e: NacosEvent) {
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.venue.mapsQuery)}`;
+/** Turn-by-turn directions to the exact pin. */
+export function directionsUrl(e: NacosEvent) {
+  return `https://www.google.com/maps/dir/?api=1&destination=${e.venue.geo.lat},${e.venue.geo.lng}`;
+}
+
+export function formatCoords({ lat, lng }: { lat: number; lng: number }) {
+  const f = (n: number, pos: string, neg: string) => `${Math.abs(n).toFixed(4)}° ${n >= 0 ? pos : neg}`;
+  return `${f(lat, "N", "S")}, ${f(lng, "E", "W")}`;
 }
 
 function icsEscape(s: string) {
@@ -161,6 +170,7 @@ export function toIcs(e: NacosEvent, pageUrl: string) {
     `SUMMARY:${icsEscape(`${e.title}, NACOS UNIUYO`)}`,
     `DESCRIPTION:${icsEscape(`${e.summary}\n\n${pageUrl}`)}`,
     `LOCATION:${icsEscape(venueLine(e))}`,
+    `GEO:${e.venue.geo.lat};${e.venue.geo.lng}`,
     `URL:${pageUrl}`,
     "BEGIN:VALARM",
     "TRIGGER:-PT2H",

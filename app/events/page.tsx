@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ogDefaults, brandImage } from "@/lib/site";
+import { ogDefaults } from "@/lib/site";
 import Image from "next/image";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/EventParts";
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description,
   alternates: { canonical: "/events" },
   openGraph: { ...ogDefaults, title: "Events | NACOS UNIUYO", description, url: "/events" },
-  twitter: { card: "summary_large_image", images: [brandImage.url], title: "Events | NACOS UNIUYO", description },
+  twitter: { card: "summary_large_image", title: "Events | NACOS UNIUYO", description },
 };
 
 const day = (iso: string) =>
