@@ -27,15 +27,6 @@ export function ArrowDown({ size = 18 }: P) {
   );
 }
 
-export function Lock({ size = 16 }: P) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" strokeWidth={2} {...base}>
-      <rect x="4" y="11" width="16" height="10" rx="2" />
-      <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-    </svg>
-  );
-}
-
 export function Calendar({ size = 18 }: P) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" strokeWidth={1.8} {...base}>
