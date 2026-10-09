@@ -1,7 +1,7 @@
 export type ProgrammeItem = {
-  time: string; // 24h, WAT
+  /** Start time, 24h, WAT. */
+  time: string;
   title: string;
-  detail: string;
 };
 
 export type NacosEvent = {
@@ -58,103 +58,29 @@ export const events: NacosEvent[] = [
       alt: "Official flyer for the inauguration of the 4th Executive Council, NACOS UNIUYO, showing all twelve officers-elect",
     },
     hashtags: ["#TheRevolution", "#4thExco", "#NACOSUNIUYO"],
+    // Official order of events, as published by the organising committee.
     programme: [
-      {
-        time: "11:30",
-        title: "Arrival and Registration",
-        detail: "Ushers receive students, staff, alumni and invited guests and show everyone to their seats.",
-      },
-      {
-        time: "11:45",
-        title: "Arrival of Dignitaries",
-        detail: "Invited dignitaries are received and seated at the high table.",
-      },
-      {
-        time: "12:00",
-        title: "Opening Processional",
-        detail: "The executives-elect walk in together to open the ceremony. Proceedings start on time.",
-      },
-      { time: "12:05", title: "National Anthem", detail: "Everyone stands for the National Anthem." },
-      { time: "12:08", title: "University Anthem", detail: "Everyone remains standing for the University of Uyo Anthem." },
-      { time: "12:12", title: "Opening Prayer", detail: "A short prayer for the ceremony and for the incoming council." },
-      {
-        time: "12:15",
-        title: "Welcome Address",
-        detail: "A welcome to guests, staff and students on behalf of the transition committee.",
-      },
-      {
-        time: "12:25",
-        title: "Introduction of Dignitaries",
-        detail: "The dignitaries in attendance are introduced to the audience.",
-      },
-      {
-        time: "12:35",
-        title: "Presentation of the Executives-Elect",
-        detail: "All twelve officers-elect are presented to the students who voted them in.",
-      },
-      {
-        time: "12:50",
-        title: "Oath of Office",
-        detail:
-          "The President-elect, Banny Confidence Jack, takes the oath of office, followed by the collective oath of the council.",
-      },
-      {
-        time: "13:05",
-        title: "Official Inauguration of the 4th Executive Council",
-        detail: "The council is declared inaugurated and the mandate formally changes hands.",
-      },
-      {
-        time: "13:15",
-        title: "Decoration of the President",
-        detail: "The new President is decorated, the visible handover of office.",
-      },
-      {
-        time: "13:25",
-        title: "Inaugural Address",
-        detail: "President Banny Confidence Jack delivers the first address of the new administration.",
-      },
-      {
-        time: "13:45",
-        title: "The Revolution: Vision and Agenda",
-        detail:
-          "The council walks through its priorities for the session, from Open-Track and Guide-U to hackathons and SIWES placements.",
-      },
-      {
-        time: "14:05",
-        title: "Goodwill Messages",
-        detail: "Messages from sister associations, past executives, alumni and friends of the chapter.",
-      },
-      {
-        time: "14:20",
-        title: "Remarks by the Dean, Faculty of Computing",
-        detail: "The Dean or a representative gives remarks and a charge to the new officers.",
-      },
-      {
-        time: "14:35",
-        title: "Remarks by the Special Guest",
-        detail: "The special guest of honour addresses the audience.",
-      },
-      {
-        time: "14:55",
-        title: "Recognition of Special Guests",
-        detail: "Special guests are acknowledged for their presence and support.",
-      },
-      {
-        time: "15:05",
-        title: "Vote of Thanks",
-        detail: "Thanks to everyone who came out and everyone who made the day possible.",
-      },
-      { time: "15:15", title: "Closing Prayer", detail: "The ceremony closes with prayer." },
-      {
-        time: "15:20",
-        title: "Group Photographs",
-        detail: "Official photographs of the council with dignitaries, staff and guests.",
-      },
-      {
-        time: "15:35",
-        title: "Refreshments and Networking",
-        detail: "Food, music and time to meet the new council.",
-      },
+      { time: "12:00", title: "Arrival and Registration of Guests" },
+      { time: "12:15", title: "Seating and Reception of Dignitaries" },
+      { time: "12:25", title: "Processional Entry of the Newly Elected Executives" },
+      { time: "12:30", title: "National Anthem" },
+      { time: "12:35", title: "University Anthem" },
+      { time: "12:40", title: "Opening Prayer" },
+      { time: "12:45", title: "Welcome Address" },
+      { time: "12:55", title: "Introduction and Recognition of Dignitaries" },
+      { time: "13:05", title: "Presentation of the Newly Elected NACOS Executives" },
+      { time: "13:20", title: "Administration of the Oath of Office" },
+      { time: "13:35", title: "Official Inauguration of the Executive Council" },
+      { time: "13:45", title: "Inaugural Address by the NACOS President" },
+      { time: "14:05", title: "Presentation of the Administration's Vision and Agenda" },
+      { time: "14:20", title: "Goodwill Messages from Invited Guests and Sister Associations" },
+      { time: "14:40", title: "Remarks by the Faculty Representative / Staff Adviser" },
+      { time: "14:55", title: "Remarks by the Distinguished Guest / Keynote Speaker" },
+      { time: "15:10", title: "Recognition and Appreciation of Special Guests" },
+      { time: "15:20", title: "Vote of Thanks" },
+      { time: "15:25", title: "Closing Prayer" },
+      { time: "15:30", title: "Official Group Photograph" },
+      { time: "15:40", title: "Refreshments, Networking and Entertainment" },
     ],
   },
 ];
@@ -164,6 +90,12 @@ export function getEvent(slug: string) {
 }
 
 export const featuredEvent = events[0];
+
+/** 12h start time of the first programme item whose title matches. */
+export function startOf(e: NacosEvent, title: RegExp) {
+  const item = e.programme.find((p) => title.test(p.title));
+  return item ? to12h(item.time) : formatEventTime(e.start);
+}
 
 const lagos = { timeZone: "Africa/Lagos" } as const;
 
