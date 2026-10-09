@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Lock, Menu } from "./icons";
+import { Menu } from "./icons";
 
 const links = [
   { href: "/#about", label: "About" },
@@ -49,11 +49,6 @@ export function Header() {
           ))}
         </nav>
 
-        <Link className="btn btn-solid btn-sm header-cta" href="/#portal">
-          <Lock />
-          Sign in
-        </Link>
-
         <button
           type="button"
           className="menu-btn"
@@ -75,17 +70,6 @@ export function Header() {
               </Link>
             </li>
           ))}
-          <li>
-            <Link
-              className="btn btn-solid btn-sm"
-              href="/#portal"
-              tabIndex={open ? 0 : -1}
-              onClick={() => setOpen(false)}
-            >
-              <Lock />
-              Sign in
-            </Link>
-          </li>
         </ul>
       </nav>
     </header>
