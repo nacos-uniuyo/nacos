@@ -14,7 +14,8 @@ import {
   formatEventTime,
   getEvent,
   googleCalendarUrl,
-  mapsUrl,
+  directionsUrl,
+  formatCoords,
   startOf,
 } from "@/lib/events";
 import { executives } from "@/lib/executives";
@@ -34,7 +35,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!e) return {};
   const title = `${e.title}, ${formatEventDate(e.start)}`;
   const description = `${e.summary} ${formatEventTime(e.start)} at ${e.venue.name}, ${e.venue.institution} ${e.venue.area}.`;
-  const images = [{ url: e.flyer.src, width: e.flyer.width, height: e.flyer.height, alt: e.flyer.alt }];
   return {
     title,
     description,
@@ -47,8 +47,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       "5 Arms Permanent Site",
     ],
     alternates: { canonical: `/events/${e.slug}` },
-    openGraph: { ...ogDefaults, title, description, url: `/events/${e.slug}`, images },
-    twitter: { card: "summary_large_image", title, description, images: [e.flyer.src] },
+    openGraph: { ...ogDefaults, title, description, url: `/events/${e.slug}` },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
@@ -221,6 +221,10 @@ export default async function EventPage({ params }: Props) {
                 {e.venue.institution} {e.venue.area}
                 <br />
                 {e.venue.locality}, {e.venue.region} State
+                <br />
+                <a className="pin-link" href={e.venue.mapLink} target="_blank" rel="noopener noreferrer">
+                  Exact pin: {formatCoords(e.venue.geo)}
+                </a>
               </address>
               <ul className="notes">
                 <li>Arrival and registration open at {formatEventTime(e.start)}.</li>
@@ -228,7 +232,7 @@ export default async function EventPage({ params }: Props) {
                 <li>Refreshments and networking follow the official group photograph.</li>
               </ul>
               <div className="cta-row">
-                <a className="btn btn-dark" href={mapsUrl(e)} target="_blank" rel="noopener noreferrer">
+                <a className="btn btn-dark" href={directionsUrl(e)} target="_blank" rel="noopener noreferrer">
                   <Pin />
                   Get directions
                 </a>

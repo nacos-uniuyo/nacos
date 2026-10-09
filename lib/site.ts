@@ -29,17 +29,12 @@ export function absoluteUrl(path = "/") {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
-/** Next.js replaces (not merges) openGraph per page, so every page spreads these in. */
-export const brandImage = {
-  url: "/opengraph-image",
-  width: 1200,
-  height: 630,
-  alt: "NACOS UNIUYO. Building Capacity, Fostering Innovation.",
-};
-
+/**
+ * Next.js replaces (not merges) openGraph per page, so every page spreads these in.
+ * Share images come from the opengraph-image/twitter-image files in each route.
+ */
 export const ogDefaults = {
   siteName: site.name,
   locale: "en_NG",
   type: "website" as const,
-  images: [brandImage],
 };
