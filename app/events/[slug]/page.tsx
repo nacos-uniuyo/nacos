@@ -14,7 +14,8 @@ import {
   formatEventTime,
   getEvent,
   googleCalendarUrl,
-  mapsUrl,
+  directionsUrl,
+  formatCoords,
   startOf,
 } from "@/lib/events";
 import { executives } from "@/lib/executives";
@@ -221,6 +222,10 @@ export default async function EventPage({ params }: Props) {
                 {e.venue.institution} {e.venue.area}
                 <br />
                 {e.venue.locality}, {e.venue.region} State
+                <br />
+                <a className="pin-link" href={e.venue.mapLink} target="_blank" rel="noopener noreferrer">
+                  Exact pin: {formatCoords(e.venue.geo)}
+                </a>
               </address>
               <ul className="notes">
                 <li>Arrival and registration open at {formatEventTime(e.start)}.</li>
@@ -228,7 +233,7 @@ export default async function EventPage({ params }: Props) {
                 <li>Refreshments and networking follow the official group photograph.</li>
               </ul>
               <div className="cta-row">
-                <a className="btn btn-dark" href={mapsUrl(e)} target="_blank" rel="noopener noreferrer">
+                <a className="btn btn-dark" href={directionsUrl(e)} target="_blank" rel="noopener noreferrer">
                   <Pin />
                   Get directions
                 </a>
