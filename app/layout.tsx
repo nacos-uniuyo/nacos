@@ -1,11 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, Instrument_Sans, Instrument_Serif } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import { EventStrip } from "@/components/EventStrip";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { JsonLd } from "@/components/JsonLd";
-import { featuredEvent, formatEventTime } from "@/lib/events";
 import { organizationSchema, websiteSchema } from "@/lib/schema";
 import { SITE_URL, site } from "@/lib/site";
 import "./globals.css";
@@ -71,7 +69,6 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const e = featuredEvent;
   return (
     <html lang="en-NG" className={`${sans.variable} ${serif.variable} ${display.variable}`}>
       <body>
@@ -79,16 +76,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to content
         </a>
         <Header />
-        <EventStrip
-          href={`/events/${e.slug}`}
-          start={e.start}
-          end={e.end}
-          label="Inauguration"
-          labelMore="of the 4th Executive Council"
-          when="Fri 9 Oct, 12 PM"
-          time={formatEventTime(e.start)}
-          where={`${e.venue.name}, ${e.venue.area}`}
-        />
         <main id="main">{children}</main>
         <Footer />
         <JsonLd data={[organizationSchema(), websiteSchema()]} />
