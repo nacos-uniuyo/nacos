@@ -35,7 +35,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!e) return {};
   const title = `${e.title}, ${formatEventDate(e.start)}`;
   const description = `${e.summary} ${formatEventTime(e.start)} at ${e.venue.name}, ${e.venue.institution} ${e.venue.area}.`;
-  const images = [{ url: e.flyer.src, width: e.flyer.width, height: e.flyer.height, alt: e.flyer.alt }];
   return {
     title,
     description,
@@ -48,8 +47,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       "5 Arms Permanent Site",
     ],
     alternates: { canonical: `/events/${e.slug}` },
-    openGraph: { ...ogDefaults, title, description, url: `/events/${e.slug}`, images },
-    twitter: { card: "summary_large_image", title, description, images: [e.flyer.src] },
+    openGraph: { ...ogDefaults, title, description, url: `/events/${e.slug}` },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 

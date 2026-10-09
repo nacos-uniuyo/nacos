@@ -8,7 +8,7 @@ import { HeroOrbits } from "@/components/Orbits";
 import { featuredEvent } from "@/lib/events";
 import { executives } from "@/lib/executives";
 import { breadcrumbSchema } from "@/lib/schema";
-import { absoluteUrl, ogDefaults, brandImage } from "@/lib/site";
+import { absoluteUrl, ogDefaults } from "@/lib/site";
 
 const description =
   "Meet the 4th Executive Council of NACOS, University of Uyo Chapter: President Banny Confidence Jack and eleven officers serving computing students this session.";
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description,
   alternates: { canonical: "/executives" },
   openGraph: { ...ogDefaults, title: "The Executives | NACOS UNIUYO", description, url: "/executives" },
-  twitter: { card: "summary_large_image", images: [brandImage.url], title: "The Executives | NACOS UNIUYO", description },
+  twitter: { card: "summary_large_image", title: "The Executives | NACOS UNIUYO", description },
 };
 
 export default function ExecutivesPage() {
