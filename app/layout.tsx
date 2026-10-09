@@ -1,0 +1,97 @@
+import type { Metadata, Viewport } from "next";
+import { Archivo, Instrument_Sans, Instrument_Serif } from "next/font/google";
+import { EventStrip } from "@/components/EventStrip";
+import { Footer } from "@/components/Footer";
+import { Header } from "@/components/Header";
+import { JsonLd } from "@/components/JsonLd";
+import { featuredEvent, formatEventTime } from "@/lib/events";
+import { organizationSchema, websiteSchema } from "@/lib/schema";
+import { SITE_URL, site } from "@/lib/site";
+import "./globals.css";
+
+const sans = Instrument_Sans({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
+const serif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-serif",
+  display: "swap",
+});
+const display = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-display", display: "swap" });
+
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "NACOS UNIUYO | Nigeria Association of Computing Students, University of Uyo",
+    template: "%s | NACOS UNIUYO",
+  },
+  description: site.shortDescription,
+  applicationName: site.name,
+  keywords: [
+    "NACOS UNIUYO",
+    "NACOS University of Uyo",
+    "Nigeria Association of Computing Students",
+    "Faculty of Computing UNIUYO",
+    "University of Uyo computer science",
+    "UNIUYO hackathon",
+    "SIWES Uyo",
+    "Open-Track",
+  ],
+  authors: [{ name: "NACOS UNIUYO Software Directorate" }],
+  creator: site.name,
+  publisher: site.name,
+  category: "education",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "en_NG",
+    siteName: site.name,
+    url: "/",
+    title: "NACOS UNIUYO",
+    description: site.shortDescription,
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: site.xHandle,
+    title: "NACOS UNIUYO",
+    description: site.shortDescription,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+  },
+  formatDetection: { telephone: false },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#062A14",
+  colorScheme: "light",
+};
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const e = featuredEvent;
+  return (
+    <html lang="en-NG" className={`${sans.variable} ${serif.variable} ${display.variable}`}>
+      <body>
+        <a className="skip" href="#main">
+          Skip to content
+        </a>
+        <Header />
+        <EventStrip
+          href={`/events/${e.slug}`}
+          start={e.start}
+          end={e.end}
+          label="Inauguration"
+          labelMore="of the 4th Executive Council"
+          when="Fri 9 Oct, 12 PM"
+          time={formatEventTime(e.start)}
+          where={`${e.venue.name}, ${e.venue.area}`}
+        />
+        <main id="main">{children}</main>
+        <Footer />
+        <JsonLd data={[organizationSchema(), websiteSchema()]} />
+      </body>
+    </html>
+  );
+}
