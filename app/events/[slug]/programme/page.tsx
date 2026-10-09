@@ -5,7 +5,7 @@ import { Breadcrumbs, EventSubnav, Timeline } from "@/components/EventParts";
 import { ArrowRight } from "@/components/icons";
 import { JsonLd } from "@/components/JsonLd";
 import { HeroOrbits } from "@/components/Orbits";
-import { events, formatEventDate, formatEventTime, getEvent, googleCalendarUrl } from "@/lib/events";
+import { events, formatEventDate, formatEventTime, getEvent, googleCalendarUrl, startOf } from "@/lib/events";
 import { breadcrumbSchema, eventSchema } from "@/lib/schema";
 import { absoluteUrl, ogDefaults } from "@/lib/site";
 
@@ -63,7 +63,7 @@ export default async function ProgrammePage({ params }: Props) {
           </h1>
           <p className="fade d3">
             The ceremony holds on {formatEventDate(e.start)} at {e.venue.name}, {e.venue.institution} {e.venue.area}.
-            Proceedings begin at {formatEventTime(e.start)} prompt. Here is the full order of the afternoon.
+            Arrival starts at {formatEventTime(e.start)} prompt. This is the official order of events.
           </p>
         </div>
       </section>
@@ -75,10 +75,11 @@ export default async function ProgrammePage({ params }: Props) {
           <div className="aside">
             <span className="eyebrow caps accent">Order of the ceremony</span>
             <h2 id="order-title" className="h2 serif">
-              Be seated by <span className="it accent">noon.</span>
+              Arrive by <span className="it accent">noon.</span>
             </h2>
             <p className="lead">
-              Registration opens at 11:30 AM. Times are a guide and may shift slightly on the day.
+              Dignitaries are seated from {startOf(e, /Dignitaries/)} and the new executives process in at{" "}
+              {startOf(e, /Processional/)}.
             </p>
             <div className="cta-row">
               <a

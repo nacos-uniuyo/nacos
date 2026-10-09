@@ -11,12 +11,7 @@ export function Timeline({ items }: { items: ProgrammeItem[] }) {
         <li key={it.time + it.title} className={KEY_MOMENTS.test(it.title) ? "key reveal" : "reveal"}>
           <time dateTime={it.time}>{to12h(it.time)}</time>
           <span className="node" aria-hidden="true" />
-          <div>
-            <h3 className="serif" style={{ fontWeight: 400 }}>
-              {it.title}
-            </h3>
-            <p>{it.detail}</p>
-          </div>
+          <h3 className="serif">{it.title}</h3>
         </li>
       ))}
     </ol>
