@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, Instrument_Sans, Instrument_Serif } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { EventStrip } from "@/components/EventStrip";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
@@ -91,6 +92,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <main id="main">{children}</main>
         <Footer />
         <JsonLd data={[organizationSchema(), websiteSchema()]} />
+        <Analytics />
       </body>
     </html>
   );
