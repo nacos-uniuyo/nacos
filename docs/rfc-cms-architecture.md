@@ -52,6 +52,8 @@ Based on our architectural decisions, the core principles of the implementation 
    - `user`: Public member dashboard, personal profile management, project showcase proposals (`draft` -> `submitted`), opportunity submissions, and yearbook profile claiming.
    - `department_editor`: Scoped to an assigned department ID. Can manage departmental officer listings, staff directories, notices, and review student project proposals within their department.
    - `admin`: Global faculty leadership (President, Staff Adviser, Director of Software, Dev Team Lead). Full access to role assignments, Dean's welcome address platform configuration, goodwill message moderation, and global publishing.
+
+   The instance lives in `lib/auth.ts` with the Drizzle adapter, the Google provider and the `nextCookies` plugin. `role`, `departmentId` and `regNumber` are declared as server-owned additional fields (`input: false`), so a Google profile cannot grant itself a role. `/login` is the sign-in page, `app/api/auth/[...all]/route.ts` mounts the handler, and `server/context.ts` resolves the session on every tRPC request.
 3. **Uniuyo Registration Number Integration & Double-Batch Onboarding:**  
    Student accounts are enriched with their Uniuyo registration number (e.g. `22/SC/CO/1199`). This enables automated mapping to their entry department and academic session. The special double-admitted merged cohort (2022/2023 set, containing both `22` and `23` prefixes) is handled cleanly via session prefix metadata.
 4. **Decoupled Identity (`person`) and Session Roles (`session_role`):**  
@@ -61,7 +63,7 @@ Based on our architectural decisions, the core principles of the implementation 
 6. **No Raw HTML in Storage (TipTap JSON AST):**  
    Rich-text content (announcements, project descriptions, staff bios, Dean's message) is stored as structured TipTap JSON in PostgreSQL `jsonb` columns, validated via Zod schemas and rendered safely with React components.
 7. **tRPC Router with Mock Data Decoupling:**  
-   All data consumption routes through a centralized tRPC router. Procedures are guarded by explicit middleware wrappers (`publicProcedure`, `protectedProcedure`, `departmentEditorProcedure`, `adminProcedure`). When database credentials are not supplied, procedures fall back to typed mock seed fixtures so frontend developers can build immediately without running a local database.
+   All data consumption routes through a centralized tRPC router. Procedures are guarded by explicit middleware wrappers (`publicProcedure`, `protectedProcedure`, `departmentEditorProcedure`, `adminProcedure`). Until the live-query phase completes, procedures serve the typed fixtures in `mocks/portal.ts`, so frontend work does not wait on content. This is a fixed mock layer, not a credential-dependent fallback: every environment variable is required, and a procedure either reads a fixture or a Drizzle query.
 8. **Design System & Developer Ergonomics:**  
    The application leverages shadcn/ui components customized with core theme tokens. Developers have full compositional freedom to craft creative layouts for their assigned routes while adhering strictly to shared design tokens and primitives. Forms use React Hook Form integrated with Zod validation.
 9. **Tooling & CI/CD Pipeline:**  
@@ -71,6 +73,10 @@ Based on our architectural decisions, the core principles of the implementation 
    - Deployment: Automated continuous deployment to Vercel via GitHub Actions running entirely on Bun (`oven-sh/setup-bun@v2`).
 10. **Environment Variable Management (T3 Env):**  
     All runtime and client-side variables are strictly validated through `@t3-oss/env-nextjs`. Every variable is required without defaults, preventing hidden assumptions and runtime deployment crashes.
+11. **Server-Signed Media Uploads:**  
+    `lib/cloudinary.ts` holds the Cloudinary configuration and signs only the upload parameters the server allows. `app/api/cloudinary/signature/route.ts` issues a signature to signed-in members, and the browser posts the file directly to Cloudinary. The API secret never reaches the client, and no `NEXT_PUBLIC_` mirror of it exists.
+12. **Git Workflow: Feature Branches and Pull Requests Only:**  
+    Nobody commits or pushes directly to `main`, including the Dev Team Lead, department editors and admins. Every change is made on a feature branch named for its purpose (`feat/...`, `fix/...`, `chore/...`, `docs/...`) and submitted as a pull request. `main` is the single integration branch and must always stay deployable, because merging to it triggers the Vercel production deployment. The Director of Software reviews every PR and is the only person who merges. Branch protection on `main` is configured in GitHub so direct pushes are rejected by the remote rather than relying on discipline alone.
 
 
 ## 3. Database Schema (Drizzle ORM)
@@ -364,9 +370,12 @@ export const env = createEnv({
 ### Phase 1: Handover Foundation & Tooling (Internal Scaffolding)
 - Upgrade and verify project configuration: Next.js 16, TypeScript 7, and Bun runtime.
 - Setup Lefthook git hooks: pre-commit (Typecheck + Oxlint) and pre-push (Build).
+- Enable branch protection on `main` in GitHub (require PRs, block direct pushes).
 - Setup T3 Env with required environment definitions.
 - Initialize shadcn/ui theme configuration and core primitives.
 - Scaffold tRPC router contracts with mock seed repositories for offline developer ergonomics.
+- Better Auth with Google OAuth, the Drizzle adapter and a `/login` page, plus the tRPC context that resolves real sessions.
+- Cloudinary configuration and a server-side signing endpoint for member uploads.
 - Configure pure Bun GitHub Actions workflow for Vercel production deployment.
 
 ### Phase 2: Public Portals & Department Hubs (Dev Team Stream)
@@ -377,11 +386,81 @@ export const env = createEnv({
 - Homepage leadership welcome section (Dean's address) and goodwill messages carousel.
 - Full University of Uyo (UNIUYO) co-branding in headers, footers, and metadata previews.
 
-### Phase 3: Database & Cloud Infrastructure Integration
-- Drizzle ORM Neon HTTP setup, schema definitions, and migration generation (`bun run db:generate`, then `bun run db:migrate` against the unpooled URL).
-- Better Auth setup with Google OAuth and session management.
-- Switch tRPC procedures from mock repositories to live Drizzle queries.
-- Cloudinary client-side upload signatures and image optimization pipeline.
+### Phase 3: Live Data Integration
+
+The database, the auth instance and the upload signing endpoint already exist; the migrations are applied and the sixteen tables are real. What Phase 3 actually has to finish is the read and write path. Every public page must render from Neon rather than from a module in `lib/`, every console must persist through Drizzle, and the fixtures must stop being a runtime source at all. The work below is ordered so the application stays shippable at each step.
+
+#### Read paths: server query functions first, tRPC on top
+
+A new `server/queries/` module holds one file per aggregate (`departments`, `sessions`, `roster`, `projects`, `opportunities`, `events`, `posts`, `goodwill`, `settings`). Each exports ordinary async functions that run a Drizzle query and return the same types already defined in `server/contracts.ts`. Server components, `generateStaticParams`, `generateMetadata`, the sitemap and the OpenGraph image routes call these functions directly, because they already run on the server during render or prerender and a tRPC round trip would add a hop without adding isolation.
+
+The tRPC procedures keep their current names, inputs and outputs, but their bodies become calls to those same query functions. That gives one query implementation with two transports: a page that only renders uses the function, a client component that filters or paginates after mount uses the procedure. This also keeps the existing contracts honest, because both paths parse their result through the same Zod schema before anything renders.
+
+Today `lib/events.ts` and `lib/executives.ts` feed the public pages at build time, and `mocks/portal.ts` feeds the routers. After this phase nothing under `app/`, `components/` or `server/queries/` imports either. They survive only as seed input and test fixtures, so there is exactly one copy of the sample content and one way to load it.
+
+#### Explicit projections and cursor pagination
+
+Every query projects named columns instead of selecting whole tables, aliasing joined slugs (`department.slug as departmentSlug`, `school_session.slug as sessionSlug`). The contract is parsed at the boundary, so a column rename or a null the page does not expect fails during render or build instead of shipping a broken page. Joins use an inner join where the foreign key is not null and a left join where it is, so a missing department cannot silently drop a project from the list.
+
+Lists take a limit and a cursor, never an offset. Admin queues cursor on `(created_at, id)`, events on `(start_date, id)`, posts on `(published_at, id)`, and the `orderBy` mirrors the cursor so the matching index is usable. The default limit is 20 and the Zod input caps it at 50. A homepage section that wants three items asks for three; it does not fetch the table and slice in the browser.
+
+Filtering happens in SQL. Department, category, status and publication become `where` clauses, not `Array.filter` over a full table scan. The list procedures therefore keep their current input shape but gain `limit` and `cursor` fields.
+
+#### Public reads are a separate surface from console reads
+
+The public side is a distinct set of functions, not a flag on the console query. `projects.listPublic` filters `status = 'approved'`; `posts.listPublic` filters `status = 'published'` and `published_at <= now()`; `events.listPublic` filters `published = true`; `opportunities.listPublic` filters `status = 'approved'` and hides rows whose deadline has passed; `goodwill.listPublic` filters on the moderation flag. The unscoped versions are reachable only from a guarded procedure, so a dashboard cannot reuse the public function by accident and a console cannot render a draft as public by accident.
+
+`bySlug` follows the same split. A public page resolves only a public row, so a draft project or an unpublished event returns `notFound()` on the public route even to its own author. The author reads it through the dashboard procedure, which is scoped by session.
+
+Slug changes go through `slug_redirect`. When a slug is updated, the old value is inserted with the row's table name and the new slug in the same batch, and the public resolver checks the redirect table before returning 404. This is why the schema carries that table: a shared link to a renamed project should still land somewhere useful.
+
+#### Writes are guarded, validated and audited
+
+Mutations write and read back in one place. `project.review` updates `status`, `rejection_reason` and `updated_at`, then returns the fresh row. The guard chain stays `departmentEditorProcedure` plus `assertDepartmentScope`, but the scope is now checked against the row's `department_id` read from the database, not against a fixture. An editor cannot review a project in another department even if they know its slug.
+
+Status changes follow an explicit state machine rather than free assignment. A project moves `draft -> submitted -> approved | rejected`, and `rejected -> submitted` on resubmission. An opportunity uses the same four states. A post moves `draft -> scheduled -> published`, where publishing sets `published_at`. An event is simply published or not. Procedures reject a transition that is not an allowed edge, and the edge list lives in one module beside the contracts so the console can render only the actions that are currently possible. Rejection still requires a reason, and approving clears any previous reason.
+
+Audit fields come from the session, never from the request body. `author_user_id` is `ctx.session.userId`, `submitted_by_user_id` likewise, and `updated_at` is handled by `$onUpdate`. A client cannot forge authorship by posting a different id. A console that shows who changed a record reads that column rather than a name embedded in JSON.
+
+Deletes are soft where the schema has a status that supports it and hard where it does not. A hard delete of a row that owns a Cloudinary asset goes through one helper that removes the asset by `public_id` after the row delete succeeds, so the database is never left pointing at a deleted file and the file is never deleted while the row still links to it.
+
+#### Caching without Cache Components
+
+Cache Components stays off. The read model uses `unstable_cache` around the public query functions, keyed by the function arguments and tagged per aggregate: `departments`, `sessions`, `roster:<sessionSlug>`, `projects`, `project:<slug>`, `opportunities`, `events`, `event:<slug>`, `posts`, `post:<slug>`, `goodwill`, `settings`. The tag strings are exported from `server/cache.ts`, so a mutation cannot invent a tag the reader never used.
+
+Each mutation calls `revalidateTag` for the tags it touched after the write succeeds. Reviewing a project invalidates `projects` and `project:<slug>`; updating the Dean's message invalidates `settings`. Time-based revalidation of one hour is a backstop, not the mechanism: a missed tag call then degrades to staleness instead of a permanently wrong page.
+
+Caching wraps only public reads. Anything scoped to a session, such as a dashboard list or a review queue, is uncached and dynamic and calls the database directly. Caching per-user data under a shared key is the mistake this split exists to prevent.
+
+#### Neon HTTP constraints
+
+The runtime driver is `drizzle-orm/neon-http`, which has no interactive transactions. `db.transaction()` is not available, and code that assumes it fails at runtime. A multi-row write uses `db.batch([...])` with ordered statements, or a single statement with `sql` when batching is not enough. Better Auth is already configured this way: the adapter is constructed without `transaction`, and it must stay that way.
+
+Every mutation that needs read-after-write does it in the same batch or a follow-up select on the returned row, and surfaces a partial failure instead of retrying blindly. No procedure loops over rows issuing one request each; that pattern turns a single review into hundreds of round trips across the Atlantic. `DATABASE_URL` is the pooled URL and the only one the runtime sees. `DATABASE_URL_UNPOOLED` belongs to `drizzle-kit` and the seed script.
+
+#### Cloudinary persistence
+
+A successful upload stores both `secure_url` and `public_id` in the same row update: `banner_url` with `banner_public_id`, `cover_url` with `cover_public_id`, `flyer_url` with `flyer_public_id`, and gallery entries as `{ url, public_id }` objects rather than bare strings so a replacement can delete the old asset. A URL with no `public_id` is treated as external and is never deleted.
+
+Replacing an image deletes the previous asset after the row update commits; deleting a row deletes its assets after the row is gone. Both happen through the server SDK, never from the browser. Orphaned uploads, meaning assets with no row, are found by a maintenance script that lists the `nacos/uploads` folder and diffs it against stored ids. It reports them rather than deleting them automatically.
+
+#### Seed, fixtures and reset
+
+A single idempotent `bun run db:seed` inserts departments, school sessions, people and session roles, projects, opportunities, events, posts, goodwill messages and the Dean's message from the fixtures, using `onConflictDoNothing` on natural keys (`department.slug`, `person.slug`, `project.slug`, `opportunity.slug`, `event.slug`, `post.slug`). Running it twice leaves the same rows and reports zero insertions the second time. It refuses to run against a database whose department count already exceeds the seed set unless `--force` is passed, so it cannot quietly overwrite real content.
+
+A separate `bun run db:reset` clears only the seeded tables in dependency order and is documented as destructive. The fixtures stay in the repository as seed input and as the shape tests assert against, and nowhere else.
+
+#### How Phase 3 is verified
+
+1. `rg -n "mocks/portal|lib/events|lib/executives" app components server` returns nothing. Only the seed script references the fixtures.
+2. `bun run db:seed` twice: the second run logs zero inserted rows for every table.
+3. Every public page renders against Neon with the dev server restarted between requests, which proves nothing is being served from module memory.
+4. A draft project returns 404 on `/projects/<slug>` while its author sees it through the dashboard procedure.
+5. An approved project appears in the public list on the next request after review, which proves the tag revalidation path works.
+6. `EXPLAIN` on the project list and the review queue shows an index scan on `project_status_idx` or `project_department_id_idx`, not a sequential scan.
+7. `rg -n "db.transaction" server` returns nothing.
+8. Replacing a banner leaves exactly one asset for that project in the Cloudinary folder, and deleting the row removes it.
+9. Typecheck, lint and a production build pass, and the Vercel preview deployment renders the seeded content.
 
 ### Phase 4: Portals, Dashboards & Moderation Workflows
 - Member dashboard for authenticated users (profile management, project submission proposals).

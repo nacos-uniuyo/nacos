@@ -64,11 +64,11 @@ Development is structured into disciplined phases to ensure developer ergonomics
 8. **Institutional Identity & Co-Branding:**
    - Unified header, footer, and OpenGraph metadata incorporating both NACOS and University of Uyo official insignia.
 
-### Phase 3: Database & Cloud Infrastructure Integration
+### Phase 3: Live Data Integration
 - Drizzle ORM Neon HTTP setup, schema definitions, relations, and migrations.
-- Universal Google OAuth authentication via Better Auth.
-- Wire tRPC procedures to live Drizzle queries, deprecating mock seed fallback in production.
+- Universal Google OAuth authentication via Better Auth, with a sign-in page and session-aware tRPC context.
 - Cloudinary client-side upload signatures and image optimization pipeline for project media and flyers.
+- Wire tRPC procedures to live Drizzle queries, retiring the mock fixtures from production paths.
 
 ### Phase 4: Portals, Dashboards & Moderation Workflows
 - **Member Dashboard (`/dashboard`):** Available to all authenticated Google users (`user` role) to manage personal profiles, submit project proposals, submit opportunity listings, and bookmark openings.
@@ -107,7 +107,7 @@ All student project submissions and opportunity listings must pass an explicit r
 ```mermaid
 flowchart LR
     A["Milestone 1: Handover Foundation<br>(Week 1)"] --> B["Milestone 2: Public Portals & Hubs<br>(Weeks 2-3)"]
-    B --> C["Milestone 3: Database & Cloud Auth<br>(Weeks 4-5)"]
+    B --> C["Milestone 3: Live Data Integration<br>(Weeks 4-5)"]
     C --> D["Milestone 4: Dashboards & Review<br>(Week 6)"]
     D --> E["Milestone 5: Production Launch<br>(Week 7)"]
     E --> F["Milestone 6: Student Community<br>(Post-Launch)"]
@@ -115,9 +115,9 @@ flowchart LR
 
 | Milestone | Deliverable | Acceptance Criteria |
 | :--- | :--- | :--- |
-| **Milestone 1: Handover Foundation** | Tooling (Next.js 16, TypeScript 7, Oxlint, Lefthook, T3 Env, Bun), shadcn primitives, and mock tRPC routers. | Clean local typechecking, linting, build, and offline mock-data dev experience. |
+| **Milestone 1: Handover Foundation** | Tooling (Next.js 16, TypeScript 7, Oxlint, Lefthook, T3 Env, Bun), shadcn primitives, mock tRPC routers, Better Auth with Google sign-in, and Cloudinary upload signing. | Clean local typechecking, linting, build, and offline mock-data dev experience; a member can sign in with Google and request an upload signature. |
 | **Milestone 2: Public Portals & Hubs** | Department hubs for all 5 departments, project showcase, SIWES directory, alumni/yearbook archives, and UNIUYO co-branding. | Public routes render with rich mock data; students can browse and filter projects and opportunities. |
-| **Milestone 3: Database & Cloud Auth** | Neon serverless database, Drizzle ORM schemas, Better Auth with Google OAuth, and Cloudinary uploads. | Users can sign in with Google; tRPC procedures persist and fetch live records from Neon. |
+| **Milestone 3: Live Data Integration** | Neon serverless database, Drizzle ORM schemas and migrations, plus tRPC procedures wired to live records. | tRPC procedures persist and fetch live records from Neon, and the public pages stop reading seed fixtures. |
 | **Milestone 4: Dashboards & Review** | User dashboard, department editor consoles, Dean's address config, and project/opportunity review queues. | Non-technical coordinators review and approve student projects; admins update Dean's address without code deploys. |
 | **Milestone 5: Production Rollout & Training** | Faculty executive rollout and training. | The PRO, General Secretary, and departmental executives manage content without developer intervention. |
 | **Milestone 6: Student Community Platform** | Student interaction and discussion platform. | Students can safely interact on projects and opportunities with active moderation controls in place. |
