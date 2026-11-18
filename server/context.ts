@@ -1,3 +1,8 @@
+import { eq } from "drizzle-orm";
+import { db } from "@/db";
+import { department } from "@/db/schema";
+import { auth } from "@/lib/auth";
+
 export type Session = {
   userId: string;
   role: "user" | "department_editor" | "admin";
@@ -10,10 +15,27 @@ export type Context = {
 };
 
 /**
- * Better Auth replaces this body in Phase 3. Until then no request carries a
- * session, so protected procedures refuse everyone and the public portal runs
- * entirely on mock fixtures.
+ * tRPC runs per request, so this resolves the Better Auth session from the
+ * incoming cookie. A department editor carries an id on their user record; the
+ * slug is looked up here so procedures can scope by the same value the public
+ * URLs use.
  */
-export function createContext(): Context {
-  return { session: null };
+export async function createContext(reqHeaders: Headers): Promise<Context> {
+  const authSession = await auth.api.getSession({ headers: reqHeaders });
+  if (!authSession) return { session: null };
+
+  const { id, departmentId } = authSession.user;
+  const role = authSession.user.role ?? "user";
+
+  if (!departmentId) {
+    return { session: { userId: id, role, departmentSlug: null } };
+  }
+
+  const [row] = await db
+    .select({ slug: department.slug })
+    .from(department)
+    .where(eq(department.id, departmentId))
+    .limit(1);
+
+  return { session: { userId: id, role, departmentSlug: row?.slug ?? null } };
 }
