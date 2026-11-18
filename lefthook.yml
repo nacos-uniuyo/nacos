@@ -1,0 +1,16 @@
+# Lefthook configuration for NACOS UNIUYO Web Portal
+# https://github.com/evilmartians/lefthook
+
+pre-commit:
+  parallel: false
+  commands:
+    typecheck:
+      run: bun run typecheck
+    lint:
+      run: bun run lint
+
+pre-push:
+  parallel: false
+  commands:
+    build:
+      run: bun run build

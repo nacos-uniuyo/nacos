@@ -1,3 +1,39 @@
+/* Tailwind utilities and theme for the portal components. Preflight is
+   deliberately skipped: this stylesheet already sets its own reset, and the
+   public pages depend on those values. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@theme inline {
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
+  --color-card: #ffffff;
+  --color-card-foreground: var(--ink);
+  --color-popover: #ffffff;
+  --color-popover-foreground: var(--ink);
+  --color-primary: var(--green);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--sand);
+  --color-secondary-foreground: var(--ink);
+  --color-muted: var(--sand);
+  --color-muted-foreground: var(--muted);
+  --color-accent: var(--sand);
+  --color-accent-foreground: var(--ink);
+  --color-destructive: #b3261e;
+  --color-destructive-foreground: #ffffff;
+  --color-border: var(--rule);
+  --color-input: var(--rule);
+  --color-ring: var(--gold);
+  --radius-sm: calc(var(--radius) - 10px);
+  --radius-md: calc(var(--radius) - 6px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 8px);
+  --font-sans: var(--font-instrument-sans);
+  --font-serif: var(--font-instrument-serif);
+  --font-display: var(--font-archivo);
+}
+
 :root {
   --ink: #0f1a13;
   --muted: #4a5a50;
@@ -36,7 +72,7 @@ html {
 
 body {
   margin: 0;
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-instrument-sans), system-ui, sans-serif;
   background: var(--paper);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
@@ -91,14 +127,14 @@ a:hover {
 
 /* Type */
 .caps {
-  font-family: var(--font-display), var(--font-sans), sans-serif;
+  font-family: var(--font-archivo), var(--font-instrument-sans), sans-serif;
   font-stretch: 125%;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.14em;
 }
 .serif {
-  font-family: var(--font-serif), Georgia, serif;
+  font-family: var(--font-instrument-serif), Georgia, serif;
   font-weight: 400;
 }
 .it {

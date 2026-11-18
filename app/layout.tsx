@@ -1,22 +1,24 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, Instrument_Sans, Instrument_Serif } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import { Analytics } from "@vercel/analytics/next";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { JsonLd } from "@/components/JsonLd";
 import { organizationSchema, websiteSchema } from "@/lib/schema";
 import { SITE_URL, site } from "@/lib/site";
+import { Providers } from "./providers";
 import "./globals.css";
 
-const sans = Instrument_Sans({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
+const sans = Instrument_Sans({ subsets: ["latin"], variable: "--font-instrument-sans", display: "swap" });
 const serif = Instrument_Serif({
   subsets: ["latin"],
   weight: "400",
   style: ["normal", "italic"],
-  variable: "--font-serif",
+  variable: "--font-instrument-serif",
   display: "swap",
 });
-const display = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-display", display: "swap" });
+const display = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -72,14 +74,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en-NG" className={`${sans.variable} ${serif.variable} ${display.variable}`}>
       <body>
+        <NextTopLoader color="#007a1e" showSpinner={false} />
         <a className="skip" href="#main">
           Skip to content
         </a>
-        <Header />
-        <main id="main">{children}</main>
-        <Footer />
-        <JsonLd data={[organizationSchema(), websiteSchema()]} />
-        <Analytics />
+        <Providers>
+          <Header />
+          <main id="main">{children}</main>
+          <Footer />
+          <JsonLd data={[organizationSchema(), websiteSchema()]} />
+          <Analytics />
+        </Providers>
       </body>
     </html>
   );

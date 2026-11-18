@@ -363,8 +363,8 @@ export default function Home() {
                 One account. <span className="it">Everything NACOS.</span>
               </h2>
               <p>
-                Every NACOSite at UNIUYO will sign in to reach Open-Track, Guide-U, dues and receipts, event
-                registration, and member resources. The Software Directorate is building it now.
+                Every NACOSite at UNIUYO will sign in to reach Open-Track, Guide-U, event registration, and
+                member resources. The Software Directorate is building it now.
               </p>
             </div>
             <div className="actions">

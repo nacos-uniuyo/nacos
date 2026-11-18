@@ -275,7 +275,7 @@ export default async function EventPage({ params }: Props) {
                   fill="rgba(255,255,255,.55)"
                   fontSize="12"
                   letterSpacing="3"
-                  fontFamily="var(--font-sans), sans-serif"
+                  fontFamily="var(--font-instrument-sans), sans-serif"
                 >
                   5 ARMS · UNIUYO
                 </text>
