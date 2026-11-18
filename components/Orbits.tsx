@@ -18,7 +18,7 @@ export function HeroOrbits({ label = "{ UNIUYO }", className = "hero-orbits fade
         y="438"
         textAnchor="middle"
         fill="rgba(255,255,255,.35)"
-        fontFamily="var(--font-sans), sans-serif"
+        fontFamily="var(--font-instrument-sans), sans-serif"
         fontSize="14"
         letterSpacing="3"
       >
