@@ -27,7 +27,10 @@ Lefthook runs typecheck and lint before each commit and a full build before each
 | `/events/[slug]` | Event page with countdown, council, highlights and venue |
 | `/events/[slug]/programme` | Full order of events |
 | `/events/[slug]/calendar.ics` | Calendar file download |
+| `/login` | Google sign-in and account state |
+| `/api/auth/[...all]` | Better Auth handler |
 | `/api/trpc/[trpc]` | tRPC HTTP endpoint (portal data) |
+| `/api/cloudinary/signature` | Signed upload parameters for members |
 
 ## Editing content
 
@@ -41,9 +44,19 @@ Executive portraits live in `public/images/execs/<slug>.webp`, cropped to 4:5 (a
 
 ## Portal scaffold
 
-`server/` is the type-safe data layer for the portal. `server/contracts.ts` holds the Zod schemas every page receives, `server/mock.ts` holds seed fixtures, and `server/routers.ts` exposes them through tRPC procedures. Routers validate mock output against the contracts, so a fixture that drifts from its schema fails at the boundary instead of rendering something wrong. Public pages can be built against these procedures today; Phase 3 replaces the procedure bodies with Drizzle queries and leaves the signatures alone.
+`server/` is the type-safe data layer for the portal. `server/contracts.ts` holds the Zod schemas every page receives, `mocks/portal.ts` holds seed fixtures, and `server/routers.ts` exposes them through tRPC procedures. Routers validate mock output against the contracts, so a fixture that drifts from its schema fails at the boundary instead of rendering something wrong. Public pages can be built against these procedures today; Phase 3 replaces the procedure bodies with Drizzle queries and leaves the signatures alone.
 
 Client components reach the API through `lib/trpc/client.tsx`, which is mounted with TanStack Query in `app/providers.tsx`.
+
+## Authentication
+
+Better Auth owns sign-in. [lib/auth.ts](lib/auth.ts) wires the Google provider, the Drizzle adapter and three server-owned user fields (`role`, `departmentId`, `regNumber`) that a Google profile cannot write. [app/api/auth/[...all]/route.ts](app/api/auth/%5B...all%5D/route.ts) mounts the handler, [lib/auth-client.ts](lib/auth-client.ts) is the browser client, and `/login` is the page. [server/context.ts](server/context.ts) resolves the session per request, so the tRPC guards now see real roles; for a department editor it also turns the stored department id into the slug the public routes use.
+
+The Google console needs `BETTER_AUTH_URL/api/auth/callback/google` registered as an authorised redirect URI. Locally that means `BETTER_AUTH_URL=http://localhost:3000` in `.env`; in Vercel it is the production URL. With the production value on your machine, Google will send the browser to production after consent.
+
+## Media uploads
+
+[lib/cloudinary.ts](lib/cloudinary.ts) configures the SDK on the server and signs only a timestamp and folder. [app/api/cloudinary/signature/route.ts](app/api/cloudinary/signature/route.ts) refuses anyone who is not signed in, and [lib/cloudinary-client.ts](lib/cloudinary-client.ts) posts the file straight to Cloudinary. The API secret stays on the server; the browser only ever receives the key, the timestamp, the folder and the signature.
 
 `components/ui/` holds the shadcn/ui primitives. Tailwind utilities are imported in `app/globals.css` without preflight, because the existing stylesheet already carries the project reset. Theme tokens map the shadcn variables onto the NACOS palette.
 
@@ -59,7 +72,7 @@ bun run db:push       # prototype only, skips migration files
 bun run db:studio     # browse the database
 ```
 
-The migrations in `drizzle/` are generated and applied to the Neon database, so all 16 tables exist. The tRPC routers still read the mock fixtures; switching them to live Drizzle queries is the remaining Phase 3 step.
+The migrations in `drizzle/` are generated and applied to the Neon database, so all 16 tables exist and Better Auth can read and write its own tables. The tRPC routers still read the mock fixtures; switching them to live Drizzle queries is the remaining Phase 3 step.
 
 ## SEO
 

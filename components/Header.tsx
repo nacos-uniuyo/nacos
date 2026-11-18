@@ -12,6 +12,7 @@ const links = [
   { href: "/executives", label: "Executives" },
   { href: "/events", label: "Events" },
   { href: "/#news", label: "News" },
+  { href: "/login", label: "Sign in" },
 ];
 
 export function Header() {
