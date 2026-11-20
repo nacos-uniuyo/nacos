@@ -1,12 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ExecCard } from "@/components/ExecCard";
-import { ArrowDown, ArrowRight } from "@/components/icons";
+import { GoodwillCarousel } from "@/components/GoodwillCarousel";
+import { ArrowDown, ArrowRight, Calendar, GithubIcon, Pin, QuoteMark, UniuyoCrest } from "@/components/icons";
 import { CornerOrbit, HeroOrbits } from "@/components/Orbits";
+import { RichTextRenderer } from "@/components/RichTextRenderer";
 import { StatCounter } from "@/components/StatCounter";
 import { featuredEvent as ev, formatEventDate, formatEventTime } from "@/lib/events";
-import { executives } from "@/lib/executives";
+import { executives, initials } from "@/lib/executives";
 import { site } from "@/lib/site";
+import { appRouter } from "@/server/routers";
 
 const tickerItems = [
   "Hackathons",
@@ -33,18 +36,54 @@ const nationalStats = [
   { label: "Years of NACOS", value: 20, suffix: "+" },
 ];
 
-export default function Home() {
+const categoryLabels: Record<string, string> = {
+  cybersecurity: "Cybersecurity",
+  embedded_systems_hardware: "Embedded Systems & Hardware",
+  software_engineering: "Software Engineering",
+  artificial_intelligence_data: "AI & Data Science",
+  information_systems_networking: "Information Systems & Networking",
+  theoretical_computing_research: "Theoretical Computing & Research",
+  interdisciplinary: "Interdisciplinary",
+};
+
+function formatShortDate(iso: string) {
+  const date = new Date(iso);
+  const day = new Intl.DateTimeFormat("en-GB", { timeZone: "Africa/Lagos", day: "2-digit" }).format(date);
+  const month = new Intl.DateTimeFormat("en-GB", { timeZone: "Africa/Lagos", month: "short" })
+    .format(date)
+    .toUpperCase();
+  const year = new Intl.DateTimeFormat("en-GB", { timeZone: "Africa/Lagos", year: "numeric" }).format(date);
+  return { day, month, year };
+}
+
+export default async function Home() {
   const featuredExecs = executives.filter((x) => x.principal);
+  const caller = appRouter.createCaller({ session: null });
+
+  const [deansAddress, goodwillList, departmentList, projectList, eventList] = await Promise.all([
+    caller.setting.deansMessage(),
+    caller.goodwill.list(),
+    caller.department.list(),
+    caller.project.list(),
+    caller.event.list(),
+  ]);
+
+  const departmentMap = new Map(departmentList.map((d) => [d.slug, d]));
 
   return (
     <>
-      {/* Hero */}
-      <section id="top" className="hero" aria-labelledby="hero-title">
+      {/* 1. Hero Banner: Deep emerald green visual continuation of the split-angled navbar */}
+      <section id="top" className="hero hero-phase2" aria-labelledby="hero-title">
         <div className="grid-bg drift" aria-hidden="true" />
         <HeroOrbits />
         <div className="hero-fade" aria-hidden="true" />
 
         <div className="wrap hero-inner">
+          <div className="hero-cobrand-pill fade d1">
+            <UniuyoCrest size={22} />
+            <span className="caps">Faculty of Computing · University of Uyo &amp; NACOS Chapter</span>
+          </div>
+
           <h1 id="hero-title" className="serif">
             <span className="line">
               <span className="rise d2">Building Capacity</span>
@@ -54,18 +93,40 @@ export default function Home() {
             </span>
           </h1>
           <p className="hero-copy fade d4">
-            The home of every computing student at the University of Uyo. We train builders, open doors to industry,
-            and show our work in public.
+            The home of every computing student at the University of Uyo across all five academic departments. We
+            train builders, showcase student research, open doors to industry, and show our work in public.
           </p>
           <div className="cta-row fade d5">
-            <Link className="btn btn-solid" href="#priorities">
-              Explore our priorities
+            <Link className="btn btn-solid" href="/projects">
+              Explore Student Projects
+              <ArrowRight />
+            </Link>
+            <Link className="btn btn-ghost" href="/departments/computer-science">
+              View Department Hubs
               <ArrowRight />
             </Link>
             <Link className="btn btn-ghost" href={`/events/${ev.slug}`}>
               Inauguration day
             </Link>
           </div>
+
+          {departmentList.length > 0 ? (
+            <div className="hero-dept-bar fade d5" aria-label="Department Hub Quick Links">
+              <span className="caps hero-dept-kicker">5 Computing Departments:</span>
+              <div className="hero-dept-links">
+                {departmentList.map((dept) => (
+                  <Link
+                    key={dept.slug}
+                    href={`/departments/${dept.slug}`}
+                    className="hero-dept-chip"
+                  >
+                    <span className="caps chip-code">{dept.shortName}</span>
+                    <span className="chip-name">{dept.name}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
 
         <div className="hero-foot">
@@ -83,6 +144,84 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 2. Dean's Welcome Address (Immediately Beneath / Overlapping Hero) */}
+      <section id="deans-welcome" className="deans-welcome-section" aria-labelledby="deans-heading">
+        <div className="wrap">
+          <article className="deans-split-card reveal">
+            <div className="deans-portrait-col">
+              <div className="deans-portrait-frame">
+                <div className="deans-monogram-stage" aria-hidden="true">
+                  <svg viewBox="0 0 320 360" fill="none" className="deans-stage-rings">
+                    <circle cx="160" cy="180" r="136" stroke="rgba(216,180,92,0.32)" strokeWidth="1.2" />
+                    <circle
+                      cx="160"
+                      cy="180"
+                      r="104"
+                      stroke="rgba(255,255,255,0.12)"
+                      strokeDasharray="3 8"
+                    />
+                    <circle cx="160" cy="44" r="4" fill="#D8B45C" />
+                  </svg>
+                  <div className="deans-crest-badge">
+                    <UniuyoCrest size={52} />
+                  </div>
+                  <span className="serif deans-initials">{initials(deansAddress.authorName)}</span>
+                </div>
+
+                <div className="deans-portrait-overlay">
+                  <span className="caps deans-office-badge">Office of the Dean</span>
+                  <h3 className="serif deans-name">{deansAddress.authorName}</h3>
+                  <p className="deans-title">{deansAddress.authorTitle}</p>
+                  <p className="caps deans-uni">University of Uyo</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="deans-content-col">
+              <div className="deans-content-head">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <span className="caps eyebrow accent">Official Faculty Welcome</span>
+                  <span className="caps deans-session-tag">Faculty of Computing · UNIUYO</span>
+                </div>
+                <h2 id="deans-heading" className="serif deans-heading">
+                  {deansAddress.heading}
+                </h2>
+              </div>
+
+              <div className="deans-message-prose">
+                <span className="deans-watermark-quote" aria-hidden="true">
+                  <QuoteMark size={40} />
+                </span>
+                <RichTextRenderer
+                  doc={deansAddress.body}
+                  className="deans-richtext"
+                />
+              </div>
+
+              <footer className="deans-content-foot">
+                <div className="deans-signature-block">
+                  <span className="serif it deans-sig-name">{deansAddress.authorName}</span>
+                  <span className="caps deans-sig-role">
+                    {deansAddress.authorTitle} · University of Uyo
+                  </span>
+                </div>
+
+                <div className="deans-quick-actions">
+                  <Link href="/departments/computer-science" className="text-link">
+                    Explore Department Hubs
+                    <ArrowRight size={16} />
+                  </Link>
+                  <Link href="/projects" className="text-link">
+                    Student Project Showcase
+                    <ArrowRight size={16} />
+                  </Link>
+                </div>
+              </footer>
+            </div>
+          </article>
+        </div>
+      </section>
+
       {/* Ticker */}
       <div className="ticker" aria-hidden="true">
         <div className="ticker-track marquee caps">
@@ -95,7 +234,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Mission */}
+      {/* Mission & 5 Autonomous Computing Department Hubs */}
       <section id="about" className="mission" aria-labelledby="about-title">
         <div className="wrap">
           <h2 id="about-title" className="eyebrow caps reveal" style={{ margin: 0 }}>
@@ -109,11 +248,45 @@ export default function Home() {
               </span>
             </p>
             <p className="lead reveal">
-              NACOS UNIUYO brings together students of the Faculty of Computing to learn practical skills, compete at
-              hackathons, connect with industry, and hold their leaders to account.
+              NACOS UNIUYO brings together students across all five departments of the Faculty of Computing to learn
+              practical skills, compete at hackathons, connect with industry, and hold their leaders to account.
             </p>
           </div>
         </div>
+
+        {departmentList.length > 0 ? (
+          <div className="wrap dept-hubs-wrap">
+            <div className="dept-hubs-grid">
+              {departmentList.map((dept, index) => (
+                <Link
+                  key={dept.slug}
+                  href={`/departments/${dept.slug}`}
+                  className="dept-hub-card card reveal"
+                >
+                  <div className="dept-hub-top">
+                    <span className="caps dept-code-badge">{dept.shortName}</span>
+                    <span className="caps dept-num">0{index + 1}</span>
+                  </div>
+                  <div className="dept-hub-body">
+                    <h3 className="serif dept-hub-name">{dept.name}</h3>
+                    <p className="dept-hub-summary">{dept.summary}</p>
+                  </div>
+                  <div className="dept-hub-foot">
+                    <div className="dept-hod">
+                      <span className="caps text-[10px] text-[var(--muted)]">Head of Department</span>
+                      <span className="text-xs font-semibold text-[var(--ink)]">
+                        {dept.hodName ?? "Faculty Leadership"}
+                      </span>
+                    </div>
+                    <span className="dept-hub-arrow" aria-hidden="true">
+                      <ArrowRight size={18} />
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </section>
 
       {/* Priorities */}
@@ -195,6 +368,77 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Featured Student & Faculty Projects Highlight Section */}
+      <section id="projects-highlight" className="projects-highlight-section" aria-labelledby="projects-preview-title">
+        <div className="wrap">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow caps accent">Student &amp; Faculty Showcase</span>
+              <h2 id="projects-preview-title" className="h2 serif reveal-x">
+                Featured <span className="it">Projects</span>
+              </h2>
+            </div>
+            <Link className="text-link" href="/projects">
+              Explore all student projects
+              <ArrowRight />
+            </Link>
+          </div>
+
+          <div className="project-preview-grid">
+            {projectList.map((proj) => {
+              const dept = departmentMap.get(proj.departmentSlug);
+              return (
+                <article key={proj.slug} className="project-preview-card card reveal">
+                  <div className="project-preview-top">
+                    <span className="caps project-cat-pill">
+                      {categoryLabels[proj.category] ?? proj.category}
+                    </span>
+                    <span className="caps project-dept-tag">
+                      {dept ? dept.shortName : proj.departmentSlug}
+                      {proj.courseCode ? ` · ${proj.courseCode}` : ""}
+                    </span>
+                  </div>
+
+                  <div className="project-preview-body">
+                    <h3 className="serif project-preview-title">
+                      <Link href={`/projects/${proj.slug}`}>{proj.title}</Link>
+                    </h3>
+                    <p className="project-preview-tagline">{proj.tagline}</p>
+                  </div>
+
+                  <footer className="project-preview-foot">
+                    <div className="project-team-meta">
+                      <span className="caps text-[10px] text-[var(--muted)]">Team / Attribution</span>
+                      <span className="text-xs font-semibold text-[var(--ink)]">
+                        {proj.teamDisplayName ?? (dept ? `${dept.name} Team` : "NACOS Project Team")}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      {proj.repoUrl ? (
+                        <a
+                          href={proj.repoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="project-icon-link"
+                          aria-label={`${proj.title} GitHub repository`}
+                        >
+                          <GithubIcon size={16} />
+                        </a>
+                      ) : null}
+                      <Link href={`/projects/${proj.slug}`} className="project-detail-link">
+                        <span>View</span>
+                        <ArrowRight size={15} />
+                      </Link>
+                    </div>
+                  </footer>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* Open-Track */}
       <section id="open-track" className="open-track" aria-labelledby="ot-title">
         <div className="wrap">
@@ -247,6 +491,25 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 3. Voices of Goodwill & Leadership Section */}
+      <section id="goodwill" className="goodwill-section dark" aria-labelledby="goodwill-title">
+        <div className="wrap">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow on-dark caps">Institutional Endorsements &amp; Counsel</span>
+              <h2 id="goodwill-title" className="h2 serif reveal-x">
+                Voices of <span className="it gold">Goodwill</span>
+              </h2>
+            </div>
+            <p className="lead max-w-[440px]">
+              Verified goodwill messages from faculty patrons, staff advisers, alumni leaders, and council executives.
+            </p>
+          </div>
+
+          <GoodwillCarousel initialMessages={goodwillList} />
+        </div>
+      </section>
+
       {/* Executives */}
       <section id="executives" className="execs" aria-labelledby="ex-title">
         <div className="wrap">
@@ -272,12 +535,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* News */}
+      {/* News & Upcoming Events */}
       <section id="news" className="news" aria-labelledby="news-title">
         <div className="wrap">
           <div className="section-head">
             <div>
-              <span className="eyebrow caps">Newsroom</span>
+              <span className="eyebrow caps">Newsroom &amp; Event Hub</span>
               <h2 id="news-title" className="h2 serif reveal-x">
                 Latest from NACOS
               </h2>
@@ -336,6 +599,42 @@ export default function Home() {
               </Link>
             </div>
           </div>
+
+          {eventList.length > 0 ? (
+            <div className="events-preview-grid">
+              {eventList.map((item) => {
+                const { day, month, year } = formatShortDate(item.startDate);
+                return (
+                  <Link
+                    key={item.slug}
+                    href={`/events/${item.slug}`}
+                    className="event-preview-card card reveal"
+                  >
+                    <div className="event-preview-date" aria-hidden="true">
+                      <span className="serif event-preview-day">{day}</span>
+                      <span className="caps event-preview-month">
+                        {month} {year}
+                      </span>
+                    </div>
+                    <div className="event-preview-content">
+                      <div className="event-preview-kicker">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--green)]">
+                          <Calendar size={14} />
+                          <span>Faculty Calendar</span>
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 text-xs text-[var(--muted)]">
+                          <Pin size={14} />
+                          <span>{item.venueName}</span>
+                        </span>
+                      </div>
+                      <h3 className="serif event-preview-title">{item.title}</h3>
+                      {item.tagline ? <p className="event-preview-tagline">{item.tagline}</p> : null}
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : null}
         </div>
       </section>
 
@@ -368,7 +667,10 @@ export default function Home() {
               </p>
             </div>
             <div className="actions">
-              <a className="btn btn-dark" href={site.social.x} target="_blank" rel="noopener noreferrer">
+              <Link className="btn btn-dark" href="/login">
+                Sign in to Member Portal
+              </Link>
+              <a className="btn btn-ghost" href={site.social.x} target="_blank" rel="noopener noreferrer">
                 Get launch updates on X
               </a>
               <Link className="btn btn-ghost" href="/executives#director-of-software">
