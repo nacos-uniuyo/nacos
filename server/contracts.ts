@@ -83,9 +83,17 @@ export const postSummary = z.object({
 });
 
 export const goodwillSummary = z.object({
+  id: z.string().min(1),
   authorName: z.string(),
   authorTitle: z.string(),
   message: z.string(),
+});
+
+export const deansMessageSummary = z.object({
+  heading: z.string().min(1),
+  body: z.string().min(1),
+  authorName: z.string().min(1),
+  authorTitle: z.string().min(1),
 });
 
 export type DepartmentSummary = z.infer<typeof departmentSummary>;
@@ -96,3 +104,4 @@ export type OpportunitySummary = z.infer<typeof opportunitySummary>;
 export type EventSummary = z.infer<typeof eventSummary>;
 export type PostSummary = z.infer<typeof postSummary>;
 export type GoodwillSummary = z.infer<typeof goodwillSummary>;
+export type DeansMessageSummary = z.infer<typeof deansMessageSummary>;

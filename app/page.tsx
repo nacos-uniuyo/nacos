@@ -1,12 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ExecCard } from "@/components/ExecCard";
+import { LeadershipMessages } from "@/components/home/LeadershipMessages";
 import { ArrowDown, ArrowRight } from "@/components/icons";
 import { CornerOrbit, HeroOrbits } from "@/components/Orbits";
 import { StatCounter } from "@/components/StatCounter";
 import { featuredEvent as ev, formatEventDate, formatEventTime } from "@/lib/events";
 import { executives } from "@/lib/executives";
 import { site } from "@/lib/site";
+import { getDeansMessage, getGoodwillMessages } from "@/server/queries/leadership";
 
 const tickerItems = [
   "Hackathons",
@@ -82,6 +84,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Public messages are rendered on the server, without an auth-dependent client fetch. */}
+      <LeadershipMessages deansMessage={getDeansMessage()} goodwill={getGoodwillMessages()} />
 
       {/* Ticker */}
       <div className="ticker" aria-hidden="true">
