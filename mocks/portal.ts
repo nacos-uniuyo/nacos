@@ -1,4 +1,5 @@
 import type {
+  DeansMessageSummary,
   DepartmentSummary,
   EventSummary,
   GoodwillSummary,
@@ -313,14 +314,21 @@ export const posts: PostSummary[] = [
   },
 ];
 
-export const goodwill: GoodwillSummary[] = [
+// Editorial fields stay in the data layer; public readers return only active messages.
+export const goodwill: (GoodwillSummary & { isActive: boolean; sortOrder: number })[] = [
   {
+    id: "dean-goodwill",
+    isActive: true,
+    sortOrder: 0,
     authorName: "Prof. A. M. Ime",
     authorTitle: "Dean, Faculty of Computing",
     message:
       "The faculty exists for the students, and a chapter that documents its own work in public is one that can be held to a standard.",
   },
   {
+    id: "staff-adviser-goodwill",
+    isActive: true,
+    sortOrder: 1,
     authorName: "Dr. U. E. Umoren",
     authorTitle: "Staff Adviser, NACOS UNIUYO",
     message:
@@ -328,7 +336,7 @@ export const goodwill: GoodwillSummary[] = [
   },
 ];
 
-export const deansMessage = {
+export const deansMessage: DeansMessageSummary | null = {
   heading: "From the Dean's desk",
   body: "Computing at the University of Uyo is measured by what our students build and how honestly they report it. This portal is the faculty's own account of that work.",
   authorName: "Prof. A. M. Ime",

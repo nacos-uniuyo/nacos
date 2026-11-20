@@ -48,6 +48,28 @@ Executive portraits live in `public/images/execs/<slug>.webp`, cropped to 4:5 (a
 
 Client components reach the API through `lib/trpc/client.tsx`, which is mounted with TanStack Query in `app/providers.tsx`.
 
+### Homepage leadership messages (F07)
+
+The Dean's welcome and goodwill messages sit immediately after the hero. Their
+existing sample copy lives in `mocks/portal.ts` and is explicitly labeled as
+awaiting faculty approval on the page. No portraits are fabricated for these fixtures.
+
+`server/queries/leadership.ts` validates the Dean's message and returns only active
+goodwill messages, ordered by `sortOrder` then stable `id`. Both the homepage and
+the tRPC procedures use these readers. The homepage calls them directly on the
+server, so displaying this public content needs no browser API request or session.
+
+`components/home/LeadershipMessages.tsx` separates the Dean's welcome, goodwill
+list, and shared author attribution into typed presentational components. Styles
+reuse the homepage's Instrument fonts and paper, forest and gold tokens. A null
+Dean's message or empty goodwill list omits that section; both absent omits the
+whole block. Set `isActive: false` to hide an individual goodwill fixture.
+
+This is the mock-backed public feature, not live content administration. F13 will
+replace the readers with database queries; F20 will supply the editing console.
+Replace the sample names/copy with approved material and remove the preview note
+when publishing verified messages.
+
 ## Authentication
 
 Better Auth owns sign-in. [lib/auth.ts](lib/auth.ts) wires the Google provider, the Drizzle adapter and three server-owned user fields (`role`, `departmentId`, `regNumber`) that a Google profile cannot write. [app/api/auth/[...all]/route.ts](app/api/auth/%5B...all%5D/route.ts) mounts the handler, [lib/auth-client.ts](lib/auth-client.ts) is the browser client, and `/login` is the page. [server/context.ts](server/context.ts) resolves the session per request, so the tRPC guards now see real roles; for a department editor it also turns the stored department id into the slug the public routes use.

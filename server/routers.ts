@@ -1,10 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
-  deansMessage,
   departments,
   events,
-  goodwill,
   opportunities,
   posts,
   projects,
@@ -14,7 +12,6 @@ import {
 import {
   departmentSummary,
   eventSummary,
-  goodwillSummary,
   opportunitySummary,
   opportunityType,
   personSummary,
@@ -23,6 +20,7 @@ import {
   projectSummary,
   schoolSessionSummary,
 } from "./contracts";
+import { getDeansMessage, getGoodwillMessages } from "./queries/leadership";
 import {
   adminProcedure,
   assertDepartmentScope,
@@ -158,11 +156,11 @@ const postRouter = router({
 });
 
 const goodwillRouter = router({
-  list: publicProcedure.query(() => z.array(goodwillSummary).parse(goodwill)),
+  list: publicProcedure.query(() => getGoodwillMessages()),
 });
 
 const settingRouter = router({
-  deansMessage: publicProcedure.query(() => deansMessage),
+  deansMessage: publicProcedure.query(() => getDeansMessage()),
 });
 
 /** Mutation contracts exist now so the admin UI can be built against them. */
