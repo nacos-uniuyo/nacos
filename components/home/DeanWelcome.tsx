@@ -42,7 +42,6 @@ export function DeanWelcome({ message }: DeanWelcomeProps) {
         </div>
 
         <div className="dean-content">
-          <span className="eyebrow caps dean-kicker">Welcome Address</span>
           <h2 id="dean-title" className="serif dean-heading">
             {message.heading}
           </h2>

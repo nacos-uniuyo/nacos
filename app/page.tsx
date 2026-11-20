@@ -73,8 +73,8 @@ export default function Home() {
       {/* Ticker */}
       <div className="ticker" aria-hidden="true">
         <div className="ticker-track marquee caps">
-          {[...tickerItems, ...tickerItems].map((t, i) => (
-            <span key={i} style={{ display: "contents" }}>
+          {[...tickerItems, ...tickerItems, ...tickerItems, ...tickerItems].map((t, i) => (
+            <span key={i} className="inline-flex items-center gap-6">
               <span>{t}</span>
               <span className="star">✦</span>
             </span>

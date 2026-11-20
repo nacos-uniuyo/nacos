@@ -355,6 +355,9 @@ a:hover {
   .main-nav {
     display: none;
   }
+  .header-actions .portal-login-btn {
+    display: none !important;
+  }
   .menu-btn {
     display: inline-flex;
   }
@@ -494,14 +497,19 @@ a:hover {
   height: 72px;
   display: flex;
   align-items: center;
+  user-select: none;
 }
 .ticker-track {
   display: flex;
   gap: 48px;
   white-space: nowrap;
+  font-family: var(--font-onest), sans-serif;
   font-size: clamp(15px, 1.5vw, 19px);
   width: max-content;
-  padding-left: 48px;
+  will-change: transform;
+}
+.marquee {
+  animation: marquee 32s linear infinite;
 }
 .ticker-track .star {
   color: var(--gold);
@@ -2053,8 +2061,13 @@ a.tile.green:hover {
 
 /* ===== Phase 2 Co-Branded Split-Angled Navbar ===== */
 .site-header {
-  background: var(--forest);
-  border-bottom: 2px solid rgba(216, 180, 92, 0.35);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(6, 42, 20, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(216, 180, 92, 0.25);
 }
 
 .cobrand-shell {
@@ -2304,7 +2317,7 @@ a.tile.green:hover {
 }
 
 .mobile-active-pill {
-  font-family: var(--font-archivo), sans-serif;
+  font-family: var(--font-instrument-sans), sans-serif;
   font-size: 10px;
   padding: 4px 10px;
   border-radius: 999px;
@@ -2394,8 +2407,8 @@ a.tile.green:hover {
   .mobile-nav-links a {
     color: #fff;
     text-decoration: none;
-    font-size: 24px;
-    padding: 10px 0;
+    font-size: 28px;
+    padding: 12px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 }
