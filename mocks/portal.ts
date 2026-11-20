@@ -329,8 +329,8 @@ export const goodwill: GoodwillSummary[] = [
 ];
 
 export const deansMessage = {
-  heading: "From the Dean's desk",
-  body: "Computing at the University of Uyo is measured by what our students build and how honestly they report it. This portal is the faculty's own account of that work.",
+  heading: "Welcome to the Faculty of Computing",
+  body: "On behalf of the faculty and leadership of the University of Uyo, I welcome both returning students and fresh minds stepping into the world of computing. Our commitment is to foster genuine technical capacity, ethical leadership, and impactful innovation. Engage deeply with your studies, collaborate across departments, and build tools that solve tangible problems for our society.",
   authorName: "Prof. A. M. Ime",
   authorTitle: "Dean, Faculty of Computing",
 };

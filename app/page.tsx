@@ -1,12 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
+import uniuyoLogo from "@/assets/images/uniuyo-circle.png";
 import { ExecCard } from "@/components/ExecCard";
-import { ArrowDown, ArrowRight } from "@/components/icons";
+import { DeanWelcome } from "@/components/home/DeanWelcome";
+import { ArrowRight } from "@/components/icons";
 import { CornerOrbit, HeroOrbits } from "@/components/Orbits";
 import { StatCounter } from "@/components/StatCounter";
 import { featuredEvent as ev, formatEventDate, formatEventTime } from "@/lib/events";
 import { executives } from "@/lib/executives";
 import { site } from "@/lib/site";
+import { getDeansMessage } from "@/server/queries/leadership";
 
 const tickerItems = [
   "Hackathons",
@@ -35,13 +38,14 @@ const nationalStats = [
 
 export default function Home() {
   const featuredExecs = executives.filter((x) => x.principal);
+  const deansMessage = getDeansMessage();
 
   return (
     <>
       {/* Hero */}
       <section id="top" className="hero" aria-labelledby="hero-title">
         <div className="grid-bg drift" aria-hidden="true" />
-        <HeroOrbits />
+        <HeroOrbits logoImage={uniuyoLogo} />
         <div className="hero-fade" aria-hidden="true" />
 
         <div className="wrap hero-inner">
@@ -62,23 +66,6 @@ export default function Home() {
               Explore our priorities
               <ArrowRight />
             </Link>
-            <Link className="btn btn-ghost" href={`/events/${ev.slug}`}>
-              Inauguration day
-            </Link>
-          </div>
-        </div>
-
-        <div className="hero-foot">
-          <div className="wrap">
-            <div className="scroll-cue fade d5">
-              <span className="cue" style={{ display: "inline-flex" }}>
-                <ArrowDown />
-              </span>
-              Scroll
-            </div>
-            <div className="meta fade d5 caps" style={{ fontSize: 11 }}>
-              Faculty of Computing · Uyo, Akwa Ibom
-            </div>
           </div>
         </div>
       </section>
@@ -86,14 +73,17 @@ export default function Home() {
       {/* Ticker */}
       <div className="ticker" aria-hidden="true">
         <div className="ticker-track marquee caps">
-          {[...tickerItems, ...tickerItems].map((t, i) => (
-            <span key={i} style={{ display: "contents" }}>
+          {[...tickerItems, ...tickerItems, ...tickerItems, ...tickerItems].map((t, i) => (
+            <span key={i} className="inline-flex items-center gap-6">
               <span>{t}</span>
               <span className="star">✦</span>
             </span>
           ))}
         </div>
       </div>
+
+      {/* Dean's Welcome Address */}
+      {deansMessage && <DeanWelcome message={deansMessage} />}
 
       {/* Mission */}
       <section id="about" className="mission" aria-labelledby="about-title">
@@ -219,7 +209,7 @@ export default function Home() {
               <span>Session commitments</span>
               <span className="status">
                 <span className="pulse-dot" aria-hidden="true" />
-                Tracking starts after inauguration
+                Live tracking active
               </span>
             </div>
             <ul>
