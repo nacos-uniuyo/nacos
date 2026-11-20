@@ -63,8 +63,7 @@ export function LeadershipMessages({ deansMessage, goodwill }: LeadershipMessage
   return (
     <div id="leadership" className="leadership-messages">
       <div className="wrap">
-        {/* Keep the unverified fixture attribution explicit until approved copy replaces it. */}
-        <p className="leadership-preview">Sample messages. Names and statements await faculty approval.</p>
+        {/* TODO: Replace mock names and statements with faculty-approved copy before content sign-off. */}
         {deansMessage && <DeanWelcome message={deansMessage} />}
         <GoodwillMessages messages={goodwill} />
       </div>

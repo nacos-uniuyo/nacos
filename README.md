@@ -51,8 +51,8 @@ Client components reach the API through `lib/trpc/client.tsx`, which is mounted 
 ### Homepage leadership messages (F07)
 
 The Dean's welcome and goodwill messages sit immediately after the hero. Their
-existing sample copy lives in `mocks/portal.ts` and is explicitly labeled as
-awaiting faculty approval on the page. No portraits are fabricated for these fixtures.
+existing sample copy lives in `mocks/portal.ts`. A code comment tracks the pending
+faculty approval; no sample-copy notice appears on the page. No portraits are fabricated for these fixtures.
 
 `server/queries/leadership.ts` validates the Dean's message and returns only active
 goodwill messages, ordered by `sortOrder` then stable `id`. Both the homepage and
@@ -67,8 +67,7 @@ whole block. Set `isActive: false` to hide an individual goodwill fixture.
 
 This is the mock-backed public feature, not live content administration. F13 will
 replace the readers with database queries; F20 will supply the editing console.
-Replace the sample names/copy with approved material and remove the preview note
-when publishing verified messages.
+Replace the sample names/copy with approved material before content sign-off.
 
 ## Authentication
 

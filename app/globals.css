@@ -197,13 +197,6 @@ a:hover {
   background: var(--paper);
 }
 
-.leadership-preview {
-  margin: 0 0 32px;
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.5;
-}
-
 .dean-welcome {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
