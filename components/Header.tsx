@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
-  Binary,
+  ChevronDown,
   Code2,
   Cpu,
   Database,
@@ -16,11 +16,41 @@ import { authClient } from "@/lib/auth-client";
 import { ArrowRight, Menu } from "./icons";
 
 const departmentItems = [
-  { slug: "computer-science", name: "Computer Science", icon: Cpu },
-  { slug: "cybersecurity", name: "Cybersecurity", icon: ShieldAlert },
-  { slug: "information-systems", name: "Information Systems", icon: Network },
-  { slug: "data-analytics", name: "Data Analytics", icon: Database },
-  { slug: "software-engineering", name: "Software Engineering", icon: Code2 },
+  {
+    slug: "computer-science",
+    name: "Computer Science",
+    shortName: "CSC",
+    summary: "Algorithms, software construction, and computational theory.",
+    icon: Cpu,
+  },
+  {
+    slug: "cybersecurity",
+    name: "Cybersecurity",
+    shortName: "CYB",
+    summary: "Defensive and offensive security, digital forensics, and network protection.",
+    icon: ShieldAlert,
+  },
+  {
+    slug: "information-systems",
+    name: "Information Systems",
+    shortName: "INS",
+    summary: "Enterprise data architectures, institutional systems, and data flow.",
+    icon: Network,
+  },
+  {
+    slug: "data-analytics",
+    name: "Data Analytics",
+    shortName: "DAN",
+    summary: "Statistical intelligence, machine learning, and decision-science pipelines.",
+    icon: Database,
+  },
+  {
+    slug: "software-engineering",
+    name: "Software Engineering",
+    shortName: "SWE",
+    summary: "Production system architecture, testing standards, and software delivery.",
+    icon: Code2,
+  },
 ] as const;
 
 const navLinks = [
@@ -86,13 +116,18 @@ export function Header() {
     if (deptTimeoutRef.current) {
       window.clearTimeout(deptTimeoutRef.current);
     }
-    setDeptDropdownOpen(true);
+    deptTimeoutRef.current = window.setTimeout(() => {
+      setDeptDropdownOpen(true);
+    }, 180);
   };
 
   const handleDeptMouseLeave = () => {
+    if (deptTimeoutRef.current) {
+      window.clearTimeout(deptTimeoutRef.current);
+    }
     deptTimeoutRef.current = window.setTimeout(() => {
       setDeptDropdownOpen(false);
-    }, 150);
+    }, 220);
   };
 
   const isCurrentRoute = (matchPrefix: string) => {
@@ -124,7 +159,11 @@ export function Header() {
     : "NU";
 
   return (
-    <header className="site-header">
+    <header
+      className="site-header"
+      ref={deptMenuRef}
+      onMouseLeave={handleDeptMouseLeave}
+    >
       <div className="wrap bar">
         <Link href="/" className="brand" aria-label="NACOS UNIUYO home">
           <Image src="/images/nacos-logo.png" alt="" width={52} height={52} priority />
@@ -145,71 +184,31 @@ export function Header() {
               Home
             </Link>
 
-            {/* Departments Dropdown */}
-            <div
-              className="relative inline-flex items-center"
-              ref={deptMenuRef}
+            {/* Departments Toggle Button */}
+            <button
+              type="button"
+              className={`navlink inline-flex items-center gap-1.5 cursor-pointer bg-transparent border-0 font-inherit p-0 transition-colors ${
+                isDeptActive || deptDropdownOpen ? "text-white" : ""
+              }`}
+              aria-expanded={deptDropdownOpen}
+              aria-haspopup="menu"
               onMouseEnter={handleDeptMouseEnter}
               onMouseLeave={handleDeptMouseLeave}
+              onClick={() => {
+                if (deptTimeoutRef.current) {
+                  window.clearTimeout(deptTimeoutRef.current);
+                }
+                setDeptDropdownOpen((prev) => !prev);
+              }}
             >
-              <button
-                type="button"
-                className={`navlink inline-flex items-center cursor-pointer bg-transparent border-0 font-inherit p-0 ${
-                  isDeptActive ? "text-white" : ""
+              <span>Departments</span>
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-300 ease-out text-[var(--mint-2)] ${
+                  deptDropdownOpen ? "rotate-180 text-white" : ""
                 }`}
-                aria-expanded={deptDropdownOpen}
-                aria-haspopup="menu"
-                onClick={() => setDeptDropdownOpen((prev) => !prev)}
-              >
-                <span>Departments</span>
-              </button>
-
-              {deptDropdownOpen && (
-                <div
-                  className="absolute left-0 top-full pt-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
-                  role="menu"
-                  aria-label="Departments"
-                >
-                  <div className="w-64 p-2 rounded-2xl bg-white shadow-2xl border border-[var(--rule)] flex flex-col gap-1">
-                    <div className="px-3 py-1.5 border-b border-[var(--rule)] text-[11px] font-semibold tracking-wider uppercase text-[var(--muted)]">
-                      Faculty Departments
-                    </div>
-                    {departmentItems.map((dept) => {
-                      const Icon = dept.icon;
-                      const isActive = pathname === `/departments/${dept.slug}`;
-                      return (
-                        <Link
-                          key={dept.slug}
-                          href={`/departments/${dept.slug}`}
-                          role="menuitem"
-                          onClick={() => setDeptDropdownOpen(false)}
-                          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl no-underline text-xs transition-colors ${
-                            isActive
-                              ? "bg-[var(--forest)] text-white font-medium"
-                              : "text-[var(--ink)] hover:bg-[var(--sand)] hover:text-[var(--forest)]"
-                          }`}
-                        >
-                          <div
-                            className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
-                              isActive
-                                ? "bg-white/15 text-[var(--gold)]"
-                                : "bg-[var(--paper)] text-[var(--forest)]"
-                            }`}
-                          >
-                            <Icon size={14} />
-                          </div>
-                          <div className="flex flex-col">
-                            <span className={isActive ? "text-white font-semibold" : "text-[var(--ink)] font-medium"}>
-                              {dept.name}
-                            </span>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
+              />
+            </button>
 
             {navLinks.slice(1).map((link) => (
               <Link
@@ -285,6 +284,85 @@ export function Header() {
             >
               <Menu open={open} />
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Extended Desktop Mega-Header Panel */}
+      <div
+        className={`max-lg:hidden overflow-hidden transition-all duration-300 ease-out border-[rgba(255,255,255,0.08)] bg-[rgba(5,32,15,0.98)] backdrop-blur-md ${
+          deptDropdownOpen
+            ? "max-h-[380px] opacity-100 border-t translate-y-0"
+            : "max-h-0 opacity-0 border-t-0 -translate-y-2 pointer-events-none"
+        }`}
+        role="menu"
+        aria-label="Academic Departments"
+        onMouseEnter={() => {
+          if (deptTimeoutRef.current) {
+            window.clearTimeout(deptTimeoutRef.current);
+          }
+          setDeptDropdownOpen(true);
+        }}
+        onMouseLeave={handleDeptMouseLeave}
+      >
+        <div className="wrap py-8">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-[11px] font-mono uppercase tracking-widest text-[var(--gold)]">
+              Faculty of Computing
+            </span>
+            <span className="text-white/20">/</span>
+            <span className="text-xs text-[var(--mint-2)]">Academic Departments</span>
+          </div>
+
+          <div className="grid grid-cols-5 gap-4">
+            {departmentItems.map((dept) => {
+              const Icon = dept.icon;
+              const isActive = pathname === `/departments/${dept.slug}`;
+              return (
+                <Link
+                  key={dept.slug}
+                  href={`/departments/${dept.slug}`}
+                  role="menuitem"
+                  onClick={() => setDeptDropdownOpen(false)}
+                  className={`group/dept flex flex-col justify-between p-4 rounded-xl border transition-all duration-200 no-underline text-inherit ${
+                    isActive
+                      ? "bg-white/10 border-[rgba(217,163,66,0.5)] shadow-md"
+                      : "bg-white/[0.03] border-white/10 hover:bg-white/[0.08] hover:border-white/20"
+                  }`}
+                >
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between">
+                      <div
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                          isActive
+                            ? "bg-[var(--gold)] text-[var(--forest)]"
+                            : "bg-white/10 text-[var(--gold)] group-hover/dept:bg-[var(--gold)] group-hover/dept:text-[var(--forest)]"
+                        }`}
+                      >
+                        <Icon size={16} />
+                      </div>
+                      <span className="text-[10px] font-mono text-[var(--mint-2)] tracking-wider uppercase">
+                        {dept.shortName}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                      <h4 className="text-sm font-semibold text-white group-hover/dept:text-[var(--gold)] transition-colors m-0 leading-tight">
+                        {dept.name}
+                      </h4>
+                      <p className="text-[12px] text-[var(--mint-2)] line-clamp-2 leading-relaxed m-0 font-normal">
+                        {dept.summary}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 mt-3 border-t border-white/10 flex items-center gap-1 text-[11px] font-mono text-[var(--gold)] opacity-80 group-hover/dept:opacity-100 transition-opacity">
+                    <span>Explore Hub</span>
+                    <ArrowRight size={12} className="transition-transform group-hover/dept:translate-x-0.5" />
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>

@@ -68,7 +68,7 @@ export default async function YearbookPage() {
           </h1>
           <p>
             Permanent institutional record and directory of graduating computing cohorts, departmental
-            honours, valedictorians, and verified alumni across the University of Uyo.
+            honours, valedictorians, and alumni across the University of Uyo.
           </p>
         </div>
       </section>

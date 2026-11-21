@@ -229,11 +229,11 @@ export default async function AlumniProfilePage({ params }: Props) {
                 )}
               </dl>
 
-              {/* Verified Profiles & Social Links */}
+              {/* Alumni Profiles & Social Links */}
               {person.socials && person.socials.length > 0 && (
                 <div className="flex flex-col gap-2.5 pt-2">
                   <span className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wider">
-                    Verified Contact
+                    Contact &amp; Profiles
                   </span>
                   <SocialIconList socials={person.socials} size="md" />
                 </div>
@@ -269,7 +269,7 @@ export default async function AlumniProfilePage({ params }: Props) {
 
                 <h3>Mentorship &amp; Industry Engagement</h3>
                 <p>
-                  As verified faculty alumni, graduates in this directory contribute directly to the undergraduate
+                  Graduates in this directory contribute directly to the undergraduate
                   experience through SIWES internship sponsorships, technical hackathon evaluation, and direct career
                   mentorship for computing students.
                 </p>

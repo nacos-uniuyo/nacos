@@ -20,6 +20,18 @@ import mikpidoghoEmmanuelImg from "@/assets/images/alumni/mikpidogho-emmanuel.jp
 import nsikanJohnImg from "@/assets/images/alumni/nsikan-john.jpg";
 import victorUdosenImg from "@/assets/images/alumni/victor-udosen.jpg";
 
+import presidentImg from "@/assets/images/execs/president.webp";
+import vicePresidentImg from "@/assets/images/execs/vice-president.webp";
+import secretaryGeneralImg from "@/assets/images/execs/secretary-general.webp";
+import assistantSecretaryGeneralImg from "@/assets/images/execs/assistant-secretary-general.webp";
+import financialSecretaryImg from "@/assets/images/execs/financial-secretary.webp";
+import treasurerImg from "@/assets/images/execs/treasurer.webp";
+import directorOfInformationImg from "@/assets/images/execs/director-of-information.webp";
+import directorOfAcademicsImg from "@/assets/images/execs/director-of-academics.webp";
+import directorOfSoftwareImg from "@/assets/images/execs/director-of-software.webp";
+import directorOfSocialsImg from "@/assets/images/execs/director-of-socials.webp";
+import directorOfSportsImg from "@/assets/images/execs/director-of-sports.webp";
+import directorOfEnvironmentImg from "@/assets/images/execs/director-of-environment.webp";
 import graduateTraineeImg from "@/assets/images/opportunities/graduate-trainee.jpg";
 import hackathonSponsorshipImg from "@/assets/images/opportunities/hackathon-sponsorship.jpg";
 import researchGrantImg from "@/assets/images/opportunities/research-grant.jpg";
@@ -91,6 +103,7 @@ export const schoolSessions: SchoolSessionSummary[] = [
 ];
 
 export const roster: PersonSummary[] = [
+  // --- 2024-2025 Current Session: Elected Council Executives ---
   {
     slug: "banny-confidence-jack",
     fullName: "Banny Confidence Jack",
@@ -98,7 +111,7 @@ export const roster: PersonSummary[] = [
     tier: "elected_exco",
     sessionSlug: "2024-2025",
     departmentSlug: "computer-science",
-    photoUrl: "/images/execs/president.webp",
+    photoUrl: presidentImg.src,
     isFeaturedHomepage: true,
   },
   {
@@ -108,7 +121,7 @@ export const roster: PersonSummary[] = [
     tier: "elected_exco",
     sessionSlug: "2024-2025",
     departmentSlug: "information-systems",
-    photoUrl: "/images/execs/vice-president.webp",
+    photoUrl: vicePresidentImg.src,
     isFeaturedHomepage: true,
   },
   {
@@ -118,18 +131,38 @@ export const roster: PersonSummary[] = [
     tier: "elected_exco",
     sessionSlug: "2024-2025",
     departmentSlug: "cybersecurity",
-    photoUrl: "/images/execs/secretary-general.webp",
+    photoUrl: secretaryGeneralImg.src,
     isFeaturedHomepage: true,
   },
   {
-    slug: "emmanuel-akpan",
-    fullName: "Emmanuel Akpan",
-    roleTitle: "Director of Software",
+    slug: "mikpidogho-emmanuel-exco",
+    fullName: "Mikpidogho Emmanuel E.",
+    roleTitle: "Assistant Secretary General",
     tier: "elected_exco",
     sessionSlug: "2024-2025",
-    departmentSlug: "software-engineering",
-    photoUrl: "/images/execs/director-of-software.webp",
-    isFeaturedHomepage: true,
+    departmentSlug: "cybersecurity",
+    photoUrl: assistantSecretaryGeneralImg.src,
+    isFeaturedHomepage: false,
+  },
+  {
+    slug: "francis-bright",
+    fullName: "Francis, Bright E.",
+    roleTitle: "Financial Secretary",
+    tier: "elected_exco",
+    sessionSlug: "2024-2025",
+    departmentSlug: "data-analytics",
+    photoUrl: financialSecretaryImg.src,
+    isFeaturedHomepage: false,
+  },
+  {
+    slug: "charles-prosper-exco",
+    fullName: "Charles Prosper O.",
+    roleTitle: "Treasurer",
+    tier: "elected_exco",
+    sessionSlug: "2024-2025",
+    departmentSlug: "information-systems",
+    photoUrl: treasurerImg.src,
+    isFeaturedHomepage: false,
   },
   {
     slug: "vincent-clement",
@@ -138,9 +171,61 @@ export const roster: PersonSummary[] = [
     tier: "elected_exco",
     sessionSlug: "2024-2025",
     departmentSlug: "data-analytics",
-    photoUrl: "/images/execs/director-of-information.webp",
+    photoUrl: directorOfInformationImg.src,
     isFeaturedHomepage: false,
   },
+  {
+    slug: "david-etuk-academics",
+    fullName: "David Etuk",
+    roleTitle: "Director of Academics",
+    tier: "elected_exco",
+    sessionSlug: "2024-2025",
+    departmentSlug: "computer-science",
+    photoUrl: directorOfAcademicsImg.src,
+    isFeaturedHomepage: false,
+  },
+  {
+    slug: "emmanuel-akpan",
+    fullName: "Emmanuel Akpan",
+    roleTitle: "Director of Software",
+    tier: "elected_exco",
+    sessionSlug: "2024-2025",
+    departmentSlug: "software-engineering",
+    photoUrl: directorOfSoftwareImg.src,
+    isFeaturedHomepage: true,
+  },
+  {
+    slug: "stephen-wisdom",
+    fullName: "Stephen, Wisdom G.",
+    roleTitle: "Director of Socials",
+    tier: "elected_exco",
+    sessionSlug: "2024-2025",
+    departmentSlug: "computer-science",
+    photoUrl: directorOfSocialsImg.src,
+    isFeaturedHomepage: false,
+  },
+  {
+    slug: "samuel-aniefiok-sports",
+    fullName: "Samuel Aniefiok",
+    roleTitle: "Director of Sports",
+    tier: "elected_exco",
+    sessionSlug: "2024-2025",
+    departmentSlug: "software-engineering",
+    photoUrl: directorOfSportsImg.src,
+    isFeaturedHomepage: false,
+  },
+  {
+    slug: "clement-paul",
+    fullName: "Clement Paul T.",
+    roleTitle: "Director of Environment",
+    tier: "elected_exco",
+    sessionSlug: "2024-2025",
+    departmentSlug: "cybersecurity",
+    photoUrl: directorOfEnvironmentImg.src,
+    isFeaturedHomepage: false,
+  },
+
+  // --- 2024-2025 Current Session: Presidential Aides ---
   {
     slug: "grace-udoh",
     fullName: "Grace Udoh",
@@ -152,9 +237,21 @@ export const roster: PersonSummary[] = [
     isFeaturedHomepage: false,
   },
   {
+    slug: "kufre-archibong",
+    fullName: "Kufre Archibong",
+    roleTitle: "Special Assistant on Media & Logistics",
+    tier: "aide",
+    sessionSlug: "2024-2025",
+    departmentSlug: "information-systems",
+    photoUrl: null,
+    isFeaturedHomepage: false,
+  },
+
+  // --- 2024-2025 Current Session: Dev Team ---
+  {
     slug: "samuel-aniefiok",
     fullName: "Samuel Aniefiok",
-    roleTitle: "Lead Frontend",
+    roleTitle: "Lead Frontend Engineer",
     tier: "dev_team",
     sessionSlug: "2024-2025",
     departmentSlug: "software-engineering",
@@ -164,11 +261,87 @@ export const roster: PersonSummary[] = [
   {
     slug: "david-etuk",
     fullName: "David Etuk",
-    roleTitle: "Lead Backend",
+    roleTitle: "Lead Backend Architect",
     tier: "dev_team",
     sessionSlug: "2024-2025",
     departmentSlug: "computer-science",
     photoUrl: null,
+    isFeaturedHomepage: false,
+  },
+  {
+    slug: "anietie-asikpo",
+    fullName: "Anietie Asikpo",
+    roleTitle: "Systems & Security Engineer",
+    tier: "dev_team",
+    sessionSlug: "2024-2025",
+    departmentSlug: "cybersecurity",
+    photoUrl: null,
+    isFeaturedHomepage: false,
+  },
+
+  // --- 2022-2023 Previous Session: Elected Council Executives ---
+  {
+    slug: "ubong-etim-2022",
+    fullName: "Ubong Etim",
+    roleTitle: "President",
+    tier: "elected_exco",
+    sessionSlug: "2022-2023",
+    departmentSlug: "computer-science",
+    photoUrl: null,
+    isFeaturedHomepage: false,
+  },
+  {
+    slug: "idara-okon-2022",
+    fullName: "Idara Okon",
+    roleTitle: "Vice President",
+    tier: "elected_exco",
+    sessionSlug: "2022-2023",
+    departmentSlug: "information-systems",
+    photoUrl: null,
+    isFeaturedHomepage: false,
+  },
+  {
+    slug: "aniefiok-peace-2022-sec",
+    fullName: "Aniefiok Peace Ekong",
+    roleTitle: "Secretary General",
+    tier: "elected_exco",
+    sessionSlug: "2022-2023",
+    departmentSlug: "computer-science",
+    photoUrl: aniefiokPeaceImg.src,
+    isFeaturedHomepage: false,
+  },
+  {
+    slug: "charles-prosper-2022-fin",
+    fullName: "Charles Prosper O.",
+    roleTitle: "Financial Secretary",
+    tier: "elected_exco",
+    sessionSlug: "2022-2023",
+    departmentSlug: "information-systems",
+    photoUrl: charlesProsperImg.src,
+    isFeaturedHomepage: false,
+  },
+
+  // --- 2022-2023 Previous Session: Presidential Aides ---
+  {
+    slug: "nsikak-udo-2022",
+    fullName: "Nsikak Udo",
+    roleTitle: "Chief of Staff to the President",
+    tier: "aide",
+    sessionSlug: "2022-2023",
+    departmentSlug: "cybersecurity",
+    photoUrl: null,
+    isFeaturedHomepage: false,
+  },
+
+  // --- 2022-2023 Previous Session: Dev Team ---
+  {
+    slug: "edidiong-asma-2022-dev",
+    fullName: "Edidiong Asuquo",
+    roleTitle: "Webmaster & Portal Lead",
+    tier: "dev_team",
+    sessionSlug: "2022-2023",
+    departmentSlug: "software-engineering",
+    photoUrl: edidiongAsmaImg.src,
     isFeaturedHomepage: false,
   },
   {

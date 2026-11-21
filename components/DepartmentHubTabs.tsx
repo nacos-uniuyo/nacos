@@ -501,10 +501,6 @@ export function DepartmentHubTabs({
                       <p className="dept-person-dept">
                         {sess ? sess.name : `${alum.sessionSlug} Academic Session`}
                       </p>
-
-                      <div className="dept-person-socials">
-                        <span className="caps text-[10px] text-[var(--green)]">Verified Graduate</span>
-                      </div>
                     </div>
                   </li>
                 );
