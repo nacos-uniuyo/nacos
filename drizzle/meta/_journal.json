@@ -15,6 +15,13 @@
       "when": 1795015332493,
       "tag": "0001_cool_arachne",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795020000000,
+      "tag": "0002_add_opportunity_bookmarks_and_department_notices",
+      "breakpoints": true
     }
   ]
 }

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client";
 import { Menu } from "./icons";
 
 const links = [
@@ -18,6 +19,11 @@ const links = [
 export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { data: session } = authClient.useSession();
+  const navLinks = [
+    ...links.slice(0, 5),
+    session ? { href: "/dashboard", label: "Dashboard" } : { href: "/login", label: "Sign in" },
+  ];
 
   useEffect(() => setOpen(false), [pathname]);
 
@@ -43,7 +49,7 @@ export function Header() {
         </Link>
 
         <nav aria-label="Main" className="main-nav">
-          {links.map((l) => (
+          {navLinks.map((l) => (
             <Link key={l.href} className="navlink" href={l.href} aria-current={current(l.href)}>
               {l.label}
             </Link>
@@ -64,7 +70,7 @@ export function Header() {
 
       <nav id="mobile-nav" className="mobile-nav" data-open={open} aria-label="Mobile">
         <ul>
-          {links.map((l) => (
+          {navLinks.map((l) => (
             <li key={l.href}>
               <Link className="serif" href={l.href} tabIndex={open ? 0 : -1} onClick={() => setOpen(false)}>
                 {l.label}

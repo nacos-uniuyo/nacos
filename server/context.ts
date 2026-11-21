@@ -8,6 +8,10 @@ export type Session = {
   role: "user" | "department_editor" | "admin";
   /** Set for department editors, null for global roles. */
   departmentSlug: string | null;
+  departmentId: string | null;
+  email: string;
+  name: string;
+  regNumber: string | null;
 };
 
 export type Context = {
@@ -24,11 +28,21 @@ export async function createContext(reqHeaders: Headers): Promise<Context> {
   const authSession = await auth.api.getSession({ headers: reqHeaders });
   if (!authSession) return { session: null };
 
-  const { id, departmentId } = authSession.user;
-  const role = authSession.user.role ?? "user";
+  const { id, departmentId, email, name, regNumber } = authSession.user;
+  const role = (authSession.user.role ?? "user") as Session["role"];
 
   if (!departmentId) {
-    return { session: { userId: id, role, departmentSlug: null } };
+    return {
+      session: {
+        userId: id,
+        role,
+        departmentSlug: null,
+        departmentId: null,
+        email,
+        name,
+        regNumber: regNumber ?? null,
+      },
+    };
   }
 
   const [row] = await db
@@ -37,5 +51,15 @@ export async function createContext(reqHeaders: Headers): Promise<Context> {
     .where(eq(department.id, departmentId))
     .limit(1);
 
-  return { session: { userId: id, role, departmentSlug: row?.slug ?? null } };
+  return {
+    session: {
+      userId: id,
+      role,
+      departmentSlug: row?.slug ?? null,
+      departmentId,
+      email,
+      name,
+      regNumber: regNumber ?? null,
+    },
+  };
 }
