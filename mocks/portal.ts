@@ -434,6 +434,8 @@ export const opportunities: OpportunitySummary[] = [
     deadline: "2026-12-15T23:59:00+01:00",
     applyUrl: "https://example.com/siwes-2026",
     hasInternalDetails: false,
+    imageUrl: "/images/opportunities/siwes-software-intern.jpg",
+    excerpt: "Hands-on industrial attachment focusing on backend services, container orchestration, and API engineering for undergraduate computing students.",
   },
   {
     slug: "faculty-research-grant",
@@ -445,6 +447,8 @@ export const opportunities: OpportunitySummary[] = [
     deadline: "2027-01-30T23:59:00+01:00",
     applyUrl: null,
     hasInternalDetails: true,
+    imageUrl: "/images/opportunities/research-grant.jpg",
+    excerpt: "Institutional funding and lab mentorship supporting final-year research into applied machine learning, cybersecurity, and distributed networks.",
   },
   {
     slug: "hackathon-sponsorship",
@@ -456,6 +460,8 @@ export const opportunities: OpportunitySummary[] = [
     deadline: null,
     applyUrl: null,
     hasInternalDetails: true,
+    imageUrl: "/images/opportunities/hackathon-sponsorship.jpg",
+    excerpt: "Travel grants, cloud computing credits, and technical advisory for student teams competing in national and regional hackathons.",
   },
   {
     slug: "graduate-trainee-programme",
@@ -467,6 +473,8 @@ export const opportunities: OpportunitySummary[] = [
     deadline: "2026-12-31T23:59:00+01:00",
     applyUrl: "https://example.com/graduate-trainee",
     hasInternalDetails: false,
+    imageUrl: "/images/opportunities/graduate-trainee.jpg",
+    excerpt: "Fast-track technology leadership training for graduating students with rotations across banking systems, digital payments, and security operations.",
   },
 ];
 

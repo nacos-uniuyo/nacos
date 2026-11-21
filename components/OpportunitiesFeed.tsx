@@ -1,17 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import {
-  Briefcase,
-  Calendar,
-  GraduationCap,
-  Handshake,
-  MapPin,
-  Search,
-  Sparkles,
-} from "lucide-react";
-import { ArrowRight, ArrowUpRight } from "@/components/icons";
+import { Search } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -28,14 +20,6 @@ const OPPORTUNITY_TYPE_LABELS: Record<OpportunityType, string> = {
   scholarship: "Scholarship",
   sponsorship: "Sponsorship",
   partnership: "Partnership",
-};
-
-const TYPE_ICONS: Record<OpportunityType, React.ElementType> = {
-  job: Briefcase,
-  siwes_it: Briefcase,
-  scholarship: GraduationCap,
-  sponsorship: Sparkles,
-  partnership: Handshake,
 };
 
 type Props = {
@@ -90,16 +74,17 @@ export function OpportunitiesFeed({ initialOpportunities, departments }: Props) 
   }, [initialOpportunities]);
 
   function formatDeadline(deadlineString: string | null): string {
-    if (!deadlineString) return "Rolling admissions";
+    if (!deadlineString) return "ROLLING ADMISSIONS";
     try {
       const date = new Date(deadlineString);
-      return `Deadline: ${date.toLocaleDateString("en-NG", {
+      const formatted = date.toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
         year: "numeric",
-      })}`;
+      });
+      return formatted.toUpperCase();
     } catch {
-      return "Active";
+      return "ACTIVE";
     }
   }
 
@@ -187,7 +172,6 @@ export function OpportunitiesFeed({ initialOpportunities, departments }: Props) 
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 w-full text-left">
           {filteredOpportunities.map((opp) => {
-            const Icon = TYPE_ICONS[opp.type] ?? Briefcase;
             const typeLabel = OPPORTUNITY_TYPE_LABELS[opp.type] ?? opp.type;
             const deptName = opp.departmentSlug ? deptMap.get(opp.departmentSlug) : null;
             const deadlineLabel = formatDeadline(opp.deadline);
@@ -196,82 +180,93 @@ export function OpportunitiesFeed({ initialOpportunities, departments }: Props) 
               Boolean(opp.applyUrl) &&
               (opp.applyUrl!.startsWith("http://") || opp.applyUrl!.startsWith("https://"));
 
-            return (
-              <div
-                key={opp.slug}
-                className="group flex flex-col justify-between bg-white rounded-[20px] border border-[rgba(15,26,19,0.12)] p-6 shadow-sm hover:shadow-md transition-all duration-300"
-              >
-                <div className="flex flex-col gap-4">
-                  {/* Top Row: Type Badge and Scope */}
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[8px] bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] text-[11px] font-semibold text-[var(--forest)]">
-                      <Icon size={13} className="text-[var(--green)]" />
-                      <span>{typeLabel}</span>
-                    </span>
+            const targetHref = hasInternal ? `/opportunities/${opp.slug}` : (opp.applyUrl ?? "#");
+            const linkProps = !hasInternal && isExternal
+              ? { target: "_blank", rel: "noopener noreferrer" }
+              : {};
 
-                    {deptName ? (
-                      <span className="text-[11px] font-medium text-[var(--muted)] line-clamp-1">
-                        Department of {deptName}
+            return (
+              <Link
+                key={opp.slug}
+                href={targetHref}
+                {...linkProps}
+                className="block h-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--green)] rounded-2xl group cursor-pointer no-underline text-inherit"
+              >
+                <div className="h-full min-h-[380px] sm:min-h-[420px] flex flex-col justify-between overflow-hidden relative border border-white/10 bg-[#0e1713] rounded-2xl p-0 py-0 gap-0 transition-all duration-500 hover:shadow-2xl hover:border-white/20 select-none">
+                  {/* Base Background Image Layer (Unblurred & Zoomable) */}
+                  {opp.imageUrl && (
+                    <div className="absolute inset-0 z-0 overflow-hidden">
+                      <Image
+                        src={opp.imageUrl}
+                        alt={opp.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      />
+                    </div>
+                  )}
+
+                  {/* Progressive Blur Layer */}
+                  <div
+                    className="absolute inset-0 z-[1] pointer-events-none backdrop-blur-[6px] overflow-hidden"
+                    style={{
+                      maskImage:
+                        "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0.2) 75%, rgba(0,0,0,0) 100%)",
+                      WebkitMaskImage:
+                        "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0.2) 75%, rgba(0,0,0,0) 100%)",
+                    }}
+                  />
+
+                  {/* Smooth Directional Gradient Shade */}
+                  <div
+                    className="absolute inset-0 z-[2] pointer-events-none transition-opacity duration-500 group-hover:opacity-95"
+                    style={{
+                      background:
+                        "linear-gradient(to bottom, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.25) 35%, rgba(0, 0, 0, 0.68) 65%, rgba(0, 0, 0, 0.90) 100%)",
+                    }}
+                  />
+
+                  {/* Top metadata overlay */}
+                  <div className="relative z-10 px-5 sm:px-6 pt-5 sm:pt-6 pb-0 flex items-center justify-between gap-2">
+                    <span className="text-xs font-mono font-medium text-white/90 drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)] uppercase tracking-wider">
+                      {deadlineLabel}
+                    </span>
+                    <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                      <span className="text-[11px] font-mono bg-black/40 text-white/95 border border-white/20 backdrop-blur-xs px-2.5 py-0.5 rounded-full font-normal shadow-sm">
+                        {typeLabel}
                       </span>
-                    ) : (
-                      <span className="text-[11px] font-medium text-[var(--gold)]">
-                        Faculty of Computing
-                      </span>
+                      {deptName ? (
+                        <span className="text-[10px] font-mono bg-black/30 text-white/80 border border-white/15 backdrop-blur-xs px-2 py-0.5 rounded-full font-normal">
+                          {deptName}
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-mono bg-black/30 text-[var(--gold)] border border-[rgba(217,163,66,0.3)] backdrop-blur-xs px-2 py-0.5 rounded-full font-normal">
+                          Faculty
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Bottom Card Content */}
+                  <div className="relative z-10 mt-auto px-5 sm:px-6 pt-2 pb-5 sm:pb-6 flex flex-col justify-end">
+                    <p className="text-[11px] font-mono uppercase tracking-wider text-white/70 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] mb-1.5">
+                      <span>{opp.orgName}</span>
+                      <span className="mx-1.5 text-white/40">·</span>
+                      <span>{opp.location}</span>
+                    </p>
+
+                    <h3 className="font-mono text-xl sm:text-2xl font-bold leading-snug text-white mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                      {opp.title}
+                    </h3>
+
+                    {opp.excerpt && (
+                      <p className="text-white/80 text-xs sm:text-sm leading-relaxed drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] line-clamp-3 mb-0">
+                        {opp.excerpt}
+                      </p>
                     )}
                   </div>
-
-                  {/* Title and Organization */}
-                  <div className="flex flex-col gap-1.5">
-                    <h3 className="serif text-xl sm:text-2xl text-[var(--ink)] leading-snug group-hover:text-[var(--green)] transition-colors m-0">
-                      {hasInternal ? (
-                        <Link href={`/opportunities/${opp.slug}`} className="no-underline text-inherit hover:text-[var(--green)]">
-                          {opp.title}
-                        </Link>
-                      ) : (
-                        opp.title
-                      )}
-                    </h3>
-                    <p className="text-sm font-semibold text-[var(--muted)] flex items-center gap-1.5 m-0">
-                      <span>{opp.orgName}</span>
-                    </p>
-                  </div>
-
-                  {/* Metadata Row: Location and Deadline */}
-                  <div className="flex flex-col gap-2 pt-2 text-xs text-[var(--muted)]">
-                    <div className="flex items-center gap-2">
-                      <MapPin size={14} className="text-[var(--forest)] shrink-0" />
-                      <span>{opp.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar size={14} className="text-[var(--forest)] shrink-0" />
-                      <span>{deadlineLabel}</span>
-                    </div>
-                  </div>
                 </div>
-
-                {/* Bottom CTA Button */}
-                <div className="pt-5 mt-5 border-t border-[rgba(15,26,19,0.08)] flex items-center justify-between">
-                  {hasInternal ? (
-                    <Link
-                      href={`/opportunities/${opp.slug}`}
-                      className="btn btn-solid w-full"
-                    >
-                      <span>View Details</span>
-                      <ArrowRight size={15} />
-                    </Link>
-                  ) : (
-                    <a
-                      href={opp.applyUrl!}
-                      target={isExternal ? "_blank" : undefined}
-                      rel={isExternal ? "noopener noreferrer" : undefined}
-                      className="btn btn-solid w-full"
-                    >
-                      <span>Apply Externally</span>
-                      <ArrowUpRight size={15} />
-                    </a>
-                  )}
-                </div>
-              </div>
+              </Link>
             );
           })}
         </div>

@@ -81,6 +81,8 @@ export const opportunitySummary = z.object({
   deadline: z.string().nullable(),
   applyUrl: z.string().nullable(),
   hasInternalDetails: z.boolean().default(false),
+  imageUrl: z.string().nullable().optional(),
+  excerpt: z.string().nullable().optional(),
 });
 
 export const eventSummary = z.object({
