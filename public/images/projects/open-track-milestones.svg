@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#062A14"/>
+      <stop offset="100%" stop-color="#02140A"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <rect width="1200" height="675" fill="url(#grid)"/>
+
+  <!-- Top bar -->
+  <rect x="60" y="40" width="1080" height="50" rx="12" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)"/>
+  <circle cx="90" cy="65" r="6" fill="#EF4444"/>
+  <circle cx="110" cy="65" r="6" fill="#F59E0B"/>
+  <circle cx="130" cy="65" r="6" fill="#10B981"/>
+  <text x="160" y="70" fill="#93C5AA" font-family="system-ui, sans-serif" font-size="14" font-weight="500">Open-Track // NACOS UNIUYO Executive Progress Board</text>
+  <text x="1080" y="70" text-anchor="end" fill="#D8B45C" font-family="system-ui, sans-serif" font-size="12" font-weight="600" letter-spacing="1">12 COMMITMENTS TRACKED</text>
+
+  <!-- Pipeline Columns -->
+  <g transform="translate(80, 120)">
+    <!-- Column 1: Backlog -->
+    <rect x="0" y="0" width="320" height="500" rx="14" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)"/>
+    <text x="20" y="36" fill="#93C5AA" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Committed Initiatives (4)</text>
+
+    <rect x="16" y="60" width="288" height="100" rx="10" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)"/>
+    <text x="32" y="90" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Hardware Lab Refurbishment</text>
+    <text x="32" y="112" fill="#75A88C" font-family="system-ui, sans-serif" font-size="12">Owner: Director of Academics</text>
+    <rect x="32" y="126" width="70" height="22" rx="4" fill="rgba(216,180,92,0.15)"/>
+    <text x="67" y="141" text-anchor="middle" fill="#D8B45C" font-family="system-ui, sans-serif" font-size="10" font-weight="600">PLANNED</text>
+
+    <rect x="16" y="175" width="288" height="100" rx="10" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)"/>
+    <text x="32" y="205" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Alumni Mentorship Registry</text>
+    <text x="32" y="227" fill="#75A88C" font-family="system-ui, sans-serif" font-size="12">Owner: Vice President</text>
+    <rect x="32" y="241" width="70" height="22" rx="4" fill="rgba(216,180,92,0.15)"/>
+    <text x="67" y="256" text-anchor="middle" fill="#D8B45C" font-family="system-ui, sans-serif" font-size="10" font-weight="600">PLANNED</text>
+  </g>
+
+  <g transform="translate(440, 120)">
+    <!-- Column 2: In Progress -->
+    <rect x="0" y="0" width="320" height="500" rx="14" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)"/>
+    <text x="20" y="36" fill="#D8B45C" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Under Active Delivery (5)</text>
+
+    <rect x="16" y="60" width="288" height="120" rx="10" fill="rgba(216,180,92,0.08)" stroke="rgba(216,180,92,0.3)"/>
+    <text x="32" y="90" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Faculty Digital Portal Release</text>
+    <text x="32" y="112" fill="#CBD5E1" font-family="system-ui, sans-serif" font-size="12">PR #42 merged into feat/portal</text>
+    <text x="32" y="132" fill="#75A88C" font-family="system-ui, sans-serif" font-size="11">Owner: Director of Software</text>
+    <rect x="32" y="146" width="90" height="22" rx="4" fill="rgba(16,185,129,0.2)"/>
+    <text x="77" y="161" text-anchor="middle" fill="#10B981" font-family="system-ui, sans-serif" font-size="10" font-weight="600">85% COMPLETE</text>
+
+    <rect x="16" y="195" width="288" height="120" rx="10" fill="rgba(216,180,92,0.08)" stroke="rgba(216,180,92,0.3)"/>
+    <text x="32" y="225" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Annual Tech Week Hackathon</text>
+    <text x="32" y="247" fill="#CBD5E1" font-family="system-ui, sans-serif" font-size="12">Sponsorship agreements finalized</text>
+    <text x="32" y="267" fill="#75A88C" font-family="system-ui, sans-serif" font-size="11">Owner: Director of Socials</text>
+    <rect x="32" y="281" width="90" height="22" rx="4" fill="rgba(216,180,92,0.2)"/>
+    <text x="77" y="296" text-anchor="middle" fill="#D8B45C" font-family="system-ui, sans-serif" font-size="10" font-weight="600">60% COMPLETE</text>
+  </g>
+
+  <g transform="translate(800, 120)">
+    <!-- Column 3: Shipped -->
+    <rect x="0" y="0" width="320" height="500" rx="14" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)"/>
+    <text x="20" y="36" fill="#10B981" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Verified &amp; Shipped (3)</text>
+
+    <rect x="16" y="60" width="288" height="110" rx="10" fill="rgba(16,185,129,0.08)" stroke="rgba(16,185,129,0.3)"/>
+    <text x="32" y="90" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Executive Inauguration Ceremony</text>
+    <text x="32" y="112" fill="#75A88C" font-family="system-ui, sans-serif" font-size="12">Completed Oct 9, 2026 // Audit Filed</text>
+    <rect x="32" y="132" width="70" height="22" rx="4" fill="rgba(16,185,129,0.25)"/>
+    <text x="67" y="147" text-anchor="middle" fill="#10B981" font-family="system-ui, sans-serif" font-size="10" font-weight="600">SHIPPED</text>
+
+    <rect x="16" y="185" width="288" height="110" rx="10" fill="rgba(16,185,129,0.08)" stroke="rgba(16,185,129,0.3)"/>
+    <text x="32" y="215" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Code of Conduct Ratification</text>
+    <text x="32" y="237" fill="#75A88C" font-family="system-ui, sans-serif" font-size="12">Approved by Council Resolution 01</text>
+    <rect x="32" y="257" width="70" height="22" rx="4" fill="rgba(16,185,129,0.25)"/>
+    <text x="67" y="272" text-anchor="middle" fill="#10B981" font-family="system-ui, sans-serif" font-size="10" font-weight="600">SHIPPED</text>
+  </g>
+</svg>

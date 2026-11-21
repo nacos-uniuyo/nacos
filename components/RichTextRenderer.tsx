@@ -206,15 +206,21 @@ function renderNode(node: RichTextNode, index: number, path = "rt"): ReactNode {
 
     case "image":
       return (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          key={key}
-          src={node.attrs.src}
-          alt={node.attrs.alt ?? ""}
-          title={node.attrs.title}
-          className="my-3 max-w-full rounded-xl"
-          loading="lazy"
-        />
+        <figure key={key} className="my-6">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={node.attrs.src}
+            alt={node.attrs.alt ?? ""}
+            title={node.attrs.title}
+            className="w-full h-auto rounded-[16px] border border-[rgba(15,26,19,0.1)] shadow-sm object-cover"
+            loading="lazy"
+          />
+          {node.attrs.title || node.attrs.alt ? (
+            <figcaption className="mt-2.5 text-center text-xs sm:text-sm text-[var(--muted)]">
+              {node.attrs.title ?? node.attrs.alt}
+            </figcaption>
+          ) : null}
+        </figure>
       );
 
     default:

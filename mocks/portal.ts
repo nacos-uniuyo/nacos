@@ -187,7 +187,7 @@ export const projects: ProjectSummary[] = [
     courseCode: null,
     teamDisplayName: "NACOS Software Directorate",
     repoUrl: "https://github.com/nacos-uniuYo",
-    demoUrl: null,
+    demoUrl: "https://open-track.nacosuniuyo.org",
     featured: true,
   },
   {

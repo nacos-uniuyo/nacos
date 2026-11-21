@@ -1234,13 +1234,17 @@ a.tile.green:hover {
   background: var(--forest);
   color: #fff;
   overflow: hidden;
-  padding: clamp(80px, 10vw, 130px) 0 clamp(64px, 8vw, 100px);
+  min-height: min(780px, calc(100svh - 80px));
+  display: flex;
+  align-items: center;
+  padding: clamp(64px, 8vw, 100px) 0;
 }
 .page-hero .wrap {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  width: 100%;
 }
 .page-hero h1 {
   margin: 0;
@@ -1949,7 +1953,12 @@ a.tile.green:hover {
     height: 44px;
   }
   .hero {
+    min-height: 0;
     padding: 88px 0 140px;
+  }
+  .page-hero {
+    min-height: 0;
+    padding: 72px 0 88px;
   }
   .hero-foot .meta {
     display: none;
@@ -2650,7 +2659,7 @@ a.tile.green:hover {
 
 /* ===== Departmental Hubs (/departments/[slug]) ===== */
 .dept-hero {
-  padding-bottom: clamp(56px, 7vw, 88px);
+  padding: clamp(64px, 8vw, 92px) 0;
 }
 
 .dept-hero-badges {
@@ -3454,3 +3463,87 @@ a.tile.green:hover {
   color: var(--green);
 }
 
+
+/* Project Editorial Prose */
+.project-prose {
+  color: var(--ink);
+  line-height: 1.85;
+}
+
+.project-prose h2 {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(24px, 2.4vw, 32px);
+  color: var(--ink);
+  margin-top: 2.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(15, 26, 19, 0.08);
+  letter-spacing: -0.01em;
+}
+
+.project-prose h2:first-child {
+  margin-top: 0;
+}
+
+.project-prose h3 {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(20px, 1.8vw, 24px);
+  color: var(--ink);
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.project-prose p {
+  margin-bottom: 1.35rem;
+  font-size: 17px;
+  color: rgba(15, 26, 19, 0.88);
+}
+
+.project-prose blockquote {
+  margin: 2.25rem 0;
+  padding: 1.25rem 1.75rem;
+  background: var(--paper);
+  border-left: 3px solid var(--forest);
+  border-radius: 0 12px 12px 0;
+  font-style: italic;
+  color: var(--ink);
+}
+
+.project-prose blockquote p {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--forest);
+}
+
+.project-prose ul {
+  margin: 1.25rem 0 1.75rem;
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.project-prose li {
+  margin-bottom: 0.75rem;
+  font-size: 17px;
+  color: rgba(15, 26, 19, 0.88);
+  line-height: 1.75;
+}
+
+.project-prose figure {
+  margin: 2.25rem 0;
+}
+
+.project-prose img {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 26, 19, 0.1);
+  box-shadow: 0 4px 12px rgba(15, 26, 19, 0.04);
+}
+
+.project-prose figcaption {
+  margin-top: 0.65rem;
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+}
