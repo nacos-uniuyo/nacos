@@ -4,11 +4,11 @@ import uniuyoLogo from "@/assets/images/uniuyo-circle.png";
 import { site } from "@/lib/site";
 
 const computingDepartments = [
-  { slug: "computer-science", name: "Computer Science", code: "CSC" },
-  { slug: "cybersecurity", name: "Cybersecurity", code: "CYB" },
-  { slug: "information-systems", name: "Information Systems", code: "INS" },
-  { slug: "data-analytics", name: "Data Analytics", code: "DAN" },
-  { slug: "software-engineering", name: "Software Engineering", code: "SWE" },
+  { slug: "computer-science", name: "Computer Science" },
+  { slug: "cybersecurity", name: "Cybersecurity" },
+  { slug: "information-systems", name: "Information Systems" },
+  { slug: "data-analytics", name: "Data Analytics" },
+  { slug: "software-engineering", name: "Software Engineering" },
 ] as const;
 
 export function Footer() {
