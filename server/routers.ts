@@ -136,6 +136,9 @@ const opportunityRouter = router({
       });
       return z.array(opportunitySummary).parse(filtered);
     }),
+  bySlug: publicProcedure
+    .input(z.object({ slug: z.string() }))
+    .query(({ input }) => bySlug(opportunities, input.slug, opportunitySummary)),
 });
 
 const eventRouter = router({

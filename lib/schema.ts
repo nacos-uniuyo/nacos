@@ -168,3 +168,68 @@ export function projectCollectionSchema(projects: { title: string; slug: string;
     },
   };
 }
+
+export function opportunitySchema(opp: {
+  title: string;
+  slug: string;
+  orgName: string;
+  location: string;
+  type: string;
+  deadline?: string | null;
+  applyUrl?: string | null;
+  departmentSlug?: string | null;
+}) {
+  const url = absoluteUrl(`/opportunities/${opp.slug}`);
+  return {
+    "@context": "https://schema.org",
+    "@type": opp.type === "job" ? "JobPosting" : "EducationalOccupationalProgram",
+    name: opp.title,
+    headline: opp.title,
+    description: `${opp.title} offered by ${opp.orgName} in ${opp.location}.`,
+    url,
+    inLanguage: "en-NG",
+    hiringOrganization: {
+      "@type": "Organization",
+      name: opp.orgName,
+    },
+    jobLocation: {
+      "@type": "Place",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: opp.location,
+        addressCountry: "NG",
+      },
+    },
+    ...(opp.deadline ? { validThrough: opp.deadline } : {}),
+    ...(opp.applyUrl ? { applicationContact: { "@type": "ContactPoint", url: opp.applyUrl } } : {}),
+    provider: {
+      "@type": "Organization",
+      "@id": orgId,
+      name: site.name,
+      url: absoluteUrl("/"),
+    },
+  };
+}
+
+export function opportunityCollectionSchema(
+  items: { title: string; slug: string; orgName: string; location: string; applyUrl: string | null }[],
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Opportunities and Career Hub",
+    description:
+      "Curated directory of student internships, SIWES placements, scholarships, research grants, and graduate trainee positions across the Faculty of Computing, University of Uyo.",
+    url: absoluteUrl("/opportunities"),
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: items.map((opp, idx) => ({
+        "@type": "ListItem",
+        position: idx + 1,
+        name: opp.title,
+        description: `${opp.orgName} - ${opp.location}`,
+        url: opp.applyUrl || absoluteUrl(`/opportunities/${opp.slug}`),
+      })),
+    },
+  };
+}
