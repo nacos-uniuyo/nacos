@@ -99,3 +99,72 @@ export function breadcrumbSchema(items: { name: string; path: string }[]) {
     })),
   };
 }
+
+export function projectSchema({
+  title,
+  tagline,
+  slug,
+  category,
+  courseCode,
+  teamDisplayName,
+  repoUrl,
+  demoUrl,
+  departmentName,
+}: {
+  title: string;
+  tagline: string;
+  slug: string;
+  category: string;
+  courseCode?: string | null;
+  teamDisplayName?: string | null;
+  repoUrl?: string | null;
+  demoUrl?: string | null;
+  departmentName?: string | null;
+}) {
+  const url = absoluteUrl(`/projects/${slug}`);
+  return {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    headline: title,
+    name: title,
+    description: tagline,
+    url,
+    inLanguage: "en-NG",
+    about: departmentName ? `Department of ${departmentName}` : "Faculty of Computing",
+    articleSection: category,
+    keywords: [category, courseCode, departmentName, "NACOS UNIUYO", "Student Engineering"].filter(Boolean).join(", "),
+    author: {
+      "@type": "Organization",
+      name: teamDisplayName ?? "NACOS Project Team",
+    },
+    publisher: {
+      "@type": "Organization",
+      "@id": orgId,
+      name: site.name,
+      url: absoluteUrl("/"),
+    },
+    ...(repoUrl ? { codeRepository: repoUrl } : {}),
+    ...(demoUrl ? { sameAs: [demoUrl] } : {}),
+  };
+}
+
+export function projectCollectionSchema(projects: { title: string; slug: string; tagline: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Student and Faculty Project Showcase",
+    description:
+      "Searchable gallery of student innovations, coursework group projects, embedded systems, cybersecurity tools, and academic research across the Faculty of Computing, University of Uyo.",
+    url: absoluteUrl("/projects"),
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: projects.map((p, idx) => ({
+        "@type": "ListItem",
+        position: idx + 1,
+        name: p.title,
+        description: p.tagline,
+        url: absoluteUrl(`/projects/${p.slug}`),
+      })),
+    },
+  };
+}
