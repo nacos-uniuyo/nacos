@@ -9,6 +9,22 @@ import type {
   SchoolSessionSummary,
 } from "@/server/contracts";
 
+import aniefiokPeaceImg from "@/assets/images/alumni/aniefiok-peace.jpg";
+import basseyOkpoImg from "@/assets/images/alumni/bassey-okpo.jpg";
+import charlesProsperImg from "@/assets/images/alumni/charles-prosper.jpg";
+import edidiongAsmaImg from "@/assets/images/alumni/edidiong-asma.jpg";
+import ememEtimImg from "@/assets/images/alumni/emem-etim.jpg";
+import idongesitUdofaImg from "@/assets/images/alumni/idongesit-udofa.jpg";
+import imaobongAkpanImg from "@/assets/images/alumni/imaobong-akpan.jpg";
+import mikpidoghoEmmanuelImg from "@/assets/images/alumni/mikpidogho-emmanuel.jpg";
+import nsikanJohnImg from "@/assets/images/alumni/nsikan-john.jpg";
+import victorUdosenImg from "@/assets/images/alumni/victor-udosen.jpg";
+
+import graduateTraineeImg from "@/assets/images/opportunities/graduate-trainee.jpg";
+import hackathonSponsorshipImg from "@/assets/images/opportunities/hackathon-sponsorship.jpg";
+import researchGrantImg from "@/assets/images/opportunities/research-grant.jpg";
+import siwesSoftwareInternImg from "@/assets/images/opportunities/siwes-software-intern.jpg";
+
 /**
  * Seed fixtures for Phase 2 frontend work. They mirror the production schema
  * closely enough that swapping a router from these arrays to a Drizzle query
@@ -162,7 +178,7 @@ export const roster: PersonSummary[] = [
     tier: "alumni",
     sessionSlug: "2022-2023",
     departmentSlug: "cybersecurity",
-    photoUrl: "/images/alumni/mikpidogho-emmanuel.jpg",
+    photoUrl: mikpidoghoEmmanuelImg.src,
     isFeaturedHomepage: false,
     quote: "Building defensive security architectures that protect critical civic and university infrastructure.",
     matricNumber: "19/SC/CO/108",
@@ -184,7 +200,7 @@ export const roster: PersonSummary[] = [
     tier: "alumni",
     sessionSlug: "2022-2023",
     departmentSlug: "information-systems",
-    photoUrl: "/images/alumni/charles-prosper.jpg",
+    photoUrl: charlesProsperImg.src,
     isFeaturedHomepage: false,
     quote: "Enterprise data pipelines and resilient systems for large-scale institutional record management.",
     matricNumber: "19/SC/CO/042",
@@ -205,7 +221,7 @@ export const roster: PersonSummary[] = [
     tier: "alumni",
     sessionSlug: "2022-2023",
     departmentSlug: "computer-science",
-    photoUrl: "/images/alumni/aniefiok-peace.jpg",
+    photoUrl: aniefiokPeaceImg.src,
     isFeaturedHomepage: false,
     quote: "Bridging algorithmic theory and applied machine intelligence for low-resource West African languages.",
     matricNumber: "19/SC/CO/019",
@@ -227,7 +243,7 @@ export const roster: PersonSummary[] = [
     tier: "alumni",
     sessionSlug: "2022-2023",
     departmentSlug: "software-engineering",
-    photoUrl: "/images/alumni/edidiong-asma.jpg",
+    photoUrl: edidiongAsmaImg.src,
     isFeaturedHomepage: false,
     quote: "Architecting zero-downtime distributed platforms with measurable real-world user reliability.",
     matricNumber: "19/SC/CO/077",
@@ -249,7 +265,7 @@ export const roster: PersonSummary[] = [
     tier: "alumni",
     sessionSlug: "2022-2023",
     departmentSlug: "data-analytics",
-    photoUrl: "/images/alumni/imaobong-akpan.jpg",
+    photoUrl: imaobongAkpanImg.src,
     isFeaturedHomepage: false,
     quote: "Statistical modeling and decision-science pipelines turning public sector metrics into actionable governance.",
     matricNumber: null,
@@ -270,7 +286,7 @@ export const roster: PersonSummary[] = [
     tier: "alumni",
     sessionSlug: "2024-2025",
     departmentSlug: "computer-science",
-    photoUrl: "/images/alumni/victor-udosen.jpg",
+    photoUrl: victorUdosenImg.src,
     isFeaturedHomepage: false,
     quote: "Low-level kernels, compilers, and hardware acceleration on embedded RISC-V architectures.",
     matricNumber: "20/SC/CO/084",
@@ -292,7 +308,7 @@ export const roster: PersonSummary[] = [
     tier: "alumni",
     sessionSlug: "2024-2025",
     departmentSlug: "software-engineering",
-    photoUrl: "/images/alumni/nsikan-john.jpg",
+    photoUrl: nsikanJohnImg.src,
     isFeaturedHomepage: false,
     quote: "High-throughput asynchronous web engineering and developer infrastructure.",
     matricNumber: "20/SC/CO/023",
@@ -313,7 +329,7 @@ export const roster: PersonSummary[] = [
     tier: "alumni",
     sessionSlug: "2024-2025",
     departmentSlug: "cybersecurity",
-    photoUrl: "/images/alumni/emem-etim.jpg",
+    photoUrl: ememEtimImg.src,
     isFeaturedHomepage: false,
     quote: "Defending distributed identity systems and zero-knowledge student verification protocols.",
     matricNumber: "20/SC/CO/051",
@@ -334,7 +350,7 @@ export const roster: PersonSummary[] = [
     tier: "alumni",
     sessionSlug: "2024-2025",
     departmentSlug: "data-analytics",
-    photoUrl: "/images/alumni/idongesit-udofa.jpg",
+    photoUrl: idongesitUdofaImg.src,
     isFeaturedHomepage: false,
     quote: "Building real-time stream processing architectures and analytical stores for African logistics.",
     matricNumber: "20/SC/CO/112",
@@ -356,7 +372,7 @@ export const roster: PersonSummary[] = [
     tier: "alumni",
     sessionSlug: "2024-2025",
     departmentSlug: "information-systems",
-    photoUrl: "/images/alumni/bassey-okpo.jpg",
+    photoUrl: basseyOkpoImg.src,
     isFeaturedHomepage: false,
     quote: "Modernizing legacy academic information systems and enterprise service integrations.",
     matricNumber: "20/SC/CO/005",
@@ -434,7 +450,7 @@ export const opportunities: OpportunitySummary[] = [
     deadline: "2026-12-15T23:59:00+01:00",
     applyUrl: "https://example.com/siwes-2026",
     hasInternalDetails: false,
-    imageUrl: "/images/opportunities/siwes-software-intern.jpg",
+    imageUrl: siwesSoftwareInternImg.src,
     excerpt: "Hands-on industrial attachment focusing on backend services, container orchestration, and API engineering for undergraduate computing students.",
   },
   {
@@ -447,7 +463,7 @@ export const opportunities: OpportunitySummary[] = [
     deadline: "2027-01-30T23:59:00+01:00",
     applyUrl: null,
     hasInternalDetails: true,
-    imageUrl: "/images/opportunities/research-grant.jpg",
+    imageUrl: researchGrantImg.src,
     excerpt: "Institutional funding and lab mentorship supporting final-year research into applied machine learning, cybersecurity, and distributed networks.",
   },
   {
@@ -460,7 +476,7 @@ export const opportunities: OpportunitySummary[] = [
     deadline: null,
     applyUrl: null,
     hasInternalDetails: true,
-    imageUrl: "/images/opportunities/hackathon-sponsorship.jpg",
+    imageUrl: hackathonSponsorshipImg.src,
     excerpt: "Travel grants, cloud computing credits, and technical advisory for student teams competing in national and regional hackathons.",
   },
   {
@@ -473,7 +489,7 @@ export const opportunities: OpportunitySummary[] = [
     deadline: "2026-12-31T23:59:00+01:00",
     applyUrl: "https://example.com/graduate-trainee",
     hasInternalDetails: false,
-    imageUrl: "/images/opportunities/graduate-trainee.jpg",
+    imageUrl: graduateTraineeImg.src,
     excerpt: "Fast-track technology leadership training for graduating students with rotations across banking systems, digital payments, and security operations.",
   },
 ];
