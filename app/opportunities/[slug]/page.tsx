@@ -178,11 +178,14 @@ export default async function OpportunityDetailPage({ params }: Props) {
             )}
           </div>
 
-          <h1 id="opportunity-detail-title" className="serif text-white">
+          <h1
+            id="opportunity-detail-title"
+            className="serif text-white max-w-[62%] max-lg:max-w-none text-[clamp(44px,6vw,92px)] leading-[0.98]"
+          >
             {opportunity.title}
           </h1>
 
-          <p className="max-w-2xl text-[var(--mint-2)] font-medium">
+          <p className="max-w-[580px] text-[var(--mint-2)] font-medium text-[clamp(16px,1.6vw,19px)] leading-relaxed">
             Offered by {opportunity.orgName} for computing students and researchers at the University of Uyo.
           </p>
         </div>
