@@ -28,6 +28,17 @@ export const schoolSessionSummary = z.object({
   isCurrent: z.boolean(),
 });
 
+export const socialPlatform = z.discriminatedUnion("platform", [
+  z.object({ platform: z.literal("github"), url: z.string() }),
+  z.object({ platform: z.literal("linkedin"), url: z.string() }),
+  z.object({ platform: z.literal("x"), url: z.string() }),
+  z.object({ platform: z.literal("instagram"), url: z.string() }),
+  z.object({ platform: z.literal("facebook"), url: z.string() }),
+  z.object({ platform: z.literal("website"), url: z.string() }),
+]);
+
+export type SocialPlatform = z.infer<typeof socialPlatform>;
+
 export const personSummary = z.object({
   slug: z.string(),
   fullName: z.string(),
@@ -37,6 +48,14 @@ export const personSummary = z.object({
   departmentSlug: z.string().nullable(),
   photoUrl: z.string().nullable(),
   isFeaturedHomepage: z.boolean(),
+  quote: z.string().nullable().optional(),
+  matricNumber: z.string().nullable().optional(),
+  currentRole: z.string().nullable().optional(),
+  currentCompany: z.string().nullable().optional(),
+  socials: z.array(socialPlatform).optional(),
+  linkedinUrl: z.string().nullable().optional(),
+  githubUrl: z.string().nullable().optional(),
+  portfolioUrl: z.string().nullable().optional(),
 });
 
 export const projectSummary = z.object({
