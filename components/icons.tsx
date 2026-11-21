@@ -18,6 +18,15 @@ export function ArrowRight({ size = 18, stroke = 2, className }: P & { stroke?: 
   );
 }
 
+export function ArrowUpRight({ size = 18, stroke = 2, className }: P & { stroke?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" strokeWidth={stroke} className={className} {...base}>
+      <path d="M7 17L17 7" />
+      <path d="M7 7h10v10" />
+    </svg>
+  );
+}
+
 export function ArrowDown({ size = 18, className }: P) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" strokeWidth={2} className={className} {...base}>
