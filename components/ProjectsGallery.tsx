@@ -53,18 +53,14 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
         <div
           role="tablist"
           aria-label="Filter projects by category"
-          className="inline-flex items-center gap-1.5 p-1.5 rounded-full bg-[var(--forest)] border border-[rgba(255,255,255,0.12)] shadow-sm max-w-full overflow-x-auto no-scrollbar"
+          className="segmented-filter-bar"
         >
           <button
             type="button"
             role="tab"
             aria-selected={selectedCategory === "all"}
             onClick={() => setSelectedCategory("all")}
-            className={`px-5 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer border-0 whitespace-nowrap ${
-              selectedCategory === "all"
-                ? "bg-white text-[var(--forest)] shadow"
-                : "bg-transparent text-[var(--mint-2)] hover:text-white"
-            }`}
+            className={`segmented-filter-btn ${selectedCategory === "all" ? "active" : ""}`}
           >
             All Projects
           </button>
@@ -77,11 +73,7 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-5 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer border-0 whitespace-nowrap ${
-                  isActive
-                    ? "bg-white text-[var(--forest)] shadow"
-                    : "bg-transparent text-[var(--mint-2)] hover:text-white"
-                }`}
+                className={`segmented-filter-btn ${isActive ? "active" : ""}`}
               >
                 {PROJECT_CATEGORY_LABELS[cat]}
               </button>

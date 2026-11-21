@@ -238,6 +238,7 @@ export const opportunities: OpportunitySummary[] = [
     location: "Lagos, Nigeria",
     deadline: "2026-12-15T23:59:00+01:00",
     applyUrl: "https://example.com/siwes-2026",
+    hasInternalDetails: false,
   },
   {
     slug: "faculty-research-grant",
@@ -247,7 +248,8 @@ export const opportunities: OpportunitySummary[] = [
     departmentSlug: null,
     location: "University of Uyo",
     deadline: "2027-01-30T23:59:00+01:00",
-    applyUrl: "https://example.com/research-grant",
+    applyUrl: null,
+    hasInternalDetails: true,
   },
   {
     slug: "hackathon-sponsorship",
@@ -257,7 +259,8 @@ export const opportunities: OpportunitySummary[] = [
     departmentSlug: null,
     location: "Uyo, Akwa Ibom",
     deadline: null,
-    applyUrl: "https://example.com/hackathon",
+    applyUrl: null,
+    hasInternalDetails: true,
   },
   {
     slug: "graduate-trainee-programme",
@@ -268,6 +271,7 @@ export const opportunities: OpportunitySummary[] = [
     location: "Nationwide",
     deadline: "2026-12-31T23:59:00+01:00",
     applyUrl: "https://example.com/graduate-trainee",
+    hasInternalDetails: false,
   },
 ];
 
