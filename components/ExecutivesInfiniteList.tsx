@@ -52,17 +52,10 @@ export function ExecutivesInfiniteList({ initialSessionsData }: Props) {
             className={`flex flex-col gap-12 ${sIndex > 0 ? "pt-14 sm:pt-20 border-t border-[rgba(15,26,19,0.12)]" : ""}`}
           >
             {/* Session Banner */}
-            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-[rgba(15,26,19,0.12)] pb-4">
-              <div className="flex items-baseline gap-3">
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--forest)]">
-                  {session.name}
-                </span>
-                {session.isCurrent && (
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--forest)] text-[var(--gold)] font-medium">
-                    Current Administration
-                  </span>
-                )}
-              </div>
+            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--forest)]">
+                {session.name}
+              </span>
               {session.theme && (
                 <span className="serif italic text-lg sm:text-xl text-[var(--gold)]">
                   &ldquo;{session.theme}&rdquo;
@@ -74,9 +67,6 @@ export function ExecutivesInfiniteList({ initialSessionsData }: Props) {
             {excos.length > 0 && (
               <section aria-labelledby={`excos-${session.slug}`}>
                 <div className="mb-6">
-                  <span className="text-xs font-mono uppercase tracking-widest text-[var(--muted)]">
-                    Tier 01
-                  </span>
                   <h2 id={`excos-${session.slug}`} className="serif text-2xl sm:text-3xl text-[var(--ink)] m-0">
                     Executive Council
                   </h2>
@@ -100,9 +90,6 @@ export function ExecutivesInfiniteList({ initialSessionsData }: Props) {
             {aides.length > 0 && (
               <section aria-labelledby={`aides-${session.slug}`}>
                 <div className="mb-6">
-                  <span className="text-xs font-mono uppercase tracking-widest text-[var(--muted)]">
-                    Tier 02
-                  </span>
                   <h2 id={`aides-${session.slug}`} className="serif text-2xl sm:text-3xl text-[var(--ink)] m-0">
                     Presidential Aides &amp; Assistants
                   </h2>
@@ -125,9 +112,6 @@ export function ExecutivesInfiniteList({ initialSessionsData }: Props) {
             {devTeam.length > 0 && (
               <section aria-labelledby={`dev-${session.slug}`}>
                 <div className="mb-6">
-                  <span className="text-xs font-mono uppercase tracking-widest text-[var(--muted)]">
-                    Tier 03
-                  </span>
                   <h2 id={`dev-${session.slug}`} className="serif text-2xl sm:text-3xl text-[var(--ink)] m-0">
                     Software Directorate &amp; Developer Team
                   </h2>

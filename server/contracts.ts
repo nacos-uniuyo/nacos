@@ -56,6 +56,10 @@ export const personSummary = z.object({
   linkedinUrl: z.string().nullable().optional(),
   githubUrl: z.string().nullable().optional(),
   portfolioUrl: z.string().nullable().optional(),
+  email: z.string().nullable().optional(),
+  officeLocation: z.string().nullable().optional(),
+  bio: z.string().nullable().optional(),
+  researchAreas: z.array(z.string()).optional(),
 });
 
 export const projectSummary = z.object({

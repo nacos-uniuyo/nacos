@@ -79,6 +79,10 @@ const rosterRouter = router({
     const people = roster.filter((p) => p.tier === "alumni");
     return z.array(personSummary).parse(people);
   }),
+  staff: publicProcedure.query(() => {
+    const people = roster.filter((p) => p.tier === "staff");
+    return z.array(personSummary).parse(people);
+  }),
   bySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(({ input }) => bySlug(roster, input.slug, personSummary)),

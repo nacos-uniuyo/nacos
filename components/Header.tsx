@@ -58,6 +58,7 @@ const navLinks = [
   { href: "/projects", label: "Projects", matchPrefix: "/projects" },
   { href: "/opportunities", label: "Opportunities", matchPrefix: "/opportunities" },
   { href: "/yearbook", label: "Yearbook", matchPrefix: "/yearbook" },
+  { href: "/staff", label: "Staff", matchPrefix: "/staff" },
   { href: "/events", label: "Events", matchPrefix: "/events" },
   { href: "/blog", label: "Blog", matchPrefix: "/blog" },
 ] as const;
