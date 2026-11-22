@@ -248,7 +248,9 @@ export function personSchema(p: {
   portfolioUrl?: string | null;
 }) {
   const url = absoluteUrl(`/yearbook/${p.slug}`);
-  const sameAs = [p.linkedinUrl, p.githubUrl, p.portfolioUrl].filter(Boolean) as string[];
+  const sameAs = [p.linkedinUrl, p.githubUrl, p.portfolioUrl].filter(
+    (u): u is string => Boolean(u),
+  );
 
   return {
     "@context": "https://schema.org",

@@ -135,8 +135,9 @@ export function ExecutivesInfiniteList({ initialSessionsData }: Props) {
 
       {/* Sentinel for infinite scroll */}
       {visibleCount < initialSessionsData.length && (
-        <div ref={sentinelRef} className="py-8 flex justify-center text-xs font-mono text-[var(--muted)]">
-          <span>Loading earlier session archives…</span>
+        <div ref={sentinelRef} className="py-12 flex flex-col items-center gap-4 w-full">
+          <div className="w-full max-w-sm h-3 rounded-full bg-[rgba(6,42,20,0.08)] animate-pulse" />
+          <div className="w-full max-w-xs h-3 rounded-full bg-[rgba(6,42,20,0.05)] animate-pulse" />
         </div>
       )}
     </div>

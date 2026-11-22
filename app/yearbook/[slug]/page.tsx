@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     caller.department.list(),
   ]);
 
-  if (!person) {
+  if (!person || person.tier !== "alumni") {
     return { title: "Profile Not Found" };
   }
 
@@ -84,7 +84,7 @@ export default async function AlumniProfilePage({ params }: Props) {
     caller.roster.alumni(),
   ]);
 
-  if (!person) {
+  if (!person || person.tier !== "alumni") {
     notFound();
   }
 
