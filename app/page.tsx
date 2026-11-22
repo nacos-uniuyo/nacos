@@ -1,12 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
+import uniuyoLogo from "@/assets/images/uniuyo-circle.png";
 import { ExecCard } from "@/components/ExecCard";
-import { ArrowDown, ArrowRight } from "@/components/icons";
+import { DeanWelcome } from "@/components/home/DeanWelcome";
+import { ArrowRight } from "@/components/icons";
 import { CornerOrbit, HeroOrbits } from "@/components/Orbits";
 import { StatCounter } from "@/components/StatCounter";
 import { featuredEvent as ev, formatEventDate, formatEventTime } from "@/lib/events";
 import { executives } from "@/lib/executives";
 import { site } from "@/lib/site";
+import { getDeansMessage } from "@/server/queries/leadership";
+import { appRouter } from "@/server/routers";
 
 const tickerItems = [
   "Hackathons",
@@ -33,15 +37,20 @@ const nationalStats = [
   { label: "Years of NACOS", value: 20, suffix: "+" },
 ];
 
-export default function Home() {
-  const featuredExecs = executives.filter((x) => x.principal);
+export default async function Home() {
+  const caller = appRouter.createCaller({ session: null });
+  const [featuredExecs, deansMessage, allDepartments] = await Promise.all([
+    executives.filter((x) => x.principal),
+    getDeansMessage(),
+    caller.department.list(),
+  ]);
 
   return (
     <>
       {/* Hero */}
       <section id="top" className="hero" aria-labelledby="hero-title">
         <div className="grid-bg drift" aria-hidden="true" />
-        <HeroOrbits />
+        <HeroOrbits logoImage={uniuyoLogo} />
         <div className="hero-fade" aria-hidden="true" />
 
         <div className="wrap hero-inner">
@@ -62,23 +71,6 @@ export default function Home() {
               Explore our priorities
               <ArrowRight />
             </Link>
-            <Link className="btn btn-ghost" href={`/events/${ev.slug}`}>
-              Inauguration day
-            </Link>
-          </div>
-        </div>
-
-        <div className="hero-foot">
-          <div className="wrap">
-            <div className="scroll-cue fade d5">
-              <span className="cue" style={{ display: "inline-flex" }}>
-                <ArrowDown />
-              </span>
-              Scroll
-            </div>
-            <div className="meta fade d5 caps" style={{ fontSize: 11 }}>
-              Faculty of Computing · Uyo, Akwa Ibom
-            </div>
           </div>
         </div>
       </section>
@@ -86,14 +78,17 @@ export default function Home() {
       {/* Ticker */}
       <div className="ticker" aria-hidden="true">
         <div className="ticker-track marquee caps">
-          {[...tickerItems, ...tickerItems].map((t, i) => (
-            <span key={i} style={{ display: "contents" }}>
+          {[...tickerItems, ...tickerItems, ...tickerItems, ...tickerItems].map((t, i) => (
+            <span key={i} className="inline-flex items-center gap-6">
               <span>{t}</span>
               <span className="star">✦</span>
             </span>
           ))}
         </div>
       </div>
+
+      {/* Dean's Welcome Address */}
+      {deansMessage && <DeanWelcome message={deansMessage} />}
 
       {/* Mission */}
       <section id="about" className="mission" aria-labelledby="about-title">
@@ -112,6 +107,52 @@ export default function Home() {
               NACOS UNIUYO brings together students of the Faculty of Computing to learn practical skills, compete at
               hackathons, connect with industry, and hold their leaders to account.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Five Department Hubs */}
+      <section id="departments" className="pt-8 sm:pt-10 pb-[var(--section-y)] bg-[var(--paper)] border-y border-[var(--rule)]" aria-labelledby="departments-title">
+        <div className="wrap flex flex-col gap-10">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow caps accent">Academic Departments</span>
+              <h2 id="departments-title" className="h2 serif reveal-x">
+                Five Autonomous Hubs
+              </h2>
+            </div>
+            <p className="m-0 max-w-[420px] text-[17px] leading-relaxed text-[var(--muted)]">
+              Explore coursework projects, faculty leadership, and executive representation across every computing department.
+            </p>
+          </div>
+
+          <div className="dept-hubs-grid">
+            {allDepartments.map((dept, index) => (
+              <Link
+                key={dept.slug}
+                href={`/departments/${dept.slug}`}
+                className="dept-hub-card card reveal"
+              >
+                <div className="dept-hub-top">
+                  <span className="caps dept-num">0{index + 1}</span>
+                </div>
+                <div className="dept-hub-body">
+                  <h3 className="serif dept-hub-name">{dept.name}</h3>
+                  <p className="dept-hub-summary">{dept.summary}</p>
+                </div>
+                <div className="dept-hub-foot">
+                  <div className="dept-hod">
+                    <span className="caps text-[10px] text-[var(--muted)]">Head of Department</span>
+                    <span className="text-xs font-semibold text-[var(--ink)]">
+                      {dept.hodName ?? "Faculty Leadership"}
+                    </span>
+                  </div>
+                  <span className="dept-hub-arrow" aria-hidden="true">
+                    <ArrowRight size={16} />
+                  </span>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -219,7 +260,7 @@ export default function Home() {
               <span>Session commitments</span>
               <span className="status">
                 <span className="pulse-dot" aria-hidden="true" />
-                Tracking starts after inauguration
+                Live tracking active
               </span>
             </div>
             <ul>

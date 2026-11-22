@@ -56,6 +56,9 @@ const departmentRouter = router({
 
 const sessionRouter = router({
   list: publicProcedure.query(() => z.array(schoolSessionSummary).parse(schoolSessions)),
+  bySlug: publicProcedure
+    .input(z.object({ slug: z.string() }))
+    .query(({ input }) => bySlug(schoolSessions, input.slug, schoolSessionSummary)),
   current: publicProcedure.query(() => {
     const found = schoolSessions.find((s) => s.isCurrent);
     return found ? schoolSessionSummary.parse(found) : null;
@@ -63,12 +66,26 @@ const sessionRouter = router({
 });
 
 const rosterRouter = router({
+  list: publicProcedure.query(() => {
+    return z.array(personSummary).parse(roster);
+  }),
   bySession: publicProcedure
     .input(z.object({ sessionSlug: z.string() }))
     .query(({ input }) => {
       const people = roster.filter((p) => p.sessionSlug === input.sessionSlug);
       return z.array(personSummary).parse(people);
     }),
+  alumni: publicProcedure.query(() => {
+    const people = roster.filter((p) => p.tier === "alumni");
+    return z.array(personSummary).parse(people);
+  }),
+  staff: publicProcedure.query(() => {
+    const people = roster.filter((p) => p.tier === "staff");
+    return z.array(personSummary).parse(people);
+  }),
+  bySlug: publicProcedure
+    .input(z.object({ slug: z.string() }))
+    .query(({ input }) => bySlug(roster, input.slug, personSummary)),
   /** Curated in the admin console later; the flag is on the record, not a guess. */
   featured: publicProcedure.query(() => {
     const people = roster.filter((p) => p.isFeaturedHomepage);
@@ -136,6 +153,9 @@ const opportunityRouter = router({
       });
       return z.array(opportunitySummary).parse(filtered);
     }),
+  bySlug: publicProcedure
+    .input(z.object({ slug: z.string() }))
+    .query(({ input }) => bySlug(opportunities, input.slug, opportunitySummary)),
 });
 
 const eventRouter = router({
