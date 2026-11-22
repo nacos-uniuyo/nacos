@@ -80,7 +80,9 @@ export default async function DepartmentHubPage({ params }: Props) {
   const initialOfficers = allRosterEntries.filter(
     (person) =>
       person.sessionSlug === activeSessionSlug &&
-      person.tier !== "alumni",
+      person.departmentSlug === department.slug &&
+      person.tier !== "alumni" &&
+      person.tier !== "staff",
   );
 
   const initialAlumni = allRosterEntries.filter(
