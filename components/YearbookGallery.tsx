@@ -5,7 +5,7 @@ import Link from "next/link";
 import { GraduationCap, Search } from "lucide-react";
 import { AlumniCard } from "@/components/AlumniCard";
 import { DraggableMarquee } from "@/components/DraggableMarquee";
-import { ArrowRight } from "@/components/icons";
+import { ArrowRight, ArrowUpRight } from "@/components/icons";
 import { sortAlumniByMatricOrName } from "@/components/SessionCohortGrid";
 import { Button } from "@/components/ui/button";
 import {
@@ -225,10 +225,10 @@ export function YearbookGallery({ initialAlumni, departments, sessions }: Props)
                     </span>
                     <Link
                       href={`/yearbook/session/${session.slug}`}
-                      className="text-link text-xs font-semibold text-[var(--forest)] hover:text-[var(--green)] transition-colors"
+                      className="inline-flex items-center justify-center size-8 rounded-full bg-white border border-[var(--rule)] text-[var(--forest)] hover:bg-[var(--forest)] hover:text-white transition-all shadow-xs"
+                      aria-label={`Explore ${session.name} cohort`}
                     >
-                      <span>Explore Cohort Grid</span>
-                      <ArrowRight size={13} />
+                      <ArrowUpRight size={16} />
                     </Link>
                   </div>
                 </div>

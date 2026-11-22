@@ -430,3 +430,88 @@ a:not([data-slot="button"]):not([class*="text-"]):not([class*="btn"]):hover {
   font-weight: 600;
   box-shadow: 0 2px 6px rgba(6, 42, 20, 0.15);
 }
+
+/* Global Page Hero & Breadcrumbs */
+.page-hero {
+  position: relative;
+  background: var(--forest);
+  color: #fff;
+  overflow: hidden;
+  min-height: min(780px, calc(100svh - 80px));
+  display: flex;
+  align-items: center;
+  padding: clamp(64px, 8vw, 100px) 0;
+}
+.page-hero .wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+.page-hero h1 {
+  margin: 0;
+  font-size: clamp(52px, 8vw, 112px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+.page-hero p {
+  margin: 0;
+  max-width: 620px;
+  font-size: clamp(17px, 1.7vw, 19px);
+  line-height: 1.6;
+  color: var(--mint-2);
+}
+.crumbs ol {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+  color: var(--mint);
+}
+.crumbs li + li::before {
+  content: "/";
+  margin-right: 8px;
+  color: rgba(255, 255, 255, 0.3);
+}
+.crumbs a {
+  color: var(--mint);
+  text-decoration: none;
+}
+.crumbs a:hover {
+  color: #fff;
+}
+.crumbs [aria-current] {
+  color: #fff;
+}
+
+/* Bounded Yearbook Carousel & Cards */
+.yearbook-carousel-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 8px 0 16px;
+}
+.yearbook-carousel-container .yearbook-card {
+  width: 300px;
+  flex-shrink: 0;
+}
+.yearbook-card {
+  width: 100%;
+  max-width: 100%;
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(15, 26, 19, 0.12), 0 1px 4px rgba(15, 26, 19, 0.08);
+  transition: all 0.3s cubic-bezier(0.2, 0.7, 0.1, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.yearbook-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 42px rgba(15, 26, 19, 0.15), 0 3px 8px rgba(15, 26, 19, 0.08);
+}
