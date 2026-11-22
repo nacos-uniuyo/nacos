@@ -382,3 +382,51 @@ a:not([data-slot="button"]):not([class*="text-"]):not([class*="btn"]):hover {
     opacity: 1;
   }
 }
+
+/* Global Segmented Filter Bar */
+.segmented-filter-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid var(--rule);
+  box-shadow: 0 2px 8px rgba(15, 26, 19, 0.04);
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.segmented-filter-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.segmented-filter-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 0;
+  outline: none;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.segmented-filter-btn:hover {
+  color: var(--ink);
+  background: rgba(15, 26, 19, 0.04);
+}
+
+.segmented-filter-btn.active {
+  background: var(--forest);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(6, 42, 20, 0.15);
+}
