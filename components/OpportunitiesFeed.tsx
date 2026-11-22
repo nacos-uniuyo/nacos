@@ -81,6 +81,7 @@ export function OpportunitiesFeed({ initialOpportunities, departments }: Props) 
         month: "short",
         day: "numeric",
         year: "numeric",
+        timeZone: "Africa/Lagos",
       });
       return formatted.toUpperCase();
     } catch {

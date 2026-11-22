@@ -176,8 +176,8 @@ export default async function StaffProfilePage({ params }: Props) {
               </div>
             </aside>
 
-            {/* Main content column */}
-            <main className="flex flex-col gap-10">
+            {/* Content column */}
+            <div className="flex flex-col gap-10">
               {person.quote && (
                 <blockquote className="serif text-xl sm:text-2xl text-[var(--forest)] italic border-l-2 border-[var(--gold)] pl-6 py-2 m-0 bg-[rgba(6,42,20,0.02)] rounded-r-xl">
                   &ldquo;{person.quote}&rdquo;
@@ -228,7 +228,7 @@ export default async function StaffProfilePage({ params }: Props) {
                   </div>
                 </section>
               )}
-            </main>
+            </div>
           </div>
         </div>
       </section>
@@ -246,6 +246,8 @@ export default async function StaffProfilePage({ params }: Props) {
             roleTitle: person.roleTitle,
             photoUrl: person.photoUrl,
             departmentName: dept?.name,
+            basePath: "/staff",
+            isAlumni: false,
           }),
         ]}
       />

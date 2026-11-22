@@ -86,26 +86,17 @@ export function DepartmentHubTabs({
 
   const sessionMap = new Map(allSessions.map((s) => [s.slug, s]));
 
-  const hodEmail = department.hodName
-    ? `${department.hodName
-        .toLowerCase()
-        .replace(/^(dr\.|prof\.)\s*/i, "")
-        .replace(/[^a-z0-9]+/g, ".")
-        .replace(/^\.+|\.+$/g, "")}@uniuyo.edu.ng`
-    : `hod.${department.slug}@uniuyo.edu.ng`;
+  const HOD_EMAILS: Record<string, string> = {
+    "computer-science": "u.e.umoren@uniuyo.edu.ng",
+    cybersecurity: "a.e.essien@uniuyo.edu.ng",
+    "information-systems": "i.j.akpan@uniuyo.edu.ng",
+    "data-analytics": "m.b.okon@uniuyo.edu.ng",
+    "software-engineering": "g.a.etuk@uniuyo.edu.ng",
+  };
 
-  const staffList = department.hodName
-    ? [
-        {
-          slug: `hod-${department.slug}`,
-          fullName: department.hodName,
-          designation: `Head of Department, ${department.name}`,
-          roleTag: "Head of Department (HOD)",
-          email: hodEmail,
-          bio: `${department.hodName} leads academic administration, curriculum standards, and undergraduate research supervision across the Department of ${department.name} at the Faculty of Computing, University of Uyo. ${department.summary}`,
-        },
-      ]
-    : [];
+  const hodEmail =
+    HOD_EMAILS[department.slug] ??
+    `hod.${department.slug}@uniuyo.edu.ng`;
 
   const totalNotices = initialOpportunities.length + posts.length;
 
@@ -124,7 +115,8 @@ export function DepartmentHubTabs({
   useEffect(() => {
     if (!showNav) return;
 
-    const ids = activeSections.map((s) => s.id);
+    const sectionIdsKey = activeSections.map((s) => s.id).join(",");
+    const ids = sectionIdsKey.split(",");
     const elements = ids
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => el !== null);
@@ -149,7 +141,7 @@ export function DepartmentHubTabs({
 
     elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, [showNav, activeSections]);
+  }, [showNav, activeSections.length]);
 
   const scrollToSection = (id: string) => {
     setActiveSectionId(id);
@@ -582,10 +574,9 @@ export function DepartmentHubTabs({
                     <span className="caps text-[10px] text-[var(--muted)]">
                       NACOS UNIUYO
                     </span>
-                    <Link href={`/blog/${post.slug}`} className="text-link text-sm">
-                      View
-                      <ArrowRight size={15} />
-                    </Link>
+                    <span className="text-sm text-[var(--forest)] font-medium">
+                      Notice
+                    </span>
                   </footer>
                 </article>
               ))}

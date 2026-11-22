@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import nacosLogoImg from "@/assets/images/nacos-logo.png";
 import uniuyoLogo from "@/assets/images/uniuyo-circle.png";
 import { site } from "@/lib/site";
 
@@ -26,7 +27,7 @@ export function Footer() {
                 className="footer-logo-base footer-logo-uniuyo"
               />
               <Image
-                src="/images/nacos-logo.png"
+                src={nacosLogoImg}
                 alt="NACOS UNIUYO logo"
                 width={60}
                 height={60}
@@ -63,7 +64,6 @@ export function Footer() {
             <Link href="/yearbook">Digital Yearbook</Link>
             <Link href="/staff">Staff Directory</Link>
             <Link href="/events">Events &amp; Calendar</Link>
-            <Link href="/blog">Faculty Newsroom</Link>
             <Link href="/executives">Executive Council</Link>
           </nav>
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "nextjs-toploader/app";
 import { useEffect, useRef, useState } from "react";
+import nacosLogoImg from "@/assets/images/nacos-logo.png";
 import {
   ChevronDown,
   Code2,
@@ -61,7 +62,6 @@ const navLinks = [
   { href: "/yearbook", label: "Yearbook", matchPrefix: "/yearbook" },
   { href: "/staff", label: "Staff", matchPrefix: "/staff" },
   { href: "/events", label: "Events", matchPrefix: "/events" },
-  { href: "/blog", label: "Blog", matchPrefix: "/blog" },
 ] as const;
 
 export function Header() {
@@ -168,7 +168,7 @@ export function Header() {
     >
       <div className="wrap bar">
         <Link href="/" className="brand" aria-label="NACOS UNIUYO home">
-          <Image src="/images/nacos-logo.png" alt="" width={52} height={52} priority />
+          <Image src={nacosLogoImg} alt="" width={52} height={52} priority />
           <span className="brand-text">
             <span className="caps brand-name">NACOS</span>
             <span className="brand-sub">University of Uyo</span>

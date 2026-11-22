@@ -246,8 +246,11 @@ export function personSchema(p: {
   linkedinUrl?: string | null;
   githubUrl?: string | null;
   portfolioUrl?: string | null;
+  basePath?: string;
+  isAlumni?: boolean;
 }) {
-  const url = absoluteUrl(`/yearbook/${p.slug}`);
+  const basePath = p.basePath ?? "/yearbook";
+  const url = absoluteUrl(`${basePath}/${p.slug}`);
   const sameAs = [p.linkedinUrl, p.githubUrl, p.portfolioUrl].filter(
     (u): u is string => Boolean(u),
   );
@@ -267,11 +270,21 @@ export function personSchema(p: {
           },
         }
       : {}),
-    alumniOf: {
-      "@type": "EducationalOrganization",
-      name: "University of Uyo",
-      department: p.departmentName ? `Department of ${p.departmentName}` : "Faculty of Computing",
-    },
+    ...(p.isAlumni !== false
+      ? {
+          alumniOf: {
+            "@type": "EducationalOrganization",
+            name: "University of Uyo",
+            department: p.departmentName ? `Department of ${p.departmentName}` : "Faculty of Computing",
+          },
+        }
+      : {
+          worksFor: {
+            "@type": "EducationalOrganization",
+            name: "University of Uyo",
+            department: p.departmentName ? `Department of ${p.departmentName}` : "Faculty of Computing",
+          },
+        }),
     ...(sameAs.length > 0 ? { sameAs } : {}),
   };
 }
