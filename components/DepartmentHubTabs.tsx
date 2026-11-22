@@ -466,7 +466,7 @@ export function DepartmentHubTabs({
               {initialAlumni.map((alum) => {
                 const sess = sessionMap.get(alum.sessionSlug);
                 return (
-                  <li key={alum.slug} className="dept-person-card">
+                  <li key={alum.slug} className="dept-person-card group relative">
                     <div className="dept-person-media">
                       {alum.photoUrl ? (
                         <Image
@@ -474,7 +474,7 @@ export function DepartmentHubTabs({
                           alt={alum.fullName}
                           fill
                           sizes="(max-width: 680px) 100vw, 320px"
-                          className="object-cover"
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
                         <div className="dept-person-monogram" aria-hidden="true">
@@ -490,18 +490,17 @@ export function DepartmentHubTabs({
                       <span className="caps dept-person-role">
                         {alum.roleTitle}
                       </span>
-                      <h3 className="serif dept-person-name">{alum.fullName}</h3>
+                      <h3 className="serif dept-person-name">
+                        <Link
+                          href={`/yearbook/${alum.slug}`}
+                          className="before:absolute before:inset-0 before:z-10 no-underline text-inherit group-hover:text-[var(--green)] transition-colors"
+                        >
+                          {alum.fullName}
+                        </Link>
+                      </h3>
                       <p className="dept-person-dept">
                         {sess ? sess.name : `${alum.sessionSlug} Academic Session`}
                       </p>
-
-                      <div className="dept-person-socials">
-                        <span className="caps text-[10px] text-[var(--green)]">Verified Graduate</span>
-                        <Link href="/yearbook" className="text-link text-xs">
-                          View Profile
-                          <ArrowRight size={13} />
-                        </Link>
-                      </div>
                     </div>
                   </li>
                 );
@@ -553,15 +552,15 @@ export function DepartmentHubTabs({
                     <span className="caps text-[10px] text-[var(--green)]">
                       {opportunityTypeLabels[opp.type] ?? opp.type}
                     </span>
-                    <a
-                      href={opp.applyUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      href={opp.applyUrl ? opp.applyUrl : `/opportunities/${opp.slug}`}
+                      target={opp.applyUrl ? "_blank" : undefined}
+                      rel={opp.applyUrl ? "noopener noreferrer" : undefined}
                       className="text-link text-sm"
                     >
                       View
                       <ArrowUpRight size={15} />
-                    </a>
+                    </Link>
                   </footer>
                 </article>
               ))}

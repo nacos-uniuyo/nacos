@@ -61,6 +61,7 @@ export function Footer() {
             <Link href="/projects">Project Showcase</Link>
             <Link href="/opportunities">SIWES &amp; Opportunities</Link>
             <Link href="/yearbook">Digital Yearbook</Link>
+            <Link href="/staff">Staff Directory</Link>
             <Link href="/events">Events &amp; Calendar</Link>
             <Link href="/blog">Faculty Newsroom</Link>
             <Link href="/executives">Executive Council</Link>

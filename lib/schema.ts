@@ -233,3 +233,68 @@ export function opportunityCollectionSchema(
     },
   };
 }
+
+export function personSchema(p: {
+  fullName: string;
+  slug: string;
+  roleTitle: string;
+  photoUrl?: string | null;
+  departmentName?: string | null;
+  sessionName?: string | null;
+  currentRole?: string | null;
+  currentCompany?: string | null;
+  linkedinUrl?: string | null;
+  githubUrl?: string | null;
+  portfolioUrl?: string | null;
+}) {
+  const url = absoluteUrl(`/yearbook/${p.slug}`);
+  const sameAs = [p.linkedinUrl, p.githubUrl, p.portfolioUrl].filter(
+    (u): u is string => Boolean(u),
+  );
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: p.fullName,
+    url,
+    jobTitle: p.currentRole ?? p.roleTitle,
+    ...(p.photoUrl ? { image: absoluteUrl(p.photoUrl) } : {}),
+    ...(p.currentCompany
+      ? {
+          worksFor: {
+            "@type": "Organization",
+            name: p.currentCompany,
+          },
+        }
+      : {}),
+    alumniOf: {
+      "@type": "EducationalOrganization",
+      name: "University of Uyo",
+      department: p.departmentName ? `Department of ${p.departmentName}` : "Faculty of Computing",
+    },
+    ...(sameAs.length > 0 ? { sameAs } : {}),
+  };
+}
+
+export function yearbookCollectionSchema(
+  items: { fullName: string; slug: string; roleTitle: string; departmentName?: string | null }[],
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Faculty of Computing Alumni Archive and Digital Yearbook",
+    description:
+      "Permanent living yearbook and alumni directory honoring graduating cohorts and student innovators across the Faculty of Computing, University of Uyo.",
+    url: absoluteUrl("/yearbook"),
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: items.map((p, idx) => ({
+        "@type": "ListItem",
+        position: idx + 1,
+        name: p.fullName,
+        description: `${p.roleTitle}${p.departmentName ? ` · Department of ${p.departmentName}` : ""}`,
+        url: absoluteUrl(`/yearbook/${p.slug}`),
+      })),
+    },
+  };
+}

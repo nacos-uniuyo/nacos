@@ -7,6 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: absoluteUrl("/"), lastModified: now, changeFrequency: "weekly", priority: 1 },
     { url: absoluteUrl("/executives"), lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: absoluteUrl("/staff"), lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: absoluteUrl("/events"), lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     ...events.flatMap((e) => [
       {

@@ -396,11 +396,11 @@ a:hover {
   position: relative;
   background: var(--forest);
   color: #fff;
-  min-height: min(860px, calc(100svh - 80px));
+  min-height: min(800px, calc(100svh - 80px));
   display: flex;
   align-items: center;
   overflow: hidden;
-  padding: 120px 0 140px;
+  padding: clamp(72px, 8vw, 110px) 0;
 }
 .grid-bg {
   position: absolute;
@@ -431,12 +431,13 @@ a:hover {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  gap: 28px;
 }
 .hero h1 {
   margin: 0;
-  font-size: clamp(60px, 10.3vw, 148px);
-  line-height: 0.92;
+  max-width: 65%;
+  font-size: clamp(52px, 7.2vw, 104px);
+  line-height: 0.95;
   letter-spacing: -0.02em;
 }
 .hero-copy {
@@ -1223,7 +1224,6 @@ a.tile.green:hover {
   align-items: center;
   gap: 12px 24px;
   flex-wrap: wrap;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 28px;
   font-size: 13px;
 }
@@ -1890,6 +1890,9 @@ a.tile.green:hover {
   .hero-orbits {
     right: -420px;
     opacity: 0.7;
+  }
+  .hero h1 {
+    max-width: none;
   }
   .mission .eyebrow,
   .mission .body {
@@ -2699,9 +2702,8 @@ a.tile.green:hover {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
-  margin: 16px 0 0;
-  padding-top: 28px;
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  margin: 48px 0 0;
+  padding-top: 36px;
 }
 
 .dept-hero-stat {
@@ -3595,4 +3597,88 @@ a.tile.green:hover {
   color: #ffffff;
   font-weight: 600;
   box-shadow: 0 2px 6px rgba(6, 42, 20, 0.15);
+}
+
+/* Bounded Yearbook Carousel */
+.yearbook-carousel-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 8px 0 16px;
+}
+
+.yearbook-carousel-track {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  will-change: transform;
+}
+
+.yearbook-carousel-track:hover {
+  animation-play-state: paused;
+}
+
+.yearbook-carousel-track.speed-normal {
+  animation: marquee 45s linear infinite;
+}
+
+.yearbook-carousel-track.speed-reverse {
+  animation: marquee-reverse 50s linear infinite;
+}
+
+@keyframes marquee-reverse {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.yearbook-card {
+  width: 100%;
+  max-width: 100%;
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(15, 26, 19, 0.12), 0 1px 4px rgba(15, 26, 19, 0.08);
+  transition: all 0.3s cubic-bezier(0.2, 0.7, 0.1, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.yearbook-carousel-container .yearbook-card {
+  width: 300px;
+  flex-shrink: 0;
+}
+
+.yearbook-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 42px rgba(15, 26, 19, 0.15), 0 3px 8px rgba(15, 26, 19, 0.08);
+}
+
+.yearbook-card-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3.4;
+  background: var(--forest);
+  overflow: hidden;
+}
+
+.yearbook-card-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.yearbook-card-footer {
+  padding: 14px 20px;
+  background: var(--paper);
+  border-top: 1px solid rgba(15, 26, 19, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
