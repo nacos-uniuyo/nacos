@@ -124,9 +124,6 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
                     <span className="serif text-4xl sm:text-5xl text-[var(--mint)] leading-none block">
                       {project.courseCode ?? `0${idx + 1}`}
                     </span>
-                    <span className="caps text-[10px] text-[var(--mint-2)] mt-1.5 block">
-                      {dept?.name ?? "Faculty of Computing"}
-                    </span>
                   </div>
                 </div>
 
@@ -142,11 +139,16 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
                   </div>
 
                   <div className="pt-4 border-t border-[rgba(15,26,19,0.08)] flex items-center justify-between text-xs text-[var(--muted)]">
-                    <span className="font-medium text-[var(--ink)]">
-                      {project.teamDisplayName ?? initials}
-                    </span>
-                    <span className="font-semibold text-[var(--green)] group-hover:translate-x-0.5 transition-transform">
-                      View Project &rarr;
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-[var(--forest)] text-[var(--mint)] text-[10px] font-semibold flex items-center justify-center shrink-0">
+                        {initials || "N"}
+                      </div>
+                      <span className="font-medium text-[var(--ink)] line-clamp-1">
+                        {project.teamDisplayName ?? initials}
+                      </span>
+                    </div>
+                    <span className="text-xs text-[var(--muted)] whitespace-nowrap">
+                      2024/2025
                     </span>
                   </div>
                 </div>
