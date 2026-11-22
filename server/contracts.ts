@@ -28,6 +28,17 @@ export const schoolSessionSummary = z.object({
   isCurrent: z.boolean(),
 });
 
+export const socialPlatform = z.discriminatedUnion("platform", [
+  z.object({ platform: z.literal("github"), url: z.string() }),
+  z.object({ platform: z.literal("linkedin"), url: z.string() }),
+  z.object({ platform: z.literal("x"), url: z.string() }),
+  z.object({ platform: z.literal("instagram"), url: z.string() }),
+  z.object({ platform: z.literal("facebook"), url: z.string() }),
+  z.object({ platform: z.literal("website"), url: z.string() }),
+]);
+
+export type SocialPlatform = z.infer<typeof socialPlatform>;
+
 export const personSummary = z.object({
   slug: z.string(),
   fullName: z.string(),
@@ -37,6 +48,18 @@ export const personSummary = z.object({
   departmentSlug: z.string().nullable(),
   photoUrl: z.string().nullable(),
   isFeaturedHomepage: z.boolean(),
+  quote: z.string().nullable().optional(),
+  matricNumber: z.string().nullable().optional(),
+  currentRole: z.string().nullable().optional(),
+  currentCompany: z.string().nullable().optional(),
+  socials: z.array(socialPlatform).optional(),
+  linkedinUrl: z.string().nullable().optional(),
+  githubUrl: z.string().nullable().optional(),
+  portfolioUrl: z.string().nullable().optional(),
+  email: z.string().nullable().optional(),
+  officeLocation: z.string().nullable().optional(),
+  bio: z.string().nullable().optional(),
+  researchAreas: z.array(z.string()).optional(),
 });
 
 export const projectSummary = z.object({
@@ -60,7 +83,10 @@ export const opportunitySummary = z.object({
   departmentSlug: z.string().nullable(),
   location: z.string(),
   deadline: z.string().nullable(),
-  applyUrl: z.string(),
+  applyUrl: z.string().nullable(),
+  hasInternalDetails: z.boolean().default(false),
+  imageUrl: z.string().nullable().optional(),
+  excerpt: z.string().nullable().optional(),
 });
 
 export const eventSummary = z.object({
@@ -96,3 +122,13 @@ export type OpportunitySummary = z.infer<typeof opportunitySummary>;
 export type EventSummary = z.infer<typeof eventSummary>;
 export type PostSummary = z.infer<typeof postSummary>;
 export type GoodwillSummary = z.infer<typeof goodwillSummary>;
+
+export const deansMessageSummary = z.object({
+  heading: z.string().min(1),
+  body: z.string().min(1),
+  authorName: z.string().min(1),
+  authorTitle: z.string().min(1),
+  portraitUrl: z.string().nullable().optional(),
+});
+
+export type DeansMessageSummary = z.infer<typeof deansMessageSummary>;
