@@ -8,12 +8,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-[var(--green)] text-white hover:bg-[var(--green-hover)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.35)]",
-        solid: "bg-[var(--green)] text-white hover:bg-[var(--green-hover)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.35)]",
-        ghost: "border border-white/45 bg-transparent text-white hover:bg-white hover:text-[var(--forest)]",
-        dark: "bg-[var(--forest)] text-white hover:bg-[var(--forest-3)]",
-        line: "border border-[rgba(15,26,19,0.2)] bg-transparent text-[var(--ink)] hover:bg-[var(--forest)] hover:text-white hover:border-[var(--forest)]",
-        destructive: "bg-destructive text-white hover:bg-destructive/90",
+        default: "!text-white bg-[var(--green)] hover:bg-[var(--green-hover)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.35)]",
+        solid: "!text-white bg-[var(--green)] hover:bg-[var(--green-hover)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.35)]",
+        ghost: "!text-white border border-white/45 bg-transparent hover:bg-white hover:!text-[var(--forest)]",
+        dark: "!text-white bg-[var(--forest)] hover:bg-[var(--forest-3)]",
+        line: "border border-[rgba(15,26,19,0.2)] bg-transparent !text-[var(--ink)] hover:bg-[var(--forest)] hover:!text-white hover:border-[var(--forest)]",
+        destructive: "!text-white bg-destructive hover:bg-destructive/90",
         outline: "border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         link: "text-primary underline-offset-4 hover:underline hover:translate-y-0",

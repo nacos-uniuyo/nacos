@@ -82,10 +82,10 @@ img {
   display: block;
 }
 
-a {
+a:not([data-slot="button"]):not([class*="text-"]):not([class*="btn"]) {
   color: var(--green);
 }
-a:hover {
+a:not([data-slot="button"]):not([class*="text-"]):not([class*="btn"]):hover {
   color: var(--green-hover);
 }
 
