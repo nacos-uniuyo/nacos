@@ -10,6 +10,7 @@ import {
   Users,
 } from "lucide-react";
 import { ArrowRight, ArrowUpRight, GithubIcon } from "@/components/icons";
+import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { HeroOrbits } from "@/components/Orbits";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
@@ -187,31 +188,35 @@ export default async function ProjectDetailPage({ params }: Props) {
 
           <div className="cta-row pt-2">
             {project.demoUrl ? (
-              <a
-                href={project.demoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-solid"
-              >
-                <span>Access Project</span>
-                <ArrowUpRight size={16} />
-              </a>
+              <Button asChild variant="solid">
+                <a
+                  href={project.demoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span>Access Project</span>
+                  <ArrowUpRight size={16} />
+                </a>
+              </Button>
             ) : null}
             {project.repoUrl ? (
-              <a
-                href={project.repoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-ghost"
-              >
-                <GithubIcon size={18} />
-                <span>Source Code</span>
-              </a>
+              <Button asChild variant="ghost">
+                <a
+                  href={project.repoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <GithubIcon size={18} />
+                  <span>Source Code</span>
+                </a>
+              </Button>
             ) : null}
             {dept ? (
-              <Link href={`/departments/${dept.slug}`} className="btn btn-ghost">
-                <span>Visit {dept.name} Hub</span>
-              </Link>
+              <Button asChild variant="ghost">
+                <Link href={`/departments/${dept.slug}`}>
+                  <span>Visit {dept.name} Hub</span>
+                </Link>
+              </Button>
             ) : null}
           </div>
         </div>
@@ -354,30 +359,34 @@ export default async function ProjectDetailPage({ params }: Props) {
                 {/* Actions */}
                 <div className="flex flex-col gap-2.5 pt-3 border-t border-[rgba(15,26,19,0.08)]">
                   {project.demoUrl ? (
-                    <a
-                      href={project.demoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-solid w-full"
-                    >
-                      <span>Access Project</span>
-                      <ArrowUpRight size={15} />
-                    </a>
+                    <Button asChild variant="solid" className="w-full">
+                      <a
+                        href={project.demoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <span>Access Project</span>
+                        <ArrowUpRight size={15} />
+                      </a>
+                    </Button>
                   ) : null}
                   {project.repoUrl ? (
-                    <a
-                      href={project.repoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-dark w-full"
-                    >
-                      <GithubIcon size={16} />
-                      <span>Source Repository</span>
-                    </a>
+                    <Button asChild variant="dark" className="w-full">
+                      <a
+                        href={project.repoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <GithubIcon size={16} />
+                        <span>Source Repository</span>
+                      </a>
+                    </Button>
                   ) : null}
-                  <Link href="/projects" className="btn btn-line w-full text-center">
-                    Back to All Projects
-                  </Link>
+                  <Button asChild variant="line" className="w-full text-center">
+                    <Link href="/projects">
+                      Back to All Projects
+                    </Link>
+                  </Button>
                 </div>
               </div>
             </aside>

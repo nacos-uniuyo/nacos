@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { JsonLd } from "@/components/JsonLd";
 import { HeroOrbits } from "@/components/Orbits";
 import { ProjectsGallery } from "@/components/ProjectsGallery";
@@ -48,24 +49,27 @@ export default async function ProjectsPage() {
 
   return (
     <>
-      <section className="page-hero" aria-labelledby="projects-hero-title">
+      <section className="relative bg-[var(--forest)] text-white overflow-hidden min-h-[min(780px,calc(100svh-80px))] flex items-center py-[clamp(64px,8vw,100px)]" aria-labelledby="projects-hero-title">
         <div className="grid-bg drift" aria-hidden="true" />
         <HeroOrbits label="{ PROJECTS }" />
 
-        <div className="wrap">
+        <div className="wrap relative flex flex-col gap-6 w-full">
           <nav className="crumbs" aria-label="Breadcrumb">
-            <ol>
+            <ol className="list-none flex flex-wrap gap-2 m-0 p-0 text-[13px] text-[var(--mint)]">
               <li>
-                <Link href="/">NACOS UNIUYO</Link>
+                <Link href="/" className="text-[var(--mint)] hover:text-white no-underline transition-colors">NACOS UNIUYO</Link>
               </li>
-              <li aria-current="page">Projects</li>
+              <li className="flex items-center gap-2" aria-current="page">
+                <span className="text-white/30">/</span>
+                <span className="text-white">Projects</span>
+              </li>
             </ol>
           </nav>
 
-          <h1 id="projects-hero-title" className="serif">
+          <h1 id="projects-hero-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
             What We <span className="it gold">Build &amp; Ship</span>
           </h1>
-          <p>
+          <p className="m-0 max-w-[620px] text-[clamp(17px,1.7vw,19px)] leading-relaxed text-[var(--mint-2)]">
             Verified software platforms, passive threat monitors, ESP32 hardware rigs, and coursework group
             engineering built by computing students and faculty teams at the University of Uyo.
           </p>
@@ -74,7 +78,9 @@ export default async function ProjectsPage() {
 
       <section className="py-[var(--section-y)]" aria-label="Project Showcase Directory">
         <div className="wrap">
-          <ProjectsGallery initialProjects={projects} departments={departments} />
+          <Suspense fallback={null}>
+            <ProjectsGallery initialProjects={projects} departments={departments} />
+          </Suspense>
         </div>
       </section>
 

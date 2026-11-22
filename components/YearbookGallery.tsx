@@ -7,6 +7,7 @@ import { AlumniCard } from "@/components/AlumniCard";
 import { DraggableMarquee } from "@/components/DraggableMarquee";
 import { ArrowRight } from "@/components/icons";
 import { sortAlumniByMatricOrName } from "@/components/SessionCohortGrid";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -174,13 +175,14 @@ export function YearbookGallery({ initialAlumni, departments, sessions }: Props)
             <p className="text-sm text-[var(--muted)] max-w-md mx-auto mb-6">
               Try adjusting your search terms or resetting the department scope filter.
             </p>
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={() => updateFilters("all", "")}
-              className="btn btn-ghost"
+              className="text-[var(--ink)]"
             >
               Reset Filters
-            </button>
+            </Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full text-left">

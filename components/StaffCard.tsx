@@ -16,7 +16,7 @@ export function StaffCard({ person, index, priority, departmentName }: Props) {
   const displayDepartment = departmentName ? `Department of ${departmentName}` : "Faculty of Computing";
 
   return (
-    <article className="group/staff relative flex flex-col bg-white rounded-2xl border border-[rgba(15,26,19,0.12)] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+    <article className="group/staff relative flex flex-col bg-white rounded-2xl border border-[rgba(15,26,19,0.12)] overflow-hidden shadow-xs hover:shadow-md transition-all duration-300">
       <div className="relative aspect-[4/3] w-full bg-[var(--forest)] overflow-hidden">
         {person.photoUrl ? (
           <Image
@@ -28,7 +28,7 @@ export function StaffCard({ person, index, priority, departmentName }: Props) {
             className="object-cover group-hover/staff:scale-105 transition-transform duration-500"
           />
         ) : (
-          <div className={`monogram${index % 2 ? " alt" : ""} w-full h-full flex items-center justify-center`} aria-hidden="true">
+          <div className={`w-full h-full flex items-center justify-center ${index % 2 ? "bg-[var(--forest-2)]" : "bg-[var(--forest)]"}`} aria-hidden="true">
             <span className="serif text-5xl text-[var(--gold)]">{initials(person.fullName)}</span>
           </div>
         )}

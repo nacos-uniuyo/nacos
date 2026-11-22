@@ -5,6 +5,7 @@ import { Breadcrumbs, EventSubnav, Timeline } from "@/components/EventParts";
 import { ArrowRight } from "@/components/icons";
 import { JsonLd } from "@/components/JsonLd";
 import { HeroOrbits } from "@/components/Orbits";
+import { Button } from "@/components/ui/button";
 import { events, formatEventDate, formatEventTime, getEvent, googleCalendarUrl, startOf } from "@/lib/events";
 import { breadcrumbSchema, eventSchema } from "@/lib/schema";
 import { absoluteUrl, ogDefaults } from "@/lib/site";
@@ -39,10 +40,10 @@ export default async function ProgrammePage({ params }: Props) {
 
   return (
     <>
-      <section className="page-hero" aria-labelledby="prog-title">
+      <section className="relative bg-[var(--forest)] text-white overflow-hidden min-h-[min(780px,calc(100svh-80px))] flex items-center py-[clamp(64px,8vw,100px)]" aria-labelledby="prog-title">
         <div className="grid-bg drift" aria-hidden="true" />
         <HeroOrbits label="{ 09 · 10 · 26 }" className="hero-orbits fade" />
-        <div className="wrap">
+        <div className="wrap relative flex flex-col gap-6 w-full">
           <Breadcrumbs
             items={[
               { name: "Home", path: "/" },
@@ -52,7 +53,7 @@ export default async function ProgrammePage({ params }: Props) {
             ]}
           />
           <span className="eyebrow on-dark caps fade d1">{e.kicker}</span>
-          <h1 id="prog-title" className="serif">
+          <h1 id="prog-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
             <span className="line">
               <span className="rise d1">Programme</span>
             </span>
@@ -60,7 +61,7 @@ export default async function ProgrammePage({ params }: Props) {
               <span className="rise d2 it gold">of Events</span>
             </span>
           </h1>
-          <p className="fade d3">
+          <p className="fade d3 m-0 max-w-[620px] text-[clamp(17px,1.7vw,19px)] leading-relaxed text-[var(--mint-2)]">
             The ceremony holds on {formatEventDate(e.start)} at {e.venue.name}, {e.venue.institution} {e.venue.area}.
             Arrival starts at {formatEventTime(e.start)} prompt. This is the official order of events.
           </p>
@@ -69,9 +70,9 @@ export default async function ProgrammePage({ params }: Props) {
 
       <EventSubnav e={e} active="programme" />
 
-      <section className="programme" aria-labelledby="order-title">
-        <div className="wrap">
-          <div className="aside">
+      <section className="py-[var(--section-y)]" aria-labelledby="order-title">
+        <div className="wrap grid grid-cols-1 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] gap-12 lg:gap-16 items-start">
+          <div className="lg:sticky lg:top-[120px] flex flex-col gap-5.5">
             <span className="eyebrow caps accent">Order of the ceremony</span>
             <h2 id="order-title" className="h2 serif">
               Arrive by <span className="it accent">noon.</span>
@@ -80,15 +81,16 @@ export default async function ProgrammePage({ params }: Props) {
               Dignitaries are seated from {startOf(e, /Dignitaries/)} and the new executives process in at{" "}
               {startOf(e, /Processional/)}.
             </p>
-            <div className="cta-row">
-              <a
-                className="btn btn-dark"
-                href={googleCalendarUrl(e, absoluteUrl(`/events/${e.slug}`))}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Add to calendar
-              </a>
+            <div className="flex flex-wrap items-center gap-3.5">
+              <Button asChild variant="dark">
+                <a
+                  href={googleCalendarUrl(e, absoluteUrl(`/events/${e.slug}`))}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Add to calendar
+                </a>
+              </Button>
               <Link className="text-link" href={`/events/${e.slug}#venue`}>
                 Directions
                 <ArrowRight />
