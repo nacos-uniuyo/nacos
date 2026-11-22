@@ -50,13 +50,13 @@ export default async function ExecutivesPage() {
 
   return (
     <>
-      <section className="page-hero" aria-labelledby="ex-title">
+      <section className="relative bg-[var(--forest)] text-white overflow-hidden min-h-[min(780px,calc(100svh-80px))] flex items-center py-[clamp(64px,8vw,100px)]" aria-labelledby="ex-title">
         <div className="grid-bg drift" aria-hidden="true" />
         <HeroOrbits label="{ LEADERSHIP }" className="hero-orbits fade" />
-        <div className="wrap">
+        <div className="wrap relative flex flex-col gap-6 w-full">
           <Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Executives" }]} />
           <span className="eyebrow on-dark caps fade d1">Faculty Leadership Archive</span>
-          <h1 id="ex-title" className="serif">
+          <h1 id="ex-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
             <span className="line">
               <span className="rise d1">The Executive</span>
             </span>
@@ -64,14 +64,14 @@ export default async function ExecutivesPage() {
               <span className="rise d2 it gold">Leadership</span>
             </span>
           </h1>
-          <p className="fade d3">
+          <p className="fade d3 m-0 max-w-[620px] text-[clamp(17px,1.7vw,19px)] leading-relaxed text-[var(--mint-2)]">
             Elected council officers, presidential aides, and the technical software directorate serving computing
             students across academic sessions.
           </p>
         </div>
       </section>
 
-      <section className="execs py-[var(--section-y)]" aria-label="Executive leadership by session">
+      <section className="bg-[var(--sand)] py-[var(--section-y)]" aria-label="Executive leadership by session">
         <div className="wrap">
           <ExecutivesInfiniteList initialSessionsData={sessionsData} />
         </div>

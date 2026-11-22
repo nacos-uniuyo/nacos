@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Briefcase } from "lucide-react";
-import { ArrowRight } from "@/components/icons";
 import { SocialIconList } from "@/components/SocialIconList";
 import type { PersonSummary } from "@/server/contracts";
 
@@ -24,10 +23,10 @@ export function AlumniCard({ alum, deptName, sessionName }: Props) {
   const initials = getAlumniInitials(alum.fullName);
 
   return (
-    <article className="yearbook-card group relative">
+    <article className="group relative flex flex-col justify-between w-full max-w-full bg-white rounded-[20px] overflow-hidden shadow-[0_4px_20px_rgba(15,26,19,0.12),0_1px_4px_rgba(15,26,19,0.08)] hover:-translate-y-1 hover:shadow-[0_20px_42px_rgba(15,26,19,0.15),0_3px_8px_rgba(15,26,19,0.08)] transition-all duration-300">
       <div>
         {/* Card Media Header */}
-        <div className="yearbook-card-media">
+        <div className="relative w-full aspect-[4/3.4] bg-[var(--forest)] overflow-hidden">
           {alum.photoUrl ? (
             <Image
               src={alum.photoUrl}
@@ -54,13 +53,13 @@ export function AlumniCard({ alum, deptName, sessionName }: Props) {
             </div>
           )}
 
-          <span className="absolute left-3.5 bottom-3 px-2.5 py-1 rounded-md bg-[rgba(6,42,20,0.85)] backdrop-blur-sm border border-[rgba(255,255,255,0.12)] text-[11px] font-semibold text-[var(--gold)]">
+          <span className="absolute left-3.5 bottom-3 px-2.5 py-1 rounded-md bg-[rgba(6,42,20,0.85)] backdrop-blur-xs border border-white/12 text-[11px] font-semibold text-[var(--gold)]">
             {sessionName.replace(" Academic Session", "")}
           </span>
         </div>
 
         {/* Card Body */}
-        <div className="yearbook-card-body">
+        <div className="p-5 flex flex-col gap-2 flex-1">
           <div className="flex items-center justify-between gap-2">
             {deptName ? (
               <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--forest)]">
@@ -114,7 +113,7 @@ export function AlumniCard({ alum, deptName, sessionName }: Props) {
 
       {/* Card Footer: Social icons sit above the full-card click layer */}
       {alum.socials && alum.socials.length > 0 && (
-        <div className="yearbook-card-footer relative z-20">
+        <div className="py-3.5 px-5 bg-[var(--paper)] border-t border-[rgba(15,26,19,0.06)] flex items-center justify-between relative z-20">
           <SocialIconList socials={alum.socials} size="sm" />
         </div>
       )}

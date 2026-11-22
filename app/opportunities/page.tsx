@@ -45,24 +45,27 @@ export default async function OpportunitiesPage() {
 
   return (
     <>
-      <section className="page-hero" aria-labelledby="opportunities-hero-title">
+      <section className="relative bg-[var(--forest)] text-white overflow-hidden min-h-[min(780px,calc(100svh-80px))] flex items-center py-[clamp(64px,8vw,100px)]" aria-labelledby="opportunities-hero-title">
         <div className="grid-bg drift" aria-hidden="true" />
         <HeroOrbits label="{ CAREERS }" />
 
-        <div className="wrap">
+        <div className="wrap relative flex flex-col gap-6 w-full">
           <nav className="crumbs" aria-label="Breadcrumb">
-            <ol>
+            <ol className="list-none flex flex-wrap gap-2 m-0 p-0 text-[13px] text-[var(--mint)]">
               <li>
-                <Link href="/">NACOS UNIUYO</Link>
+                <Link href="/" className="text-[var(--mint)] hover:text-white no-underline transition-colors">NACOS UNIUYO</Link>
               </li>
-              <li aria-current="page">Opportunities</li>
+              <li className="flex items-center gap-2" aria-current="page">
+                <span className="text-white/30">/</span>
+                <span className="text-white">Opportunities</span>
+              </li>
             </ol>
           </nav>
 
-          <h1 id="opportunities-hero-title" className="serif">
+          <h1 id="opportunities-hero-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
             Student <span className="it gold">Opportunities &amp; Careers</span>
           </h1>
-          <p>
+          <p className="m-0 max-w-[620px] text-[clamp(17px,1.7vw,19px)] leading-relaxed text-[var(--mint-2)]">
             Industrial training slots, faculty research grants, scholarships, and verified technical
             employment openings curated for computing students and graduates of the University of Uyo.
           </p>

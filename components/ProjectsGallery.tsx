@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { projectCategories, type ProjectCategory } from "@/lib/enums";
 import { trpc } from "@/lib/trpc/client";
 import type { DepartmentSummary, ProjectSummary } from "@/server/contracts";
@@ -22,7 +23,14 @@ export interface ProjectsGalleryProps {
 }
 
 export function ProjectsGallery({ initialProjects, departments }: ProjectsGalleryProps) {
-  const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | "all">("all");
+  const searchParams = useSearchParams();
+  const initialCategoryParam = searchParams.get("category");
+  const initialCategory =
+    initialCategoryParam && initialCategoryParam in PROJECT_CATEGORY_LABELS
+      ? (initialCategoryParam as ProjectCategory)
+      : "all";
+
+  const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | "all">(initialCategory);
 
   const queryInput =
     selectedCategory === "all"
@@ -40,7 +48,6 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
     [departments]
   );
 
-  // Determine categories that actually have projects
   const availableCategories = useMemo(() => {
     const present = new Set(initialProjects.map((p) => p.category));
     return projectCategories.filter((cat) => present.has(cat));
@@ -53,14 +60,18 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
         <div
           role="tablist"
           aria-label="Filter projects by category"
-          className="segmented-filter-bar"
+          className="inline-flex items-center gap-1 p-1.5 rounded-full bg-white border border-[var(--rule)] shadow-xs max-w-full overflow-x-auto scrollbar-none"
         >
           <button
             type="button"
             role="tab"
             aria-selected={selectedCategory === "all"}
             onClick={() => setSelectedCategory("all")}
-            className={`segmented-filter-btn ${selectedCategory === "all" ? "active" : ""}`}
+            className={`py-2 px-4.5 rounded-full text-[13px] font-medium whitespace-nowrap cursor-pointer transition-all ${
+              selectedCategory === "all"
+                ? "bg-[var(--forest)] text-white font-semibold shadow-xs"
+                : "text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[rgba(15,26,19,0.04)]"
+            }`}
           >
             All Projects
           </button>
@@ -73,7 +84,11 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setSelectedCategory(cat)}
-                className={`segmented-filter-btn ${isActive ? "active" : ""}`}
+                className={`py-2 px-4.5 rounded-full text-[13px] font-medium whitespace-nowrap cursor-pointer transition-all ${
+                  isActive
+                    ? "bg-[var(--forest)] text-white font-semibold shadow-xs"
+                    : "text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[rgba(15,26,19,0.04)]"
+                }`}
               >
                 {PROJECT_CATEGORY_LABELS[cat]}
               </button>
@@ -118,36 +133,28 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
                       {project.courseCode ?? `0${idx + 1}`}
                     </span>
                     <span className="caps text-[10px] text-[var(--mint-2)] mt-1.5 block">
-                      Department of {dept ? dept.name : project.departmentSlug}
+                      {dept?.name ?? "Faculty of Computing"}
                     </span>
                   </div>
                 </div>
 
-                {/* Card Body */}
-                <div className="flex flex-col flex-1 justify-between p-6 gap-4">
-                  <div className="flex flex-col gap-2">
-                    <h3 className="serif text-xl sm:text-2xl text-[var(--ink)] group-hover:text-[var(--green)] transition-colors line-clamp-2 leading-snug m-0">
+                {/* Card Content Area */}
+                <div className="p-6 flex flex-col gap-3 flex-1 justify-between">
+                  <div className="flex flex-col gap-1.5">
+                    <h3 className="serif text-2xl text-[var(--ink)] group-hover:text-[var(--forest)] transition-colors m-0 leading-snug">
                       {project.title}
                     </h3>
-
-                    <p className="text-sm text-[var(--muted)] line-clamp-2 leading-relaxed m-0">
+                    <p className="text-sm text-[var(--muted)] leading-relaxed m-0 line-clamp-3">
                       {project.tagline}
                     </p>
                   </div>
 
-                  {/* Metadata Row: Avatar + Contributor, Session */}
-                  <div className="flex items-center justify-between pt-3.5 border-t border-[rgba(15,26,19,0.08)]">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-[var(--forest)] text-[var(--mint)] text-[10px] font-semibold flex items-center justify-center shrink-0">
-                        {initials || "N"}
-                      </div>
-                      <span className="text-xs font-medium text-[var(--ink)] line-clamp-1">
-                        {project.teamDisplayName ?? "NACOS Project Team"}
-                      </span>
-                    </div>
-
-                    <span className="text-xs text-[var(--muted)] whitespace-nowrap">
-                      2024/2025
+                  <div className="pt-4 border-t border-[rgba(15,26,19,0.08)] flex items-center justify-between text-xs text-[var(--muted)]">
+                    <span className="font-medium text-[var(--ink)]">
+                      {project.teamDisplayName ?? initials}
+                    </span>
+                    <span className="font-semibold text-[var(--green)] group-hover:translate-x-0.5 transition-transform">
+                      View Project &rarr;
                     </span>
                   </div>
                 </div>
@@ -156,16 +163,8 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
           })}
         </div>
       ) : (
-        <div className="dept-empty-state">
-          <h3 className="serif text-2xl">No Projects Found</h3>
-          <p>There are no projects currently available in this category.</p>
-          <button
-            type="button"
-            className="btn btn-dark btn-sm mt-2"
-            onClick={() => setSelectedCategory("all")}
-          >
-            Show All Projects
-          </button>
+        <div className="w-full py-16 text-center text-[var(--muted)]">
+          <p className="text-base">No projects found in this category.</p>
         </div>
       )}
     </div>
