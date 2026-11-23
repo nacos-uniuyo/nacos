@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -54,6 +55,7 @@ interface CoordinatorNavProps {
   user: {
     name: string;
     email: string;
+    image?: string | null;
     role: string;
   };
   departmentSlug?: string | null;
@@ -147,9 +149,19 @@ export function CoordinatorNav({ user }: CoordinatorNavProps) {
       <div className="border-t border-[var(--rule)] pt-4">
         <div className="mb-3 rounded-lg border border-[var(--gold)]/30 bg-[var(--gold)]/10 p-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--forest)] text-xs font-bold text-[var(--gold)]">
-              {user.name.charAt(0).toUpperCase()}
-            </div>
+            {user.image ? (
+              <Image
+                src={user.image}
+                alt={user.name}
+                width={32}
+                height={32}
+                className="size-8 shrink-0 rounded-full object-cover border border-[var(--gold)]/40"
+              />
+            ) : (
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--forest)] text-xs font-bold text-[var(--gold)]">
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+            )}
             <div className="min-w-0 flex-1">
               <p className="truncate text-xs font-bold text-[var(--ink)]">
                 {user.name}
@@ -227,7 +239,7 @@ export function CoordinatorNav({ user }: CoordinatorNavProps) {
       </aside>
 
       {/* Desktop Sticky Sidebar */}
-      <aside className="hidden h-[calc(100vh-80px)] w-68 shrink-0 border-r border-[var(--rule)] bg-[var(--paper)] lg:sticky lg:top-[74px] lg:block">
+      <aside className="hidden h-screen w-68 shrink-0 border-r border-[var(--rule)] bg-[var(--paper)] lg:sticky lg:top-0 lg:block">
         {NavContent}
       </aside>
     </>
