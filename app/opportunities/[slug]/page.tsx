@@ -199,7 +199,7 @@ export default async function OpportunityDetailPage({ params }: Props) {
               <RichTextRenderer doc={articleDoc} />
             </article>
 
-            <aside className="sticky top-28 flex flex-col gap-6 p-6 sm:p-8 bg-white rounded-[24px] border border-[rgba(15,26,19,0.12)] shadow-sm">
+            <aside className="sticky top-28 flex flex-col gap-6 p-6 sm:p-8 bg-white rounded-xl border border-[rgba(15,26,19,0.12)] shadow-sm">
               <h2 className="serif text-xl text-[var(--ink)] m-0">Opportunity Summary</h2>
 
               <dl className="flex flex-col gap-4 text-xs sm:text-sm m-0">

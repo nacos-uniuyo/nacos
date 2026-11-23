@@ -15,7 +15,7 @@ export function OpenTracker({ commitments, className }: OpenTrackerProps) {
   return (
     <div
       className={cn(
-        "flex flex-col bg-white rounded-[22px] shadow-[0_30px_70px_rgba(6,42,20,0.12)] p-6 sm:p-8",
+        "flex flex-col bg-white rounded-xl shadow-[0_30px_70px_rgba(6,42,20,0.12)] p-6 sm:p-8",
         className,
       )}
     >

@@ -186,33 +186,35 @@ export default async function ProjectDetailPage({ params }: Props) {
             {project.tagline}
           </p>
 
-          <div className="cta-row pt-2">
+          <div className="flex flex-wrap items-center gap-3 pt-4">
             {project.demoUrl ? (
-              <Button asChild variant="solid">
+              <Button asChild variant="solid" size="sm">
                 <a
                   href={project.demoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="gap-1.5"
                 >
                   <span>Access Project</span>
-                  <ArrowUpRight size={16} />
+                  <ArrowUpRight size={14} />
                 </a>
               </Button>
             ) : null}
             {project.repoUrl ? (
-              <Button asChild variant="ghost">
+              <Button asChild variant="ghost" size="sm">
                 <a
                   href={project.repoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="gap-1.5"
                 >
-                  <GithubIcon size={18} />
+                  <GithubIcon size={16} />
                   <span>Source Code</span>
                 </a>
               </Button>
             ) : null}
             {dept ? (
-              <Button asChild variant="ghost">
+              <Button asChild variant="ghost" size="sm">
                 <Link href={`/departments/${dept.slug}`}>
                   <span>Visit {dept.name} Hub</span>
                 </Link>
@@ -229,7 +231,7 @@ export default async function ProjectDetailPage({ params }: Props) {
             {/* Left 8-Column Article Canvas */}
             <article className="lg:col-span-8 flex flex-col gap-8">
               {/* Cover Banner Frame */}
-              <div className="w-full aspect-[16/9] rounded-[24px] bg-[var(--forest)] border border-[rgba(15,26,19,0.14)] overflow-hidden relative flex flex-col justify-between p-8 sm:p-12 shadow-sm text-white">
+              <div className="w-full min-h-[220px] sm:aspect-[16/9] rounded-xl bg-[var(--forest)] border border-[rgba(15,26,19,0.14)] overflow-hidden relative flex flex-col justify-between p-6 sm:p-10 shadow-sm text-white">
                 <div className="flex items-center justify-between gap-4">
                   <span className="caps text-xs text-[var(--gold)] font-medium">
                     Department of {dept ? dept.name : project.departmentSlug}
@@ -239,26 +241,26 @@ export default async function ProjectDetailPage({ params }: Props) {
                   </span>
                 </div>
 
-                <div className="flex flex-col gap-3 my-auto py-4">
-                  <span className="serif text-5xl sm:text-7xl text-[var(--mint)] leading-none">
+                <div className="flex flex-col gap-2 my-auto py-4">
+                  <span className="serif text-4xl sm:text-7xl text-[var(--mint)] leading-none">
                     {project.courseCode ?? "01"}
                   </span>
-                  <h2 className="serif text-2xl sm:text-4xl text-white m-0">
+                  <h2 className="serif text-xl sm:text-4xl text-white m-0">
                     {project.title}
                   </h2>
-                  <p className="text-sm sm:text-base text-[var(--mint-2)] max-w-[560px] m-0 leading-relaxed">
+                  <p className="text-xs sm:text-base text-[var(--mint-2)] max-w-[560px] m-0 leading-relaxed">
                     {project.tagline}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-[rgba(255,255,255,0.1)] text-xs text-[var(--mint-2)]">
+                <div className="flex items-center justify-between pt-3 border-t border-[rgba(255,255,255,0.1)] text-xs text-[var(--mint-2)]">
                   <span>{project.teamDisplayName ?? "NACOS Project Team"}</span>
                   <span>{currentSession?.name ?? "2024/2025 Session"}</span>
                 </div>
               </div>
 
               {/* Natural Editorial Article Body */}
-              <div className="bg-white rounded-[24px] border border-[rgba(15,26,19,0.12)] p-8 sm:p-12 md:p-14 shadow-sm">
+              <div className="bg-white rounded-xl border border-[rgba(15,26,19,0.12)] p-6 sm:p-12 md:p-14 shadow-sm">
                 <RichTextRenderer
                   doc={articleDoc}
                   className="project-prose"
@@ -268,7 +270,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 
             {/* Right 4-Column Sticky Specifications Panel */}
             <aside className="lg:col-span-4 flex flex-col gap-4 lg:sticky lg:top-24" aria-label="Project Specifications">
-              <div className="bg-white border border-[rgba(15,26,19,0.12)] rounded-[20px] p-6 shadow-sm flex flex-col gap-5">
+              <div className="bg-white border border-[rgba(15,26,19,0.12)] rounded-xl p-6 shadow-sm flex flex-col gap-5">
                 <div className="border-b border-[rgba(15,26,19,0.08)] pb-3">
                   <span className="caps eyebrow accent">Attribution</span>
                   <h3 className="serif text-2xl text-[var(--ink)] m-0 mt-0.5">Specifications</h3>
@@ -277,8 +279,8 @@ export default async function ProjectDetailPage({ params }: Props) {
                 <div className="flex flex-col gap-4">
                   {/* Department */}
                   <div className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-[10px] bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--forest)] shrink-0">
-                      <GraduationCap size={18} />
+                    <div className="w-8 h-8 rounded-lg bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--forest)] shrink-0">
+                      <GraduationCap size={16} />
                     </div>
                     <div className="flex flex-col gap-0.5">
                       <span className="caps text-[10px] text-[var(--muted)] font-medium">Department</span>
@@ -294,8 +296,8 @@ export default async function ProjectDetailPage({ params }: Props) {
 
                   {/* Category */}
                   <div className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-[10px] bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--forest)] shrink-0">
-                      <Layers size={18} />
+                    <div className="w-8 h-8 rounded-lg bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--forest)] shrink-0">
+                      <Layers size={16} />
                     </div>
                     <div className="flex flex-col gap-0.5">
                       <span className="caps text-[10px] text-[var(--muted)] font-medium">Category</span>
@@ -305,8 +307,8 @@ export default async function ProjectDetailPage({ params }: Props) {
 
                   {/* Course Code */}
                   <div className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-[10px] bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--forest)] shrink-0">
-                      <BookOpen size={18} />
+                    <div className="w-8 h-8 rounded-lg bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--forest)] shrink-0">
+                      <BookOpen size={16} />
                     </div>
                     <div className="flex flex-col gap-0.5">
                       <span className="caps text-[10px] text-[var(--muted)] font-medium">Course Code</span>
@@ -318,8 +320,8 @@ export default async function ProjectDetailPage({ params }: Props) {
 
                   {/* Contributors */}
                   <div className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-[10px] bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--forest)] shrink-0">
-                      <Users size={18} />
+                    <div className="w-8 h-8 rounded-lg bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--forest)] shrink-0">
+                      <Users size={16} />
                     </div>
                     <div className="flex flex-col gap-0.5">
                       <span className="caps text-[10px] text-[var(--muted)] font-medium">Team or Authors</span>
@@ -331,8 +333,8 @@ export default async function ProjectDetailPage({ params }: Props) {
 
                   {/* Session */}
                   <div className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-[10px] bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--forest)] shrink-0">
-                      <Calendar size={18} />
+                    <div className="w-8 h-8 rounded-lg bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--forest)] shrink-0">
+                      <Calendar size={16} />
                     </div>
                     <div className="flex flex-col gap-0.5">
                       <span className="caps text-[10px] text-[var(--muted)] font-medium">Academic Session</span>
@@ -344,8 +346,8 @@ export default async function ProjectDetailPage({ params }: Props) {
 
                   {/* Moderation Status */}
                   <div className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-[10px] bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--green)] shrink-0">
-                      <CheckCircle2 size={18} />
+                    <div className="w-8 h-8 rounded-lg bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--green)] shrink-0">
+                      <CheckCircle2 size={16} />
                     </div>
                     <div className="flex flex-col gap-0.5">
                       <span className="caps text-[10px] text-[var(--muted)] font-medium">Verification</span>
@@ -395,16 +397,16 @@ export default async function ProjectDetailPage({ params }: Props) {
           {/* 3. Related Projects Grid */}
           {relatedProjects.length > 0 ? (
             <div className="mt-20 pt-16 border-t border-[rgba(15,26,19,0.12)]">
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
                 <div>
                   <span className="caps eyebrow accent">Explore More</span>
-                  <h2 className="serif text-3xl sm:text-4xl text-[var(--ink)] m-0 mt-1">
+                  <h2 className="serif text-2xl sm:text-4xl text-[var(--ink)] m-0 mt-1">
                     Other Student Projects
                   </h2>
                 </div>
                 <Link
                   href="/projects"
-                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--green)] no-underline hover:underline"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--green)] no-underline hover:no-underline shrink-0"
                 >
                   <span>View All Projects</span>
                   <ArrowRight size={15} />
@@ -425,7 +427,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                     <Link
                       key={rel.slug}
                       href={`/projects/${rel.slug}`}
-                      className="group flex flex-col no-underline text-inherit bg-white rounded-[20px] border border-[rgba(15,26,19,0.12)] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+                      className="group flex flex-col no-underline text-inherit bg-white rounded-xl border border-[rgba(15,26,19,0.12)] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
                     >
                       <div className="w-full aspect-[16/10] bg-[var(--forest)] overflow-hidden relative flex flex-col justify-between p-6">
                         <div className="flex items-center justify-between gap-2">

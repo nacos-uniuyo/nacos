@@ -100,18 +100,14 @@ export default async function DepartmentHubPage({ params }: Props) {
 
         <div className="wrap relative flex flex-col gap-6 w-full">
           <nav className="crumbs" aria-label="Breadcrumb">
-            <ol className="list-none flex flex-wrap gap-2 m-0 p-0 text-[13px] text-[var(--mint)]">
+            <ol>
               <li>
-                <Link href="/" className="text-[var(--mint)] hover:text-white no-underline transition-colors">Home</Link>
+                <Link href="/">NACOS UNIUYO</Link>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="text-white/30">/</span>
-                <Link href="/departments" className="text-[var(--mint)] hover:text-white no-underline transition-colors">Departments</Link>
+              <li>
+                <Link href="/departments">Departments</Link>
               </li>
-              <li className="flex items-center gap-2" aria-current="page">
-                <span className="text-white/30">/</span>
-                <span className="text-white">{department.name}</span>
-              </li>
+              <li aria-current="page">{department.name}</li>
             </ol>
           </nav>
 
@@ -162,7 +158,7 @@ export default async function DepartmentHubPage({ params }: Props) {
 
       <JsonLd
         data={breadcrumbSchema([
-          { name: "Home", path: "/" },
+          { name: "NACOS UNIUYO", path: "/" },
           { name: "Departments", path: "/departments" },
           { name: department.name, path: `/departments/${department.slug}` },
         ])}

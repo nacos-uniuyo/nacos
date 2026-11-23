@@ -37,7 +37,7 @@ export default async function StaffPage() {
         <div className="grid-bg drift" aria-hidden="true" />
         <HeroOrbits label="{ FACULTY STAFF }" className="hero-orbits fade" />
         <div className="wrap relative flex flex-col gap-6 w-full">
-          <Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Staff" }]} />
+          <Breadcrumbs items={[{ name: "NACOS UNIUYO", path: "/" }, { name: "Staff" }]} />
           <span className="eyebrow on-dark caps fade d1">Faculty Directory</span>
           <h1 id="staff-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
             <span className="line">
@@ -73,7 +73,7 @@ export default async function StaffPage() {
       <JsonLd
         data={[
           breadcrumbSchema([
-            { name: "Home", path: "/" },
+            { name: "NACOS UNIUYO", path: "/" },
             { name: "Staff", path: "/staff" },
           ]),
         ]}
