@@ -60,14 +60,14 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
         <div
           role="tablist"
           aria-label="Filter projects by category"
-          className="segmented-filter-bar"
+          className="inline-flex items-center gap-1 p-1 rounded-full bg-[var(--card-surface)] border border-[var(--rule)] shadow-xs max-w-full overflow-x-auto scrollbar-none"
         >
           <button
             type="button"
             role="tab"
             aria-selected={selectedCategory === "all"}
             onClick={() => setSelectedCategory("all")}
-            className={`segmented-filter-btn ${selectedCategory === "all" ? "active" : ""}`}
+            className={`py-2 px-4.5 rounded-full text-[13px] font-medium whitespace-nowrap cursor-pointer transition-all ${selectedCategory === "all" ? "bg-[var(--forest)] text-white font-semibold shadow-xs" : "text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[rgba(15,26,19,0.04)]"}`}
           >
             All Projects
           </button>
@@ -80,7 +80,7 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setSelectedCategory(cat)}
-                className={`segmented-filter-btn ${isActive ? "active" : ""}`}
+                className={`py-2 px-4.5 rounded-full text-[13px] font-medium whitespace-nowrap cursor-pointer transition-all ${isActive ? "bg-[var(--forest)] text-white font-semibold shadow-xs" : "text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[rgba(15,26,19,0.04)]"}`}
               >
                 {PROJECT_CATEGORY_LABELS[cat]}
               </button>
@@ -105,7 +105,7 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
               <Link
                 key={project.slug}
                 href={`/projects/${project.slug}`}
-                className="group flex flex-col no-underline text-inherit bg-white rounded-xl border border-[rgba(15,26,19,0.12)] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+                className="group flex flex-col no-underline text-inherit bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
               >
                 {/* Visual Cover Container */}
                 <div className="w-full aspect-[16/10] bg-[var(--forest)] overflow-hidden relative flex flex-col justify-between p-6">

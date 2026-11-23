@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -153,9 +154,19 @@ export function DashboardNav({ user }: DashboardNavProps) {
       {/* User Section & Logout */}
       <div className="border-t border-[var(--rule)] pt-4">
         <div className="mb-3 flex items-center gap-3 rounded-lg bg-[var(--sand)]/50 p-3">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[var(--forest)] text-sm font-semibold text-[var(--gold)]">
-            {user.name.charAt(0).toUpperCase()}
-          </div>
+          {user.image ? (
+            <Image
+              src={user.image}
+              alt={user.name}
+              width={36}
+              height={36}
+              className="size-9 shrink-0 rounded-full object-cover border border-[var(--rule)]"
+            />
+          ) : (
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[var(--forest)] text-sm font-semibold text-[var(--gold)]">
+              {user.name.charAt(0).toUpperCase()}
+            </div>
+          )}
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-[var(--ink)]">
               {user.name}
@@ -197,9 +208,19 @@ export function DashboardNav({ user }: DashboardNavProps) {
         </div>
         <Link
           href="/dashboard/profile"
-          className="flex size-8 items-center justify-center rounded-full bg-[var(--forest)] text-xs font-bold text-[var(--gold)]"
+          className="flex size-8 items-center justify-center rounded-full bg-[var(--forest)] text-xs font-bold text-[var(--gold)] overflow-hidden"
         >
-          {user.name.charAt(0).toUpperCase()}
+          {user.image ? (
+            <Image
+              src={user.image}
+              alt={user.name}
+              width={32}
+              height={32}
+              className="size-full object-cover"
+            />
+          ) : (
+            user.name.charAt(0).toUpperCase()
+          )}
         </Link>
       </div>
 
@@ -222,7 +243,7 @@ export function DashboardNav({ user }: DashboardNavProps) {
       </aside>
 
       {/* Desktop Sticky Sidebar */}
-      <aside className="hidden h-[calc(100vh-80px)] w-64 shrink-0 border-r border-[var(--rule)] bg-[var(--paper)] lg:sticky lg:top-[74px] lg:block">
+      <aside className="hidden h-screen w-64 shrink-0 border-r border-[var(--rule)] bg-[var(--paper)] lg:sticky lg:top-0 lg:block">
         {NavContent}
       </aside>
     </>

@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { DashboardNav } from "@/components/dashboard/DashboardNav";
+import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
+import { Separator } from "@/components/ui/separator";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { auth } from "@/lib/auth";
 
 export const metadata: Metadata = {
@@ -22,20 +28,29 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-[var(--paper)]">
-      <div className="mx-auto flex max-w-[1400px] flex-col lg:flex-row">
-        <DashboardNav
-          user={{
-            name: session.user.name,
-            email: session.user.email,
-            image: session.user.image,
-            role: session.user.role ?? "user",
-          }}
-        />
-        <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
+    <SidebarProvider>
+      <DashboardSidebar
+        user={{
+          name: session.user.name,
+          email: session.user.email,
+          image: session.user.image,
+          role: session.user.role ?? "user",
+        }}
+      />
+      <SidebarInset className="bg-[var(--paper)]">
+        <header className="flex h-14 shrink-0 items-center gap-2 border-b border-[var(--rule)] px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 sm:px-6">
+          <div className="flex items-center gap-2">
+            <SidebarTrigger className="-ml-1 text-[var(--forest)] hover:bg-[var(--sand)]" />
+            <Separator orientation="vertical" className="mr-2 h-4 bg-[var(--rule)]" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--forest)]">
+              Dashboard
+            </span>
+          </div>
+        </header>
+        <main id="main" className="flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-10 max-w-[1400px]">
           {children}
         </main>
-      </div>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

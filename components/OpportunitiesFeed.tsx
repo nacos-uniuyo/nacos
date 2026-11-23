@@ -94,7 +94,7 @@ export function OpportunitiesFeed({ initialOpportunities, departments }: Props) 
     <div className="flex flex-col gap-10">
       {/* 1. Centered Segmented Type Pill Bar */}
       <div className="flex flex-col items-center gap-6">
-        <div className="segmented-filter-bar">
+        <div className="inline-flex items-center gap-1 p-1 rounded-full bg-[var(--card-surface)] border border-[var(--rule)] shadow-xs max-w-full overflow-x-auto scrollbar-none">
           {availableTypes.map((tab) => {
             const isActive = selectedType === tab.id;
             return (
@@ -102,7 +102,7 @@ export function OpportunitiesFeed({ initialOpportunities, departments }: Props) 
                 key={tab.id}
                 type="button"
                 onClick={() => setSelectedType(tab.id)}
-                className={`segmented-filter-btn ${isActive ? "active" : ""}`}
+                className={`py-2 px-4.5 rounded-full text-[13px] font-medium whitespace-nowrap cursor-pointer transition-all ${isActive ? "bg-[var(--forest)] text-white font-semibold shadow-xs" : "text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[rgba(15,26,19,0.04)]"}`}
               >
                 {tab.label}
               </button>
@@ -123,7 +123,7 @@ export function OpportunitiesFeed({ initialOpportunities, departments }: Props) 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search opportunities, organizations, locations..."
-              className="w-full pl-11 pr-4 py-2.5 rounded-full bg-white border border-[rgba(15,26,19,0.12)] text-sm text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--green)] shadow-xs transition-colors"
+              className="w-full pl-11 pr-4 py-2.5 rounded-full bg-[var(--card-surface)] border border-[var(--rule)] text-sm text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--green)] shadow-xs transition-colors"
             />
           </div>
 
@@ -154,7 +154,7 @@ export function OpportunitiesFeed({ initialOpportunities, departments }: Props) 
 
       {/* 3. Opportunities Cards Grid */}
       {filteredOpportunities.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-xl border border-[rgba(15,26,19,0.12)] p-8">
+        <div className="text-center py-20 bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] p-8">
           <p className="serif text-2xl text-[var(--ink)] mb-2">No matching opportunities found</p>
           <p className="text-sm text-[var(--muted)] max-w-md mx-auto mb-6">
             Try adjusting your search query, selecting another category pill, or broadening your departmental scope.
