@@ -50,6 +50,8 @@ Development is structured into disciplined phases to ensure developer ergonomics
 3. **Opportunities & SIWES / IT Hub (`/opportunities`):**
    - Curated listings of industrial training (SIWES/IT) placements, corporate internships, scholarships, student sponsorships, technical grants, and faculty industry partnerships.
    - Filterable by department, opportunity type, and application deadline, with verified application links.
+   - Dedicated detail sub-routes (`/opportunities/[slug]`) for listings with internal application briefs and submission instructions rendered via rich text.
+   - Branding and hero watermark standards: Internal faculty grants and departmental opportunities display the University of Uyo crest or Faculty of Computing seal within the central orbital ring; external openings display the partner or sponsor brand mark in monochrome or watermark style. When partner artwork is pending, the orbits fall back to the opportunity category label and institutional insignia silhouette.
 4. **Alumni Archive & Living Digital Yearbook (`/yearbook`, `/alumni`):**
    - Annual graduating cohort archives organized by session (e.g. `2024/2025`) and filtered by department.
    - Comprehensive faculty alumni directory connecting past graduates with current undergraduates for mentoring and career networking.

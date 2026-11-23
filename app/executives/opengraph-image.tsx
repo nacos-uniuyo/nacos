@@ -11,7 +11,7 @@ const H = 140;
 export default async function Image() {
   const [mark, ...faces] = await Promise.all([
     logo(56),
-    ...executives.map((x) => picture(x.photo!, W * 2, H * 2)),
+    ...executives.map((x) => picture(`images/execs/${x.slug}.webp`, W * 2, H * 2)),
   ]);
 
   return render(
