@@ -15,7 +15,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-import { ArrowRight, Menu } from "./icons";
+import { Menu } from "./icons";
 
 const departmentItems = [
   {
@@ -71,7 +71,7 @@ export function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [deptDropdownOpen, setDeptDropdownOpen] = useState(false);
   const [mobileDeptsOpen, setMobileDeptsOpen] = useState(false);
-  const [signingOut, setSigningOut] = useState(false);
+  const [_signingOut, setSigningOut] = useState(false);
 
   const menuRef = useRef<HTMLDivElement>(null);
   const deptMenuRef = useRef<HTMLDivElement>(null);
@@ -162,24 +162,24 @@ export function Header() {
 
   return (
     <header
-      className="site-header"
+      className="sticky top-0 z-30 bg-[rgba(6,42,20,0.92)] backdrop-blur-md border-b border-white/10"
       ref={deptMenuRef}
       onMouseLeave={handleDeptMouseLeave}
     >
-      <div className="wrap bar">
-        <Link href="/" className="brand" aria-label="NACOS UNIUYO home">
-          <Image src={nacosLogoImg} alt="" width={52} height={52} priority />
-          <span className="brand-text">
-            <span className="caps brand-name">NACOS</span>
-            <span className="brand-sub">University of Uyo</span>
+      <div className="wrap h-20 flex items-center justify-between gap-6">
+        <Link href="/" className="flex items-center gap-3.5 no-underline" aria-label="NACOS UNIUYO home">
+          <Image src={nacosLogoImg} alt="" width={52} height={52} priority className="size-[52px] rounded-full ring-2 ring-white/90" />
+          <span className="flex flex-col gap-0.5">
+            <span className="caps text-white text-[15px] tracking-[0.18em]">NACOS</span>
+            <span className="text-[var(--mint)] text-xs tracking-[0.04em]">University of Uyo</span>
           </span>
         </Link>
 
         {/* Right Navigation Bar */}
         <div className="flex items-center gap-6">
-          <nav aria-label="Main" className="main-nav">
+          <nav aria-label="Main" className="hidden lg:flex items-center gap-[clamp(20px,2.6vw,36px)]">
             <Link
-              className="navlink"
+              className="text-[#e7eaf3] hover:text-white no-underline text-[15px] font-medium py-2.5 px-0.5 border-b-2 border-transparent transition-colors aria-[current=page]:text-white aria-[current=page]:border-b-[var(--gold)]"
               href="/"
               aria-current={isCurrentRoute("/")}
             >
@@ -189,8 +189,8 @@ export function Header() {
             {/* Departments Toggle Button */}
             <button
               type="button"
-              className={`navlink inline-flex items-center gap-1.5 cursor-pointer bg-transparent border-0 font-inherit p-0 transition-colors ${
-                isDeptActive || deptDropdownOpen ? "text-white" : ""
+              className={`inline-flex items-center gap-1.5 cursor-pointer bg-transparent border-0 font-inherit p-0 text-[#e7eaf3] hover:text-white text-[15px] font-medium py-2.5 px-0.5 border-b-2 border-transparent transition-colors ${
+                isDeptActive || deptDropdownOpen ? "text-white border-b-[var(--gold)]" : ""
               }`}
               aria-expanded={deptDropdownOpen}
               aria-haspopup="menu"
@@ -215,7 +215,7 @@ export function Header() {
             {navLinks.slice(1).map((link) => (
               <Link
                 key={link.href}
-                className="navlink"
+                className="text-[#e7eaf3] hover:text-white no-underline text-[15px] font-medium py-2.5 px-0.5 border-b-2 border-transparent transition-colors aria-[current=page]:text-white aria-[current=page]:border-b-[var(--gold)]"
                 href={link.href}
                 aria-current={isCurrentRoute(link.matchPrefix)}
               >
@@ -224,34 +224,34 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="header-actions">
+          <div className="hidden lg:flex items-center gap-3 shrink-0">
             {user ? (
-              <div className="session-menu-wrap" ref={menuRef}>
+              <div className="relative" ref={menuRef}>
                 <button
                   type="button"
-                  className="portal-login-btn session-trigger"
+                  className="inline-flex items-center justify-center gap-2 min-h-10 px-4.5 rounded-full border-[1.5px] border-[var(--gold)] bg-[rgba(216,180,92,0.08)] text-white text-[13.5px] font-semibold no-underline cursor-pointer whitespace-nowrap transition-all hover:bg-[var(--gold)] hover:text-[var(--forest)] hover:-translate-y-0.5"
                   aria-expanded={userMenuOpen}
                   aria-haspopup="menu"
                   onClick={() => setUserMenuOpen((prev) => !prev)}
                 >
-                  <span className="session-avatar" aria-hidden="true">
+                  <span className="size-6 rounded-full bg-[var(--gold)] text-[var(--forest)] text-[11px] font-bold inline-flex items-center justify-center" aria-hidden="true">
                     {userInitials}
                   </span>
-                  <span className="session-name">{user.name.split(" ")[0]}</span>
+                  <span>{user.name.split(" ")[0]}</span>
                 </button>
 
                 {userMenuOpen ? (
-                  <div className="session-dropdown" role="menu">
-                    <div className="session-dropdown-head">
-                      <p className="caps session-kicker">Signed in member</p>
-                      <p className="session-user-name">{user.name}</p>
-                      <p className="session-user-email">{user.email}</p>
+                  <div className="absolute right-0 top-[calc(100%+10px)] w-[250px] bg-white text-[var(--ink)] rounded-2xl border border-[var(--rule)] shadow-[0_24px_48px_rgba(6,42,20,0.24)] overflow-hidden z-60" role="menu">
+                    <div className="p-4 bg-[var(--paper)] border-b border-[var(--rule)]">
+                      <p className="caps m-0 text-[10px] text-[var(--green)]">Signed in member</p>
+                      <p className="m-0 mt-1 text-sm font-semibold text-[var(--ink)]">{user.name}</p>
+                      <p className="m-0 mt-0.5 text-xs text-[var(--muted)] break-all">{user.email}</p>
                     </div>
-                    <div className="session-dropdown-links">
+                    <div className="flex flex-col p-1.5">
                       <Link
                         href="/login"
                         role="menuitem"
-                        className="session-dropdown-item"
+                        className="flex items-center w-full p-2.5 rounded-lg bg-transparent text-[13px] font-semibold text-[var(--ink)] hover:bg-[var(--sand)] no-underline transition-colors"
                         onClick={() => setUserMenuOpen(false)}
                       >
                         Account &amp; Session
@@ -259,229 +259,134 @@ export function Header() {
                       <button
                         type="button"
                         role="menuitem"
-                        className="session-dropdown-item session-signout"
+                        className="flex items-center w-full p-2.5 rounded-lg bg-transparent border-0 text-[13px] font-semibold text-destructive hover:bg-destructive/10 cursor-pointer text-left transition-colors"
                         onClick={handleSignOut}
-                        disabled={signingOut}
                       >
-                        {signingOut ? "Signing out…" : "Sign out"}
+                        Sign Out
                       </button>
                     </div>
                   </div>
                 ) : null}
               </div>
             ) : (
-              <Link href="/login" className="portal-login-btn max-lg:hidden">
-                <span>Portal Login</span>
-                <ArrowRight size={15} stroke={2.2} />
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center gap-2 min-h-10 px-4.5 rounded-full border-[1.5px] border-[var(--gold)] bg-[rgba(216,180,92,0.08)] text-white text-[13.5px] font-semibold no-underline cursor-pointer whitespace-nowrap transition-all hover:bg-[var(--gold)] hover:text-[var(--forest)] hover:-translate-y-0.5"
+              >
+                Sign In
               </Link>
             )}
-
-            <button
-              type="button"
-              className="menu-btn"
-              aria-expanded={open}
-              aria-controls="mobile-nav"
-              aria-label={open ? "Close navigation menu" : "Open navigation menu"}
-              onClick={() => setOpen((o) => !o)}
-            >
-              <Menu open={open} />
-            </button>
           </div>
+
+          <button
+            type="button"
+            className="lg:hidden size-11.5 rounded-full border border-white/30 bg-transparent text-white inline-flex items-center justify-center cursor-pointer"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            onClick={() => setOpen((prev) => !prev)}
+          >
+            <Menu open={open} />
+          </button>
         </div>
       </div>
 
-      {/* Extended Desktop Mega-Header Panel */}
-      <div
-        className={`max-lg:hidden overflow-hidden transition-all duration-300 ease-out border-[rgba(255,255,255,0.08)] bg-[rgba(5,32,15,0.98)] backdrop-blur-md ${
-          deptDropdownOpen
-            ? "max-h-[380px] opacity-100 border-t translate-y-0"
-            : "max-h-0 opacity-0 border-t-0 -translate-y-2 pointer-events-none"
-        }`}
-        role="menu"
-        aria-label="Academic Departments"
-        onMouseEnter={() => {
-          if (deptTimeoutRef.current) {
-            window.clearTimeout(deptTimeoutRef.current);
-          }
-          setDeptDropdownOpen(true);
-        }}
-        onMouseLeave={handleDeptMouseLeave}
-      >
-        <div className="wrap py-8">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="text-[11px] font-mono uppercase tracking-widest text-[var(--gold)]">
-              Faculty of Computing
-            </span>
-            <span className="text-white/20">/</span>
-            <span className="text-xs text-[var(--mint-2)]">Academic Departments</span>
-          </div>
-
-          <div className="grid grid-cols-5 gap-4">
+      {/* Departments Hover/Click Mega Panel for Desktop */}
+      {deptDropdownOpen && (
+        <div
+          className="hidden lg:block absolute left-0 right-0 top-full bg-[rgba(6,42,20,0.98)] backdrop-blur-xl border-b border-[var(--gold)]/30 shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-20 py-8"
+          onMouseEnter={handleDeptMouseEnter}
+          onMouseLeave={handleDeptMouseLeave}
+        >
+          <div className="wrap grid grid-cols-5 gap-6">
             {departmentItems.map((dept) => {
               const Icon = dept.icon;
-              const isActive = pathname === `/departments/${dept.slug}`;
               return (
                 <Link
                   key={dept.slug}
                   href={`/departments/${dept.slug}`}
-                  role="menuitem"
-                  onClick={() => setDeptDropdownOpen(false)}
-                  className={`group/dept flex flex-col justify-between p-4 rounded-xl border transition-all duration-200 no-underline text-inherit ${
-                    isActive
-                      ? "bg-white/10 border-[rgba(217,163,66,0.5)] shadow-md"
-                      : "bg-white/[0.03] border-white/10 hover:bg-white/[0.08] hover:border-white/20"
-                  }`}
+                  className="group flex flex-col gap-3 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-[var(--gold)]/50 transition-all no-underline"
                 >
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between">
-                      <div
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                          isActive
-                            ? "bg-[var(--gold)] text-[var(--forest)]"
-                            : "bg-white/10 text-[var(--gold)] group-hover/dept:bg-[var(--gold)] group-hover/dept:text-[var(--forest)]"
-                        }`}
-                      >
-                        <Icon size={16} />
-                      </div>
-                      <span className="text-[10px] font-mono text-[var(--mint-2)] tracking-wider uppercase">
-                        {dept.shortName}
-                      </span>
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-                      <h4 className="text-sm font-semibold text-white group-hover/dept:text-[var(--gold)] transition-colors m-0 leading-tight">
-                        {dept.name}
-                      </h4>
-                      <p className="text-[12px] text-[var(--mint-2)] line-clamp-2 leading-relaxed m-0 font-normal">
-                        {dept.summary}
-                      </p>
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <span className="p-2 rounded-lg bg-[var(--gold)]/10 text-[var(--gold)] group-hover:bg-[var(--gold)] group-hover:text-[var(--forest)] transition-colors">
+                      <Icon size={18} />
+                    </span>
+                    <span className="caps text-[10px] text-[var(--mint-2)]">{dept.shortName}</span>
                   </div>
-
-                  <div className="pt-3 mt-3 border-t border-white/10 flex items-center gap-1 text-[11px] font-mono text-[var(--gold)] opacity-80 group-hover/dept:opacity-100 transition-opacity">
-                    <span>Explore Hub</span>
-                    <ArrowRight size={12} className="transition-transform group-hover/dept:translate-x-0.5" />
+                  <div>
+                    <h3 className="serif text-lg text-white m-0 group-hover:text-[var(--gold)] transition-colors">
+                      {dept.name}
+                    </h3>
+                    <p className="text-xs text-[var(--mint)] leading-relaxed m-0 mt-1 line-clamp-2">
+                      {dept.summary}
+                    </p>
                   </div>
                 </Link>
               );
             })}
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Responsive Mobile Navigation Drawer */}
-      <nav id="mobile-nav" className="mobile-nav" data-open={open} aria-label="Mobile">
-        <div className="mobile-nav-inner">
-          <ul className="mobile-nav-links">
+      {/* Mobile Drawer */}
+      {open && (
+        <div className="lg:hidden border-t border-white/10 bg-[var(--forest)] px-6 py-6 overflow-y-auto max-h-[85vh]">
+          <ul className="flex flex-col list-none m-0 p-0 divide-y divide-white/10">
             <li>
-              <Link
-                className="serif"
-                href="/"
-                aria-current={isCurrentRoute("/")}
-                style={isCurrentRoute("/") ? { color: "var(--gold)" } : undefined}
-                tabIndex={open ? 0 : -1}
-                onClick={() => setOpen(false)}
-              >
-                <span>Home</span>
+              <Link href="/" className="block py-3 text-xl text-white no-underline">
+                Home
               </Link>
             </li>
-
-            {/* Mobile Departments Expandable Group */}
             <li>
-              <div className="flex flex-col">
+              <button
+                type="button"
+                className="w-full flex items-center justify-between py-3 text-xl text-white bg-transparent border-0 cursor-pointer"
+                onClick={() => setMobileDeptsOpen((p) => !p)}
+              >
+                <span>Departments</span>
+                <ChevronDown size={18} className={`transition-transform ${mobileDeptsOpen ? "rotate-180" : ""}`} />
+              </button>
+              {mobileDeptsOpen && (
+                <div className="pl-4 pb-3 flex flex-col gap-2">
+                  {departmentItems.map((d) => (
+                    <Link
+                      key={d.slug}
+                      href={`/departments/${d.slug}`}
+                      className="text-sm text-[var(--mint-2)] hover:text-white py-1 no-underline"
+                    >
+                      {d.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </li>
+            {navLinks.slice(1).map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} className="block py-3 text-xl text-white no-underline">
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+            <li className="pt-4">
+              {user ? (
                 <button
                   type="button"
-                  className="mobile-nav-link-btn serif flex items-center justify-between w-full bg-transparent border-0 border-b border-[rgba(255,255,255,0.08)] text-left cursor-pointer transition-colors"
-                  style={isDeptActive ? { color: "var(--gold)" } : undefined}
-                  onClick={() => setMobileDeptsOpen((prev) => !prev)}
-                  tabIndex={open ? 0 : -1}
+                  onClick={handleSignOut}
+                  className="w-full text-left py-2 text-base font-semibold text-destructive bg-transparent border-0 cursor-pointer"
                 >
-                  <span>Departments</span>
+                  Sign Out ({user.name.split(" ")[0]})
                 </button>
-
-                {mobileDeptsOpen && (
-                  <div className="py-2 pl-3 flex flex-col gap-1 border-b border-[rgba(255,255,255,0.08)] bg-black/10 rounded-lg my-1">
-                    {departmentItems.map((dept) => {
-                      const isActive = pathname === `/departments/${dept.slug}`;
-                      const Icon = dept.icon;
-                      return (
-                        <Link
-                          key={dept.slug}
-                          href={`/departments/${dept.slug}`}
-                          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors no-underline ${
-                            isActive
-                              ? "bg-white/10 text-[var(--gold)] font-medium"
-                              : "text-[var(--mint-2)] hover:text-white hover:bg-white/5"
-                          }`}
-                          tabIndex={open ? 0 : -1}
-                          onClick={() => setOpen(false)}
-                        >
-                          <div
-                            className={`w-6 h-6 rounded flex items-center justify-center shrink-0 ${
-                              isActive
-                                ? "bg-[var(--gold)] text-[var(--forest)]"
-                                : "bg-white/10 text-[var(--mint)]"
-                            }`}
-                          >
-                            <Icon size={13} />
-                          </div>
-                          <span className="text-sm font-sans tracking-normal">{dept.name}</span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="inline-flex items-center justify-center w-full py-3 rounded-full border border-[var(--gold)] text-white text-sm font-semibold no-underline"
+                >
+                  Sign In
+                </Link>
+              )}
             </li>
-
-            {navLinks.slice(1).map((link) => {
-              const active = isCurrentRoute(link.matchPrefix);
-              return (
-                <li key={link.href}>
-                  <Link
-                    className="serif"
-                    href={link.href}
-                    aria-current={active}
-                    style={active ? { color: "var(--gold)" } : undefined}
-                    tabIndex={open ? 0 : -1}
-                    onClick={() => setOpen(false)}
-                  >
-                    <span>{link.label}</span>
-                  </Link>
-                </li>
-              );
-            })}
-
-            {user ? (
-              <li>
-                <Link
-                  className="serif"
-                  href="/login"
-                  aria-current={isCurrentRoute("/login")}
-                  style={isCurrentRoute("/login") ? { color: "var(--gold)" } : undefined}
-                  tabIndex={open ? 0 : -1}
-                  onClick={() => setOpen(false)}
-                >
-                  <span>Account ({user.name.split(" ")[0]})</span>
-                </Link>
-              </li>
-            ) : (
-              <li>
-                <Link
-                  className="serif"
-                  href="/login"
-                  aria-current={isCurrentRoute("/login")}
-                  style={isCurrentRoute("/login") ? { color: "var(--gold)" } : undefined}
-                  tabIndex={open ? 0 : -1}
-                  onClick={() => setOpen(false)}
-                >
-                  <span>Portal Login</span>
-                </Link>
-              </li>
-            )}
           </ul>
         </div>
-      </nav>
+      )}
     </header>
   );
 }

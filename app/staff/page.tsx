@@ -33,13 +33,13 @@ export default async function StaffPage() {
 
   return (
     <>
-      <section className="page-hero" aria-labelledby="staff-title">
+      <section className="relative bg-[var(--forest)] text-white overflow-hidden min-h-[min(780px,calc(100svh-80px))] flex items-center py-[clamp(64px,8vw,100px)]" aria-labelledby="staff-title">
         <div className="grid-bg drift" aria-hidden="true" />
         <HeroOrbits label="{ FACULTY STAFF }" className="hero-orbits fade" />
-        <div className="wrap">
-          <Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Staff" }]} />
+        <div className="wrap relative flex flex-col gap-6 w-full">
+          <Breadcrumbs items={[{ name: "NACOS UNIUYO", path: "/" }, { name: "Staff" }]} />
           <span className="eyebrow on-dark caps fade d1">Faculty Directory</span>
-          <h1 id="staff-title" className="serif">
+          <h1 id="staff-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
             <span className="line">
               <span className="rise d1">Academic &amp; Administrative</span>
             </span>
@@ -47,7 +47,7 @@ export default async function StaffPage() {
               <span className="rise d2 it gold">Staff</span>
             </span>
           </h1>
-          <p className="fade d3 max-w-[640px]">
+          <p className="fade d3 m-0 max-w-[640px] text-[clamp(17px,1.7vw,19px)] leading-relaxed text-[var(--mint-2)]">
             Faculty leadership, departmental heads, research advisers, and technologists serving the computing
             community at the University of Uyo.
           </p>
@@ -73,7 +73,7 @@ export default async function StaffPage() {
       <JsonLd
         data={[
           breadcrumbSchema([
-            { name: "Home", path: "/" },
+            { name: "NACOS UNIUYO", path: "/" },
             { name: "Staff", path: "/staff" },
           ]),
         ]}
