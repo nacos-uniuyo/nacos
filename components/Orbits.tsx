@@ -36,6 +36,7 @@ export function HeroOrbits({
           fontFamily="var(--font-instrument-sans), sans-serif"
           fontSize="14"
           letterSpacing="3"
+          className="hidden md:block"
         >
           {label}
         </text>

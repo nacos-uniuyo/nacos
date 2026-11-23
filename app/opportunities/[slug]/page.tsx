@@ -10,6 +10,7 @@ import {
   MapPin,
   Sparkles,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { ArrowUpRight } from "@/components/icons";
 import { JsonLd } from "@/components/JsonLd";
 import { HeroOrbits } from "@/components/Orbits";
@@ -198,7 +199,7 @@ export default async function OpportunityDetailPage({ params }: Props) {
               <RichTextRenderer doc={articleDoc} />
             </article>
 
-            <aside className="sticky top-28 flex flex-col gap-6 p-6 sm:p-8 bg-white rounded-[24px] border border-[rgba(15,26,19,0.12)] shadow-sm">
+            <aside className="sticky top-28 flex flex-col gap-6 p-6 sm:p-8 bg-white rounded-xl border border-[rgba(15,26,19,0.12)] shadow-sm">
               <h2 className="serif text-xl text-[var(--ink)] m-0">Opportunity Summary</h2>
 
               <dl className="flex flex-col gap-4 text-xs sm:text-sm m-0">
@@ -241,15 +242,16 @@ export default async function OpportunityDetailPage({ params }: Props) {
 
               <div className="pt-2">
                 {opportunity.applyUrl ? (
-                  <a
-                    href={opportunity.applyUrl}
-                    target={isExternalApply ? "_blank" : undefined}
-                    rel={isExternalApply ? "noopener noreferrer" : undefined}
-                    className="btn btn-solid w-full"
-                  >
-                    <span>{isExternalApply ? "Apply on Official Site" : "Submit Application"}</span>
-                    <ArrowUpRight size={15} />
-                  </a>
+                  <Button asChild variant="solid" className="w-full">
+                    <a
+                      href={opportunity.applyUrl}
+                      target={isExternalApply ? "_blank" : undefined}
+                      rel={isExternalApply ? "noopener noreferrer" : undefined}
+                    >
+                      <span>{isExternalApply ? "Apply on Official Site" : "Submit Application"}</span>
+                      <ArrowUpRight size={15} />
+                    </a>
+                  </Button>
                 ) : (
                   <div className="p-4 rounded-xl bg-[var(--sand)] text-xs text-[var(--forest)] leading-relaxed">
                     Applications for this faculty opportunity are submitted directly through the administrative instructions described on this page.

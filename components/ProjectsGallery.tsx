@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { projectCategories, type ProjectCategory } from "@/lib/enums";
 import { trpc } from "@/lib/trpc/client";
 import type { DepartmentSummary, ProjectSummary } from "@/server/contracts";
@@ -22,7 +23,14 @@ export interface ProjectsGalleryProps {
 }
 
 export function ProjectsGallery({ initialProjects, departments }: ProjectsGalleryProps) {
-  const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | "all">("all");
+  const searchParams = useSearchParams();
+  const initialCategoryParam = searchParams.get("category");
+  const initialCategory =
+    initialCategoryParam && initialCategoryParam in PROJECT_CATEGORY_LABELS
+      ? (initialCategoryParam as ProjectCategory)
+      : "all";
+
+  const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | "all">(initialCategory);
 
   const queryInput =
     selectedCategory === "all"
@@ -40,7 +48,6 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
     [departments]
   );
 
-  // Determine categories that actually have projects
   const availableCategories = useMemo(() => {
     const present = new Set(initialProjects.map((p) => p.category));
     return projectCategories.filter((cat) => present.has(cat));
@@ -98,7 +105,7 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
               <Link
                 key={project.slug}
                 href={`/projects/${project.slug}`}
-                className="group flex flex-col no-underline text-inherit bg-white rounded-[20px] border border-[rgba(15,26,19,0.12)] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+                className="group flex flex-col no-underline text-inherit bg-white rounded-xl border border-[rgba(15,26,19,0.12)] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
               >
                 {/* Visual Cover Container */}
                 <div className="w-full aspect-[16/10] bg-[var(--forest)] overflow-hidden relative flex flex-col justify-between p-6">
@@ -117,35 +124,29 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
                     <span className="serif text-4xl sm:text-5xl text-[var(--mint)] leading-none block">
                       {project.courseCode ?? `0${idx + 1}`}
                     </span>
-                    <span className="caps text-[10px] text-[var(--mint-2)] mt-1.5 block">
-                      Department of {dept ? dept.name : project.departmentSlug}
-                    </span>
                   </div>
                 </div>
 
-                {/* Card Body */}
-                <div className="flex flex-col flex-1 justify-between p-6 gap-4">
-                  <div className="flex flex-col gap-2">
-                    <h3 className="serif text-xl sm:text-2xl text-[var(--ink)] group-hover:text-[var(--green)] transition-colors line-clamp-2 leading-snug m-0">
+                {/* Card Content Area */}
+                <div className="p-6 flex flex-col gap-3 flex-1 justify-between">
+                  <div className="flex flex-col gap-1.5">
+                    <h3 className="serif text-2xl text-[var(--ink)] group-hover:text-[var(--forest)] transition-colors m-0 leading-snug">
                       {project.title}
                     </h3>
-
-                    <p className="text-sm text-[var(--muted)] line-clamp-2 leading-relaxed m-0">
+                    <p className="text-sm text-[var(--muted)] leading-relaxed m-0 line-clamp-3">
                       {project.tagline}
                     </p>
                   </div>
 
-                  {/* Metadata Row: Avatar + Contributor, Session */}
-                  <div className="flex items-center justify-between pt-3.5 border-t border-[rgba(15,26,19,0.08)]">
+                  <div className="pt-4 border-t border-[rgba(15,26,19,0.08)] flex items-center justify-between text-xs text-[var(--muted)]">
                     <div className="flex items-center gap-2">
                       <div className="w-6 h-6 rounded-full bg-[var(--forest)] text-[var(--mint)] text-[10px] font-semibold flex items-center justify-center shrink-0">
                         {initials || "N"}
                       </div>
-                      <span className="text-xs font-medium text-[var(--ink)] line-clamp-1">
-                        {project.teamDisplayName ?? "NACOS Project Team"}
+                      <span className="font-medium text-[var(--ink)] line-clamp-1">
+                        {project.teamDisplayName ?? initials}
                       </span>
                     </div>
-
                     <span className="text-xs text-[var(--muted)] whitespace-nowrap">
                       2024/2025
                     </span>
@@ -156,16 +157,8 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
           })}
         </div>
       ) : (
-        <div className="dept-empty-state">
-          <h3 className="serif text-2xl">No Projects Found</h3>
-          <p>There are no projects currently available in this category.</p>
-          <button
-            type="button"
-            className="btn btn-dark btn-sm mt-2"
-            onClick={() => setSelectedCategory("all")}
-          >
-            Show All Projects
-          </button>
+        <div className="w-full py-16 text-center text-[var(--muted)]">
+          <p className="text-base">No projects found in this category.</p>
         </div>
       )}
     </div>

@@ -49,11 +49,11 @@ export default async function YearbookPage() {
 
   return (
     <>
-      <section className="page-hero" aria-labelledby="yearbook-hero-title">
+      <section className="relative bg-[var(--forest)] text-white overflow-hidden min-h-[min(780px,calc(100svh-80px))] flex items-center py-[clamp(64px,8vw,100px)]" aria-labelledby="yearbook-hero-title">
         <div className="grid-bg drift" aria-hidden="true" />
         <HeroOrbits label="{ YEARBOOK }" />
 
-        <div className="wrap">
+        <div className="wrap relative flex flex-col gap-6 w-full">
           <nav className="crumbs" aria-label="Breadcrumb">
             <ol>
               <li>
@@ -63,10 +63,10 @@ export default async function YearbookPage() {
             </ol>
           </nav>
 
-          <h1 id="yearbook-hero-title" className="serif">
+          <h1 id="yearbook-hero-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
             Living <span className="it gold">Digital Yearbook</span>
           </h1>
-          <p>
+          <p className="m-0 max-w-[620px] text-[clamp(17px,1.7vw,19px)] leading-relaxed text-[var(--mint-2)]">
             Permanent institutional record and directory of graduating computing cohorts, departmental
             honours, valedictorians, and alumni across the University of Uyo.
           </p>

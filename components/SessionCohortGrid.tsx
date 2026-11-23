@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { AlumniCard } from "@/components/AlumniCard";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -152,18 +153,19 @@ export function SessionCohortGrid({ cohortAlumni, departments, session }: Props)
 
       {/* Grid of Cards */}
       {filteredAlumni.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-[24px] border border-[rgba(15,26,19,0.12)] p-8">
+        <div className="text-center py-20 bg-white rounded-xl border border-[rgba(15,26,19,0.12)] p-8">
           <p className="serif text-2xl text-[var(--ink)] mb-2">No matching graduates in this cohort</p>
           <p className="text-sm text-[var(--muted)] max-w-md mx-auto mb-6">
             Try adjusting your search query or broadening your department filter.
           </p>
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={() => updateFilters("all", "")}
-            className="btn btn-ghost"
+            className="text-[var(--ink)] rounded-full px-6"
           >
             Reset Filters
-          </button>
+          </Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full text-left">

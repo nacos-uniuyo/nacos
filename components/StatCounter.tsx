@@ -43,11 +43,11 @@ export function StatCounter({ stats }: { stats: Stat[] }) {
   }, []);
 
   return (
-    <dl className="stats-grid" ref={ref}>
+    <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 m-0" ref={ref}>
       {stats.map((s) => (
-        <div className="stat" key={s.label}>
-          <dt>{s.label}</dt>
-          <dd className="serif">
+        <div className="flex flex-col-reverse justify-end gap-2.5 border-t border-white/18 pt-6.5" key={s.label}>
+          <dt className="text-[15px] text-[var(--mint)] leading-normal">{s.label}</dt>
+          <dd className="serif m-0 text-[clamp(56px,6vw,84px)] leading-none tabular-nums text-white">
             {(s.compact ? short : plain).format(Math.round(s.value * t))}
             {s.suffix}
           </dd>

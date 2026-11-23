@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -153,22 +154,23 @@ export function OpportunitiesFeed({ initialOpportunities, departments }: Props) 
 
       {/* 3. Opportunities Cards Grid */}
       {filteredOpportunities.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-[24px] border border-[rgba(15,26,19,0.12)] p-8">
+        <div className="text-center py-20 bg-white rounded-xl border border-[rgba(15,26,19,0.12)] p-8">
           <p className="serif text-2xl text-[var(--ink)] mb-2">No matching opportunities found</p>
           <p className="text-sm text-[var(--muted)] max-w-md mx-auto mb-6">
             Try adjusting your search query, selecting another category pill, or broadening your departmental scope.
           </p>
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={() => {
               setSelectedType("all");
               setSelectedDept("all");
               setSearchQuery("");
             }}
-            className="btn btn-ghost"
+            className="text-[var(--ink)] rounded-full px-6"
           >
             Reset Filters
-          </button>
+          </Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 w-full text-left">

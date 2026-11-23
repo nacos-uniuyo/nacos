@@ -5,8 +5,9 @@ import Link from "next/link";
 import { GraduationCap, Search } from "lucide-react";
 import { AlumniCard } from "@/components/AlumniCard";
 import { DraggableMarquee } from "@/components/DraggableMarquee";
-import { ArrowRight } from "@/components/icons";
+import { ArrowRight, ArrowUpRight } from "@/components/icons";
 import { sortAlumniByMatricOrName } from "@/components/SessionCohortGrid";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -169,18 +170,19 @@ export function YearbookGallery({ initialAlumni, departments, sessions }: Props)
       {/* When filtering or searching: Render filtered grid */}
       {isFiltering ? (
         filteredAlumni.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-[24px] border border-[rgba(15,26,19,0.12)] p-8">
+          <div className="text-center py-20 bg-white rounded-xl border border-[rgba(15,26,19,0.12)] p-8">
             <p className="serif text-2xl text-[var(--ink)] mb-2">No graduating alumni found</p>
             <p className="text-sm text-[var(--muted)] max-w-md mx-auto mb-6">
               Try adjusting your search terms or resetting the department scope filter.
             </p>
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={() => updateFilters("all", "")}
-              className="btn btn-ghost"
+              className="text-[var(--ink)] rounded-full px-6"
             >
               Reset Filters
-            </button>
+            </Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full text-left">
@@ -223,10 +225,10 @@ export function YearbookGallery({ initialAlumni, departments, sessions }: Props)
                     </span>
                     <Link
                       href={`/yearbook/session/${session.slug}`}
-                      className="text-link text-xs font-semibold text-[var(--forest)] hover:text-[var(--green)] transition-colors"
+                      className="inline-flex items-center justify-center size-8 rounded-full bg-white border border-[var(--rule)] text-[var(--forest)] hover:bg-[var(--forest)] hover:text-white transition-all shadow-xs"
+                      aria-label={`Explore ${session.name} cohort`}
                     >
-                      <span>Explore Cohort Grid</span>
-                      <ArrowRight size={13} />
+                      <ArrowUpRight size={16} />
                     </Link>
                   </div>
                 </div>
