@@ -153,7 +153,7 @@ export function SessionCohortGrid({ cohortAlumni, departments, session }: Props)
 
       {/* Grid of Cards */}
       {filteredAlumni.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-[24px] border border-[rgba(15,26,19,0.12)] p-8">
+        <div className="text-center py-20 bg-white rounded-xl border border-[rgba(15,26,19,0.12)] p-8">
           <p className="serif text-2xl text-[var(--ink)] mb-2">No matching graduates in this cohort</p>
           <p className="text-sm text-[var(--muted)] max-w-md mx-auto mb-6">
             Try adjusting your search query or broadening your department filter.
@@ -162,7 +162,7 @@ export function SessionCohortGrid({ cohortAlumni, departments, session }: Props)
             type="button"
             variant="outline"
             onClick={() => updateFilters("all", "")}
-            className="text-[var(--ink)]"
+            className="text-[var(--ink)] rounded-full px-6"
           >
             Reset Filters
           </Button>

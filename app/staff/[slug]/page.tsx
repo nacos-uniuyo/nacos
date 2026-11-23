@@ -236,7 +236,7 @@ export default async function StaffProfilePage({ params }: Props) {
       <JsonLd
         data={[
           breadcrumbSchema([
-            { name: "Home", path: "/" },
+            { name: "NACOS UNIUYO", path: "/" },
             { name: "Staff", path: "/staff" },
             { name: person.fullName, path: `/staff/${person.slug}` },
           ]),

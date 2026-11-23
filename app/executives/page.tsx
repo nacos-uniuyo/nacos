@@ -54,7 +54,7 @@ export default async function ExecutivesPage() {
         <div className="grid-bg drift" aria-hidden="true" />
         <HeroOrbits label="{ LEADERSHIP }" className="hero-orbits fade" />
         <div className="wrap relative flex flex-col gap-6 w-full">
-          <Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Executives" }]} />
+          <Breadcrumbs items={[{ name: "NACOS UNIUYO", path: "/" }, { name: "Executives" }]} />
           <span className="eyebrow on-dark caps fade d1">Faculty Leadership Archive</span>
           <h1 id="ex-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
             <span className="line">
@@ -80,7 +80,7 @@ export default async function ExecutivesPage() {
       <JsonLd
         data={[
           breadcrumbSchema([
-            { name: "Home", path: "/" },
+            { name: "NACOS UNIUYO", path: "/" },
             { name: "Executives", path: "/executives" },
           ]),
           {

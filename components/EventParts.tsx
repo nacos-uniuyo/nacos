@@ -38,16 +38,15 @@ export function Timeline({ items }: { items: ProgrammeItem[] }) {
 export function Breadcrumbs({ items }: { items: { name: string; path?: string }[] }) {
   return (
     <nav className="crumbs" aria-label="Breadcrumb">
-      <ol className="list-none flex flex-wrap gap-2 m-0 p-0 text-[13px] text-[var(--mint)]">
-        {items.map((it, idx) => (
-          <li key={it.name} className="flex items-center gap-2">
-            {idx > 0 && <span className="text-white/30">/</span>}
+      <ol>
+        {items.map((it) => (
+          <li key={it.name}>
             {it.path ? (
-              <Link href={it.path} className="text-[var(--mint)] hover:text-white no-underline transition-colors">
+              <Link href={it.path}>
                 {it.name}
               </Link>
             ) : (
-              <span className="text-white" aria-current="page">
+              <span aria-current="page">
                 {it.name}
               </span>
             )}
@@ -61,7 +60,7 @@ export function Breadcrumbs({ items }: { items: { name: string; path?: string }[
 export function EventSubnav({ e, active }: { e: NacosEvent; active: "overview" | "programme" }) {
   const base = `/events/${e.slug}`;
   return (
-    <nav className="bg-[var(--deep)] border-b border-white/6" aria-label="Event sections">
+    <nav className="sticky top-[80px] z-20 bg-[var(--deep)]/95 backdrop-blur-md border-b border-white/6" aria-label="Event sections">
       <div className="wrap">
         <ul className="list-none m-0 p-0 flex gap-7 overflow-x-auto scrollbar-none">
           <li>

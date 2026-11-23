@@ -46,7 +46,7 @@ export default async function ProgrammePage({ params }: Props) {
         <div className="wrap relative flex flex-col gap-6 w-full">
           <Breadcrumbs
             items={[
-              { name: "Home", path: "/" },
+              { name: "NACOS UNIUYO", path: "/" },
               { name: "Events", path: "/events" },
               { name: "Inauguration", path: `/events/${e.slug}` },
               { name: "Programme" },
@@ -105,7 +105,7 @@ export default async function ProgrammePage({ params }: Props) {
         data={[
           eventSchema(e),
           breadcrumbSchema([
-            { name: "Home", path: "/" },
+            { name: "NACOS UNIUYO", path: "/" },
             { name: "Events", path: "/events" },
             { name: e.shortTitle, path: `/events/${e.slug}` },
             { name: "Programme", path },

@@ -66,7 +66,11 @@ export default async function EventPage({ params }: Props) {
         <div className="wrap relative grid grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] gap-14 items-center">
           <div className="flex flex-col gap-7">
             <Breadcrumbs
-              items={[{ name: "Home", path: "/" }, { name: "Events", path: "/events" }, { name: "Inauguration" }]}
+              items={[
+                { name: "NACOS UNIUYO", path: "/" },
+                { name: "Events", path: "/events" },
+                { name: e.shortTitle ?? e.title },
+              ]}
             />
             <span className="eyebrow on-dark caps fade d1">{e.kicker}</span>
             <h1 id="event-title" className="serif m-0 text-[clamp(56px,8.6vw,124px)] leading-[0.92] tracking-[-0.02em]">
@@ -274,7 +278,7 @@ export default async function EventPage({ params }: Props) {
         </div>
       </section>
 
-      <JsonLd data={[eventSchema(e), breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Events", path: "/events" }, { name: e.title, path: `/events/${e.slug}` }])]} />
+      <JsonLd data={[eventSchema(e), breadcrumbSchema([{ name: "NACOS UNIUYO", path: "/" }, { name: "Events", path: "/events" }, { name: e.title, path: `/events/${e.slug}` }])]} />
     </>
   );
 }

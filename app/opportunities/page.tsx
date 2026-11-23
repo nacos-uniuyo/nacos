@@ -51,14 +51,11 @@ export default async function OpportunitiesPage() {
 
         <div className="wrap relative flex flex-col gap-6 w-full">
           <nav className="crumbs" aria-label="Breadcrumb">
-            <ol className="list-none flex flex-wrap gap-2 m-0 p-0 text-[13px] text-[var(--mint)]">
+            <ol>
               <li>
-                <Link href="/" className="text-[var(--mint)] hover:text-white no-underline transition-colors">NACOS UNIUYO</Link>
+                <Link href="/">NACOS UNIUYO</Link>
               </li>
-              <li className="flex items-center gap-2" aria-current="page">
-                <span className="text-white/30">/</span>
-                <span className="text-white">Opportunities</span>
-              </li>
+              <li aria-current="page">Opportunities</li>
             </ol>
           </nav>
 
