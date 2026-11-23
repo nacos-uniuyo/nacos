@@ -2,12 +2,13 @@
 # https://github.com/evilmartians/lefthook
 
 pre-commit:
-  parallel: false
+  parallel: true
   commands:
     typecheck:
       run: bun run typecheck
     lint:
       run: bun run lint
+      stage_fixed: true
 
 pre-push:
   parallel: false

@@ -5,7 +5,7 @@
 
 export const roleNames = ["user", "department_editor", "admin"] as const;
 
-export const roleTiers = ["elected_exco", "aide", "dev_team", "alumni"] as const;
+export const roleTiers = ["elected_exco", "aide", "dev_team", "alumni", "staff"] as const;
 
 export const projectCategories = [
   "cybersecurity",

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Instrument_Sans, Instrument_Serif } from "next/font/google";
+import { Archivo, Instrument_Sans, Instrument_Serif, Onest } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import { Analytics } from "@vercel/analytics/next";
 import { Footer } from "@/components/Footer";
@@ -19,42 +19,48 @@ const serif = Instrument_Serif({
   display: "swap",
 });
 const display = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
+const onest = Onest({ subsets: ["latin"], variable: "--font-onest", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "NACOS UNIUYO | Nigeria Association of Computing Students, University of Uyo",
-    template: "%s | NACOS UNIUYO",
+    default: "NACOS UNIUYO · Faculty of Computing, University of Uyo Portal",
+    template: "%s | NACOS UNIUYO · University of Uyo",
   },
   description: site.shortDescription,
-  applicationName: site.name,
+  applicationName: site.coBrandName,
   keywords: [
     "NACOS UNIUYO",
+    "University of Uyo",
+    "UNIUYO Faculty of Computing",
     "NACOS University of Uyo",
     "Nigeria Association of Computing Students",
-    "Faculty of Computing UNIUYO",
-    "University of Uyo computer science",
+    "Computer Science UNIUYO",
+    "Cybersecurity UNIUYO",
+    "Information Systems UNIUYO",
+    "Data Analytics UNIUYO",
+    "Software Engineering UNIUYO",
     "UNIUYO hackathon",
     "SIWES Uyo",
     "Open-Track",
   ],
-  authors: [{ name: "NACOS UNIUYO Software Directorate" }],
-  creator: site.name,
-  publisher: site.name,
+  authors: [{ name: "NACOS UNIUYO Software Directorate · Faculty of Computing, University of Uyo" }],
+  creator: site.coBrandName,
+  publisher: site.coBrandName,
   category: "education",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "en_NG",
-    siteName: site.name,
+    siteName: `${site.name} · ${site.universityName}`,
     url: "/",
-    title: "NACOS UNIUYO",
+    title: "NACOS UNIUYO · Faculty of Computing, University of Uyo",
     description: site.shortDescription,
   },
   twitter: {
     card: "summary_large_image",
     site: site.xHandle,
-    title: "NACOS UNIUYO",
+    title: "NACOS UNIUYO · Faculty of Computing, University of Uyo",
     description: site.shortDescription,
   },
   robots: {
@@ -72,7 +78,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-NG" className={`${sans.variable} ${serif.variable} ${display.variable}`}>
+    <html lang="en-NG" className={`${sans.variable} ${serif.variable} ${display.variable} ${onest.variable}`}>
       <body>
         <NextTopLoader color="#007a1e" showSpinner={false} />
         <a className="skip" href="#main">
