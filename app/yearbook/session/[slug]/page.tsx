@@ -93,15 +93,15 @@ export default async function SessionCohortPage({ params }: Props) {
             </ol>
           </nav>
 
-          <div className="flex flex-wrap items-center gap-2.5 text-xs text-[var(--mint-2)]">
+          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-3.5 text-xs text-[var(--mint-2)]">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.12)] text-[var(--mint-2)] font-semibold">
               <GraduationCap size={13} className="text-[var(--gold)]" />
               <span>{session.name.replace(" Academic Session", " Cohort")}</span>
             </span>
             {session.theme && (
               <>
-                <span className="opacity-40" aria-hidden="true">·</span>
-                <span className="caps text-[var(--gold)] font-medium">
+                <span className="opacity-40 max-sm:hidden" aria-hidden="true">·</span>
+                <span className="caps text-[var(--gold)] font-medium max-sm:w-full">
                   &ldquo;{session.theme}&rdquo;
                 </span>
               </>

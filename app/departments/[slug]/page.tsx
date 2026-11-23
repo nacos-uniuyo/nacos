@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import uniuyoLogo from "@/assets/images/uniuyo-circle.png";
 import { DepartmentHubTabs } from "@/components/DepartmentHubTabs";
 import { JsonLd } from "@/components/JsonLd";
 import { HeroOrbits } from "@/components/Orbits";
@@ -55,7 +53,7 @@ export default async function DepartmentHubPage({ params }: Props) {
   const { slug } = await params;
   const caller = appRouter.createCaller({ session: null });
 
-  const [department, allDepartments, allSessions, currentSession, deptProjects, allOpportunities, posts] =
+  const [department, _allDepartments, allSessions, currentSession, deptProjects, allOpportunities, posts] =
     await Promise.all([
       caller.department.bySlug({ slug }),
       caller.department.list(),
@@ -96,15 +94,15 @@ export default async function DepartmentHubPage({ params }: Props) {
   return (
     <>
       {/* Department Hero */}
-      <section className="page-hero dept-hero" aria-labelledby="dept-hero-title">
+      <section className="relative bg-[var(--forest)] text-white overflow-hidden py-[clamp(64px,8vw,92px)] flex items-center" aria-labelledby="dept-hero-title">
         <div className="grid-bg drift" aria-hidden="true" />
         <HeroOrbits label={`{ ${department.name} · UNIUYO }`} />
 
-        <div className="wrap">
+        <div className="wrap relative flex flex-col gap-6 w-full">
           <nav className="crumbs" aria-label="Breadcrumb">
             <ol>
               <li>
-                <Link href="/">Home</Link>
+                <Link href="/">NACOS UNIUYO</Link>
               </li>
               <li>
                 <Link href="/departments">Departments</Link>
@@ -113,11 +111,11 @@ export default async function DepartmentHubPage({ params }: Props) {
             </ol>
           </nav>
 
-          <h1 id="dept-hero-title" className="serif">
+          <h1 id="dept-hero-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
             Department of <span className="it gold">{department.name}</span>
           </h1>
 
-          <div className="dept-hero-overview">
+          <div className="max-w-[680px]">
             <RichTextRenderer
               doc={department.summary}
               className="text-[clamp(17px,1.7vw,19.5px)] leading-relaxed text-[var(--mint-2)]"
@@ -125,27 +123,27 @@ export default async function DepartmentHubPage({ params }: Props) {
           </div>
 
           {/* Key Department Stats */}
-          <dl className="dept-hero-stats">
-            <div className="dept-hero-stat">
-              <dt className="caps">Head of Department</dt>
-              <dd className="serif">{department.hodName ?? "Faculty Leadership"}</dd>
+          <dl className="grid grid-cols-2 sm:grid-cols-4 gap-5 mt-12 pt-9 border-t border-white/12">
+            <div className="flex flex-col-reverse justify-end gap-1.5">
+              <dt className="caps text-[10.5px] text-[var(--mint)]">Head of Department</dt>
+              <dd className="serif m-0 text-[clamp(26px,3vw,40px)] leading-none text-white">{department.hodName ?? "Faculty Leadership"}</dd>
             </div>
-            <div className="dept-hero-stat">
-              <dt className="caps">Active Session Officers</dt>
-              <dd className="serif">{initialOfficers.length}</dd>
+            <div className="flex flex-col-reverse justify-end gap-1.5">
+              <dt className="caps text-[10.5px] text-[var(--mint)]">Active Session Officers</dt>
+              <dd className="serif m-0 text-[clamp(26px,3vw,40px)] leading-none text-white">{initialOfficers.length}</dd>
             </div>
-            <div className="dept-hero-stat">
-              <dt className="caps">
+            <div className="flex flex-col-reverse justify-end gap-1.5">
+              <dt className="caps text-[10.5px] text-[var(--mint)]">
                 {deptProjects.length === 1 ? "Showcased Project" : "Showcased Projects"}
               </dt>
-              <dd className="serif">{deptProjects.length}</dd>
+              <dd className="serif m-0 text-[clamp(26px,3vw,40px)] leading-none text-white">{deptProjects.length}</dd>
             </div>
           </dl>
         </div>
       </section>
 
       {/* Tabbed Sections */}
-      <section className="dept-hub-body-section" aria-label={`${department.name} Department Hub`}>
+      <section className="pb-[var(--section-y)]" aria-label={`${department.name} Department Hub`}>
         <DepartmentHubTabs
           department={department}
           currentSession={currentSession}
@@ -160,7 +158,7 @@ export default async function DepartmentHubPage({ params }: Props) {
 
       <JsonLd
         data={breadcrumbSchema([
-          { name: "Home", path: "/" },
+          { name: "NACOS UNIUYO", path: "/" },
           { name: "Departments", path: "/departments" },
           { name: department.name, path: `/departments/${department.slug}` },
         ])}

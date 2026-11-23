@@ -89,10 +89,6 @@ export function DraggableMarquee({
     hasDraggedRef.current = false;
     startXRef.current = e.clientX;
     lastXRef.current = e.clientX;
-
-    if (containerRef.current) {
-      containerRef.current.setPointerCapture(e.pointerId);
-    }
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
@@ -100,8 +96,15 @@ export function DraggableMarquee({
     const deltaX = e.clientX - lastXRef.current;
     lastXRef.current = e.clientX;
 
-    if (Math.abs(e.clientX - startXRef.current) > 5) {
+    if (Math.abs(e.clientX - startXRef.current) > 10) {
       hasDraggedRef.current = true;
+      if (containerRef.current && !containerRef.current.hasPointerCapture(e.pointerId)) {
+        try {
+          containerRef.current.setPointerCapture(e.pointerId);
+        } catch {
+          // ignore
+        }
+      }
     }
 
     offsetRef.current += deltaX;
@@ -123,11 +126,15 @@ export function DraggableMarquee({
     if (!isDragging) return;
     setIsDragging(false);
     if (containerRef.current && containerRef.current.hasPointerCapture(e.pointerId)) {
-      containerRef.current.releasePointerCapture(e.pointerId);
+      try {
+        containerRef.current.releasePointerCapture(e.pointerId);
+      } catch {
+        // ignore
+      }
     }
   };
 
-  // Prevent accidental clicks on child links if the user was actively dragging
+  // Prevent accidental clicks on child links only if user actually dragged
   const handleClickCapture = (e: React.MouseEvent) => {
     if (hasDraggedRef.current) {
       e.preventDefault();
