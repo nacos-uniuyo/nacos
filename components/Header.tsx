@@ -8,14 +8,25 @@ import { useEffect, useRef, useState } from "react";
 import nacosLogoImg from "@/assets/images/nacos-logo.png";
 import {
   ChevronDown,
+  ChevronRight,
   Code2,
   Cpu,
   Database,
+  FolderGit2,
+  LayoutDashboard,
+  LogOut,
   Network,
+  Shield,
   ShieldAlert,
+  Moon,
+  Sun,
+  Monitor,
+  User,
 } from "lucide-react";
+import { useTheme } from "next-themes";
 import { authClient } from "@/lib/auth-client";
 import { Menu } from "./icons";
+import { cn } from "@/lib/utils";
 
 const departmentItems = [
   {
@@ -72,6 +83,7 @@ export function Header() {
   const [deptDropdownOpen, setDeptDropdownOpen] = useState(false);
   const [mobileDeptsOpen, setMobileDeptsOpen] = useState(false);
   const [_signingOut, setSigningOut] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const menuRef = useRef<HTMLDivElement>(null);
   const deptMenuRef = useRef<HTMLDivElement>(null);
@@ -229,40 +241,189 @@ export function Header() {
               <div className="relative" ref={menuRef}>
                 <button
                   type="button"
-                  className="inline-flex items-center justify-center gap-2 min-h-10 px-4.5 rounded-full border-[1.5px] border-[var(--gold)] bg-[rgba(216,180,92,0.08)] text-white text-[13.5px] font-semibold no-underline cursor-pointer whitespace-nowrap transition-all hover:bg-[var(--gold)] hover:text-[var(--forest)] hover:-translate-y-0.5"
+                  className="group relative flex size-10 items-center justify-center rounded-full p-0.5 border border-white/20 transition-all hover:border-[var(--gold)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--gold)] cursor-pointer bg-transparent"
                   aria-expanded={userMenuOpen}
                   aria-haspopup="menu"
+                  aria-label="User account menu"
                   onClick={() => setUserMenuOpen((prev) => !prev)}
                 >
-                  <span className="size-6 rounded-full bg-[var(--gold)] text-[var(--forest)] text-[11px] font-bold inline-flex items-center justify-center" aria-hidden="true">
-                    {userInitials}
+                  <span className="relative flex size-full items-center justify-center overflow-hidden rounded-full bg-[var(--forest-2)]">
+                    {user.image ? (
+                      <Image
+                        src={user.image}
+                        alt={user.name}
+                        width={48}
+                        height={48}
+                        unoptimized
+                        className="size-full object-cover scale-[1.38] transition-transform duration-200 group-hover:scale-[1.46]"
+                      />
+                    ) : (
+                      <span
+                        className="flex size-full items-center justify-center text-white text-sm font-semibold"
+                        aria-hidden="true"
+                      >
+                        {userInitials}
+                      </span>
+                    )}
                   </span>
-                  <span>{user.name.split(" ")[0]}</span>
                 </button>
 
                 {userMenuOpen ? (
-                  <div className="absolute right-0 top-[calc(100%+10px)] w-[250px] bg-white text-[var(--ink)] rounded-2xl border border-[var(--rule)] shadow-[0_24px_48px_rgba(6,42,20,0.24)] overflow-hidden z-60" role="menu">
-                    <div className="p-4 bg-[var(--paper)] border-b border-[var(--rule)]">
-                      <p className="caps m-0 text-[10px] text-[var(--green)]">Signed in member</p>
-                      <p className="m-0 mt-1 text-sm font-semibold text-[var(--ink)]">{user.name}</p>
-                      <p className="m-0 mt-0.5 text-xs text-[var(--muted)] break-all">{user.email}</p>
+                  <div
+                    className="absolute right-0 top-[calc(100%+12px)] w-[320px] rounded-2xl border border-[var(--rule)] bg-[var(--card-surface)] text-[var(--ink)] shadow-[0_24px_60px_-15px_rgba(6,42,20,0.35)] overflow-hidden z-60 animate-in fade-in zoom-in-95 duration-150"
+                    role="menu"
+                  >
+                    {/* Header info card */}
+                    <div className="flex flex-col items-center border-b border-[var(--rule)] bg-[var(--paper)] px-4 py-3 text-center">
+                      <div className="relative mb-2 flex size-12 items-center justify-center overflow-hidden rounded-full border-2 border-white/20 bg-[var(--forest-2)] shadow-xs">
+                        {user.image ? (
+                          <Image
+                            src={user.image}
+                            alt={user.name}
+                            width={48}
+                            height={48}
+                            unoptimized
+                            className="size-full object-cover scale-[1.38]"
+                          />
+                        ) : (
+                          <span className="flex size-full items-center justify-center text-[var(--gold)] text-base font-bold">
+                            {userInitials}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm font-semibold leading-tight text-[var(--ink)]">
+                        {user.name}
+                      </p>
+                      <p className="mt-0.5 text-xs text-[var(--muted)] truncate max-w-[260px]">
+                        {user.email}
+                      </p>
                     </div>
-                    <div className="flex flex-col p-1.5">
+
+                    {/* Quick Action Navigation */}
+                    <div className="p-2 space-y-0.5">
                       <Link
-                        href="/login"
+                        href="/dashboard"
                         role="menuitem"
-                        className="flex items-center w-full p-2.5 rounded-lg bg-transparent text-[13px] font-semibold text-[var(--ink)] hover:bg-[var(--sand)] no-underline transition-colors"
+                        className="group flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[var(--ink)] hover:bg-[var(--sand)]/70 transition-colors no-underline"
                         onClick={() => setUserMenuOpen(false)}
                       >
-                        Account &amp; Session
+                        <div className="flex items-center gap-3">
+                          <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--forest)]/10 text-[var(--forest)] group-hover:bg-[var(--forest)] group-hover:text-white transition-colors">
+                            <LayoutDashboard className="size-4" />
+                          </div>
+                          <span>Member Dashboard</span>
+                        </div>
+                        <ChevronRight className="size-4 text-[var(--muted)] group-hover:text-[var(--forest)] group-hover:translate-x-0.5 transition-all" />
                       </Link>
+
+                      <Link
+                        href="/dashboard/profile"
+                        role="menuitem"
+                        className="group flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[var(--ink)] hover:bg-[var(--sand)]/70 transition-colors no-underline"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--forest)]/10 text-[var(--forest)] group-hover:bg-[var(--forest)] group-hover:text-white transition-colors">
+                            <User className="size-4" />
+                          </div>
+                          <span>My Profile</span>
+                        </div>
+                        <ChevronRight className="size-4 text-[var(--muted)] group-hover:text-[var(--forest)] group-hover:translate-x-0.5 transition-all" />
+                      </Link>
+
+                      <Link
+                        href="/dashboard/projects"
+                        role="menuitem"
+                        className="group flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[var(--ink)] hover:bg-[var(--sand)]/70 transition-colors no-underline"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--forest)]/10 text-[var(--forest)] group-hover:bg-[var(--forest)] group-hover:text-white transition-colors">
+                            <FolderGit2 className="size-4" />
+                          </div>
+                          <span>My Projects</span>
+                        </div>
+                        <ChevronRight className="size-4 text-[var(--muted)] group-hover:text-[var(--forest)] group-hover:translate-x-0.5 transition-all" />
+                      </Link>
+
+                      {((user as { role?: string }).role === "department_editor" ||
+                        (user as { role?: string }).role === "admin") && (
+                        <Link
+                          href="/admin/departments"
+                          role="menuitem"
+                          className="group flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[var(--ink)] hover:bg-[var(--sand)]/70 transition-colors no-underline"
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="flex size-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                              <Shield className="size-4" />
+                            </div>
+                            <span>Coordinator Console</span>
+                          </div>
+                          <ChevronRight className="size-4 text-[var(--muted)] group-hover:text-amber-700 group-hover:translate-x-0.5 transition-all" />
+                        </Link>
+                      )}
+                    </div>
+
+                    {/* Theme switcher */}
+                    <div className="border-t border-[var(--rule)] px-3 py-2.5 bg-[var(--paper)]/30">
+                      <div className="flex items-center justify-between text-xs font-medium text-[var(--muted)] mb-2">
+                        <span>Appearance</span>
+                        <span className="capitalize text-[var(--ink)] font-semibold">{theme ?? "system"}</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-1 rounded-xl bg-[var(--sand)]/60 p-1 border border-[var(--rule)]">
+                        <button
+                          type="button"
+                          onClick={() => setTheme("light")}
+                          className={cn(
+                            "flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-medium transition-all cursor-pointer border-0",
+                            theme === "light"
+                              ? "bg-[var(--card-surface)] text-[var(--ink)] shadow-xs"
+                              : "bg-transparent text-[var(--muted)] hover:text-[var(--ink)]"
+                          )}
+                        >
+                          <Sun className="size-3.5" />
+                          <span>Light</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setTheme("dark")}
+                          className={cn(
+                            "flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-medium transition-all cursor-pointer border-0",
+                            theme === "dark"
+                              ? "bg-[var(--card-surface)] text-[var(--ink)] shadow-xs"
+                              : "bg-transparent text-[var(--muted)] hover:text-[var(--ink)]"
+                          )}
+                        >
+                          <Moon className="size-3.5" />
+                          <span>Dark</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setTheme("system")}
+                          className={cn(
+                            "flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-medium transition-all cursor-pointer border-0",
+                            theme === "system"
+                              ? "bg-[var(--card-surface)] text-[var(--ink)] shadow-xs"
+                              : "bg-transparent text-[var(--muted)] hover:text-[var(--ink)]"
+                          )}
+                        >
+                          <Monitor className="size-3.5" />
+                          <span>System</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Footer sign out */}
+                    <div className="border-t border-[var(--rule)] bg-[var(--paper)]/50 p-2">
                       <button
                         type="button"
                         role="menuitem"
-                        className="flex items-center w-full p-2.5 rounded-lg bg-transparent border-0 text-[13px] font-semibold text-destructive hover:bg-destructive/10 cursor-pointer text-left transition-colors"
+                        className="flex w-full items-center justify-center gap-2 rounded-xl py-2 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-colors cursor-pointer border-0 bg-transparent"
                         onClick={handleSignOut}
                       >
-                        Sign Out
+                        <LogOut className="size-3.5" />
+                        <span>Sign out of account</span>
                       </button>
                     </div>
                   </div>
@@ -368,13 +529,44 @@ export function Header() {
             ))}
             <li className="pt-4">
               {user ? (
-                <button
-                  type="button"
-                  onClick={handleSignOut}
-                  className="w-full text-left py-2 text-base font-semibold text-destructive bg-transparent border-0 cursor-pointer"
-                >
-                  Sign Out ({user.name.split(" ")[0]})
-                </button>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 py-2">
+                    <div className="relative flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-[var(--forest-2)]">
+                      {user.image ? (
+                        <Image
+                          src={user.image}
+                          alt={user.name}
+                          width={36}
+                          height={36}
+                          unoptimized
+                          className="size-full object-cover scale-[1.38]"
+                        />
+                      ) : (
+                        <span className="text-[var(--gold)] text-xs font-bold">
+                          {userInitials}
+                        </span>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="m-0 text-sm font-semibold text-white truncate">{user.name}</p>
+                      <p className="m-0 text-xs text-[var(--mint-2)] truncate">{user.email}</p>
+                    </div>
+                  </div>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setOpen(false)}
+                    className="inline-flex items-center justify-center w-full py-2.5 rounded-full bg-[var(--gold)] text-[var(--forest)] text-sm font-semibold no-underline"
+                  >
+                    Go to Dashboard
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    className="w-full text-left py-2 text-sm font-semibold text-destructive bg-transparent border-0 cursor-pointer"
+                  >
+                    Sign Out
+                  </button>
+                </div>
               ) : (
                 <Link
                   href="/login"

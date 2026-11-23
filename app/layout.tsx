@@ -2,8 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Archivo, Instrument_Sans, Instrument_Serif, Onest } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import { Analytics } from "@vercel/analytics/next";
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
 import { JsonLd } from "@/components/JsonLd";
 import { organizationSchema, websiteSchema } from "@/lib/schema";
 import { SITE_URL, site } from "@/lib/site";
@@ -73,21 +71,23 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#062A14",
-  colorScheme: "light",
+  colorScheme: "light dark",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-NG" className={`${sans.variable} ${serif.variable} ${display.variable} ${onest.variable}`}>
+    <html
+      lang="en-NG"
+      suppressHydrationWarning
+      className={`${sans.variable} ${serif.variable} ${display.variable} ${onest.variable}`}
+    >
       <body>
         <NextTopLoader color="#007a1e" showSpinner={false} />
         <a className="skip" href="#main">
           Skip to content
         </a>
         <Providers>
-          <Header />
-          <main id="main">{children}</main>
-          <Footer />
+          {children}
           <JsonLd data={[organizationSchema(), websiteSchema()]} />
           <Analytics />
         </Providers>

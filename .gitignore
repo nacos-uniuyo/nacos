@@ -8,3 +8,9 @@ next-env.d.ts
 .vercel
 .DS_Store
 .env*
+
+# AI tooling & local artifacts
+.agents/
+.devin/
+.kiro/
+skills-lock.json

@@ -122,7 +122,7 @@ export function SessionCohortGrid({ cohortAlumni, departments, session }: Props)
             value={searchQuery}
             onChange={(e) => updateFilters(selectedDept, e.target.value)}
             placeholder="Search cohort by graduate, company, role, or award..."
-            className="w-full pl-11 pr-4 py-2.5 rounded-full bg-white border border-[rgba(15,26,19,0.12)] text-sm text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--green)] shadow-xs transition-colors"
+            className="w-full pl-11 pr-4 py-2.5 rounded-full bg-[var(--card-surface)] border border-[var(--rule)] text-sm text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--green)] shadow-xs transition-colors"
           />
         </div>
 
