@@ -17,7 +17,7 @@ export const C = {
   gold: "#D8B45C",
   mint: "#A9C4B1",
   mint2: "#C8DBCD",
-  paper: "#F5F2EA",
+  paper: "#FFFFFF",
 };
 
 // Fixed folder prefixes keep the bundler from tracing the whole project.
