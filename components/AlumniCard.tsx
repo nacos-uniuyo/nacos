@@ -23,7 +23,7 @@ export function AlumniCard({ alum, deptName, sessionName }: Props) {
   const initials = getAlumniInitials(alum.fullName);
 
   return (
-    <article className="yearbook-card group relative">
+    <article className="yearbook-card group relative flex h-full w-full flex-col bg-[var(--card-surface)] border border-[var(--rule)] rounded-xl overflow-hidden">
       <div>
         {/* Card Media Header */}
         <div className="relative w-full aspect-[4/3.4] bg-[var(--forest)] overflow-hidden">
@@ -62,7 +62,7 @@ export function AlumniCard({ alum, deptName, sessionName }: Props) {
         <div className="p-5 flex flex-col gap-2 flex-1">
           <div className="flex items-center justify-between gap-2">
             {deptName ? (
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--forest)]">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-primary">
                 Department of {deptName}
               </span>
             ) : (
@@ -87,7 +87,7 @@ export function AlumniCard({ alum, deptName, sessionName }: Props) {
                 {alum.fullName}
               </Link>
             </h3>
-            <p className="text-xs font-semibold text-[var(--forest)] mt-1 mb-0 line-clamp-1">
+            <p className="text-xs font-semibold text-primary mt-1 mb-0 line-clamp-1">
               {alum.roleTitle}
             </p>
           </div>

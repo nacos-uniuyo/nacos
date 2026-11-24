@@ -448,6 +448,7 @@ export const departmentRelations = relations(department, ({ one, many }) => ({
     relationName: "departmentHead",
   }),
   staff: many(facultyStaff, { relationName: "departmentStaff" }),
+  notices: many(departmentNotice),
   users: many(user),
   sessionRoles: many(sessionRole),
   projects: many(project),
@@ -466,6 +467,8 @@ export const userRelations = relations(user, ({ one, many }) => ({
   submittedOpportunities: many(opportunity),
   authoredPosts: many(post),
   authoredEvents: many(event),
+  opportunityBookmarks: many(opportunityBookmark),
+  authoredNotices: many(departmentNotice),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -514,7 +517,7 @@ export const projectRelations = relations(project, ({ one }) => ({
   author: one(user, { fields: [project.authorUserId], references: [user.id] }),
 }));
 
-export const opportunityRelations = relations(opportunity, ({ one }) => ({
+export const opportunityRelations = relations(opportunity, ({ one, many }) => ({
   department: one(department, {
     fields: [opportunity.departmentId],
     references: [department.id],
@@ -523,6 +526,7 @@ export const opportunityRelations = relations(opportunity, ({ one }) => ({
     fields: [opportunity.sessionId],
     references: [schoolSession.id],
   }),
+  bookmarks: many(opportunityBookmark),
   submittedBy: one(user, {
     fields: [opportunity.submittedByUserId],
     references: [user.id],
@@ -548,3 +552,70 @@ export const postRelations = relations(post, ({ one }) => ({
 }));
 
 export const slugRedirectRelations = relations(slugRedirect, () => ({}));
+
+/* -------------------------------------------------------------------------- */
+/* Phase 4: Opportunity Bookmarks and Department Notices                     */
+/* -------------------------------------------------------------------------- */
+
+export const opportunityBookmark = pgTable(
+  "opportunity_bookmark",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    opportunityId: uuid("opportunity_id")
+      .notNull()
+      .references(() => opportunity.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("opportunity_bookmark_user_id_idx").on(table.userId),
+    index("opportunity_bookmark_opportunity_id_idx").on(table.opportunityId),
+    unique("opportunity_bookmark_user_opportunity_unique").on(table.userId, table.opportunityId),
+  ],
+);
+
+export const departmentNotice = pgTable(
+  "department_notice",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    departmentId: uuid("department_id")
+      .notNull()
+      .references(() => department.id, { onDelete: "cascade" }),
+    title: varchar("title", { length: 255 }).notNull(),
+    slug: varchar("slug", { length: 128 }).notNull().unique(),
+    contentJson: jsonb("content_json").$type<RichTextDoc>().notNull(),
+    isPinned: boolean("is_pinned").notNull().default(false),
+    authorUserId: uuid("author_user_id")
+      .notNull()
+      .references(() => user.id),
+    published: boolean("published").notNull().default(true),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .$onUpdate(() => new Date())
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index("department_notice_department_id_idx").on(table.departmentId),
+    index("department_notice_author_user_id_idx").on(table.authorUserId),
+    index("department_notice_created_at_idx").on(table.createdAt),
+  ],
+);
+
+export const opportunityBookmarkRelations = relations(opportunityBookmark, ({ one }) => ({
+  user: one(user, { fields: [opportunityBookmark.userId], references: [user.id] }),
+  opportunity: one(opportunity, {
+    fields: [opportunityBookmark.opportunityId],
+    references: [opportunity.id],
+  }),
+}));
+
+export const departmentNoticeRelations = relations(departmentNotice, ({ one }) => ({
+  department: one(department, {
+    fields: [departmentNotice.departmentId],
+    references: [department.id],
+  }),
+  author: one(user, { fields: [departmentNotice.authorUserId], references: [user.id] }),
+}));

@@ -37,16 +37,21 @@ export function Timeline({ items }: { items: ProgrammeItem[] }) {
 
 export function Breadcrumbs({ items }: { items: { name: string; path?: string }[] }) {
   return (
-    <nav className="crumbs" aria-label="Breadcrumb">
-      <ol>
-        {items.map((it) => (
-          <li key={it.name}>
+    <nav className="mb-5" aria-label="Breadcrumb">
+      <ol className="flex flex-wrap items-center gap-2 text-[13px] text-white/60">
+        {items.map((it, index) => (
+          <li key={it.name} className="flex items-center gap-2">
+            {index > 0 ? (
+              <span aria-hidden="true" className="text-white/40">
+                /
+              </span>
+            ) : null}
             {it.path ? (
-              <Link href={it.path}>
+              <Link href={it.path} className="no-underline transition-colors hover:text-white">
                 {it.name}
               </Link>
             ) : (
-              <span aria-current="page">
+              <span aria-current="page" className="font-medium text-white">
                 {it.name}
               </span>
             )}

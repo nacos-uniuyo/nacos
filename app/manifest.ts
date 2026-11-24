@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description: site.shortDescription,
     start_url: "/",
     display: "standalone",
-    background_color: "#F5F2EA",
+    background_color: "#FFFFFF",
     theme_color: "#062A14",
     icons: [{ src: "/images/nacos-logo.png", sizes: "250x250", type: "image/png" }],
   };

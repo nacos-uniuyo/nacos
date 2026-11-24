@@ -1,5 +1,18 @@
 import { TRPCError } from "@trpc/server";
+import { and, count, desc, eq, ilike, or } from "drizzle-orm";
 import { z } from "zod";
+import { db } from "@/db";
+import { leadContributor, richTextDoc } from "@/db/json";
+import {
+  department,
+  opportunity,
+  opportunityBookmark,
+  person,
+  project,
+  schoolSession,
+  user,
+} from "@/db/schema";
+import { generateUniqueSlug } from "@/lib/slug";
 import {
   deansMessage,
   departments,
@@ -23,19 +36,21 @@ import {
   projectSummary,
   schoolSessionSummary,
 } from "./contracts";
+import { coordinatorRouter } from "./routers/coordinator";
 import {
   adminProcedure,
   assertDepartmentScope,
   departmentEditorProcedure,
+  protectedProcedure,
   publicProcedure,
   router,
 } from "./trpc";
 
 /**
- * Phase 1 contracts. Every procedure reads the fixtures in mocks/portal.ts and
- * validates the result against its contract, so data that drifts from the page
- * shape fails at the boundary instead of rendering something wrong. Phase 3
- * swaps the bodies for Drizzle queries and leaves the signatures alone.
+ * Phase 1 contracts & Phase 4 Member Dashboard backend.
+ * Public and preview procedures continue reading from mocks/portal.ts until
+ * Phase 3 live query cutover, while Phase 4 Member Dashboard mutations and
+ * member-specific reads interact with Neon PostgreSQL through Drizzle ORM.
  */
 
 function bySlug<T extends { slug: string }>(
@@ -47,12 +62,218 @@ function bySlug<T extends { slug: string }>(
   return found ? contract.parse(found) : null;
 }
 
+/**
+ * Resolves a department ID whether provided as a UUID or a slug (e.g. "computer-science").
+ */
+async function resolveDepartmentId(idOrSlug: string): Promise<string | null> {
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug);
+  const [dept] = await db
+    .select({ id: department.id })
+    .from(department)
+    .where(isUuid ? eq(department.id, idOrSlug) : eq(department.slug, idOrSlug))
+    .limit(1);
+
+  return dept?.id ?? null;
+}
+
+/**
+ * Resolves a session ID whether provided as a UUID or a slug (e.g. "2024-2025").
+ */
+async function resolveSessionId(idOrSlug: string): Promise<string | null> {
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug);
+  const [sess] = await db
+    .select({ id: schoolSession.id })
+    .from(schoolSession)
+    .where(isUuid ? eq(schoolSession.id, idOrSlug) : eq(schoolSession.slug, idOrSlug))
+    .limit(1);
+
+  return sess?.id ?? null;
+}
+
+/* -------------------------------------------------------------------------- */
+/* User Profile & Dashboard Overview (Phase 4)                                */
+/* -------------------------------------------------------------------------- */
+
+const userRouter = router({
+  searchMembers: protectedProcedure
+    .input(z.object({ query: z.string().trim().max(100).default("") }))
+    .query(async ({ input }) => {
+      const q = input.query;
+      const rows = await db
+        .select({
+          id: user.id,
+          name: user.name,
+          image: user.image,
+          regNumber: user.regNumber,
+        })
+        .from(user)
+        .where(
+          q
+            ? or(
+                ilike(user.name, `%${q}%`),
+                ilike(user.email, `%${q}%`),
+                ilike(user.regNumber, `%${q}%`),
+              )
+            : undefined,
+        )
+        .limit(12);
+      return rows;
+    }),
+  getProfile: protectedProcedure.query(async ({ ctx }) => {
+    const [row] = await db
+      .select({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        role: user.role,
+        departmentId: user.departmentId,
+        departmentName: department.name,
+        departmentSlug: department.slug,
+        regNumber: user.regNumber,
+        createdAt: user.createdAt,
+      })
+      .from(user)
+      .leftJoin(department, eq(user.departmentId, department.id))
+      .where(eq(user.id, ctx.session.userId))
+      .limit(1);
+
+    if (!row) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "User profile not found." });
+    }
+
+    const [claimedPerson] = await db
+      .select({
+        id: person.id,
+        slug: person.slug,
+        fullName: person.fullName,
+        photoUrl: person.photoUrl,
+        currentRole: person.currentRole,
+      })
+      .from(person)
+      .where(eq(person.claimedByUserId, ctx.session.userId))
+      .limit(1);
+
+    return {
+      ...row,
+      claimedPerson: claimedPerson ?? null,
+    };
+  }),
+
+  updateProfile: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().trim().min(2, "Name must be at least 2 characters").max(128),
+        departmentId: z.string().nullable().optional(),
+        regNumber: z
+          .string()
+          .trim()
+          .max(32, "Registration number must not exceed 32 characters")
+          .nullable()
+          .optional()
+          .or(z.literal("")),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      let resolvedDeptId: string | null = null;
+      if (input.departmentId) {
+        resolvedDeptId = await resolveDepartmentId(input.departmentId);
+        if (!resolvedDeptId) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Selected department does not exist." });
+        }
+      }
+
+      // Security: Department editors and admins cannot alter their department assignment via member profile
+      const isPrivileged = ctx.session.role === "department_editor" || ctx.session.role === "admin";
+      const updateData: { name: string; departmentId?: string | null; regNumber?: string | null } = {
+        name: input.name,
+      };
+
+      if (!isPrivileged && input.departmentId !== undefined) {
+        updateData.departmentId = input.departmentId ? resolvedDeptId : null;
+      }
+
+      if (input.regNumber !== undefined) {
+        updateData.regNumber = input.regNumber === "" ? null : input.regNumber;
+      }
+
+      const [updated] = await db
+        .update(user)
+        .set(updateData)
+        .where(eq(user.id, ctx.session.userId))
+        .returning({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          departmentId: user.departmentId,
+          regNumber: user.regNumber,
+        });
+
+      return updated;
+    }),
+
+  getDashboardStats: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.userId;
+
+    const [userRow] = await db
+      .select({
+        departmentId: user.departmentId,
+        regNumber: user.regNumber,
+      })
+      .from(user)
+      .where(eq(user.id, userId))
+      .limit(1);
+
+    const [projectsCountRow] = await db
+      .select({ count: count() })
+      .from(project)
+      .where(eq(project.authorUserId, userId));
+
+    const [approvedProjectsRow] = await db
+      .select({ count: count() })
+      .from(project)
+      .where(and(eq(project.authorUserId, userId), eq(project.status, "approved")));
+
+    const [pendingProjectsRow] = await db
+      .select({ count: count() })
+      .from(project)
+      .where(and(eq(project.authorUserId, userId), eq(project.status, "submitted")));
+
+    const [opportunitiesCountRow] = await db
+      .select({ count: count() })
+      .from(opportunity)
+      .where(eq(opportunity.submittedByUserId, userId));
+
+    const [bookmarksCountRow] = await db
+      .select({ count: count() })
+      .from(opportunityBookmark)
+      .where(eq(opportunityBookmark.userId, userId));
+
+    return {
+      submittedProjectsCount: Number(projectsCountRow?.count ?? 0),
+      approvedProjectsCount: Number(approvedProjectsRow?.count ?? 0),
+      pendingProjectsCount: Number(pendingProjectsRow?.count ?? 0),
+      submittedOpportunitiesCount: Number(opportunitiesCountRow?.count ?? 0),
+      savedBookmarksCount: Number(bookmarksCountRow?.count ?? 0),
+      hasCompletedProfile: Boolean(userRow?.regNumber && userRow?.departmentId),
+    };
+  }),
+});
+
+/* -------------------------------------------------------------------------- */
+/* Department Router                                                          */
+/* -------------------------------------------------------------------------- */
+
 const departmentRouter = router({
   list: publicProcedure.query(() => z.array(departmentSummary).parse(departments)),
   bySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(({ input }) => bySlug(departments, input.slug, departmentSummary)),
 });
+
+/* -------------------------------------------------------------------------- */
+/* Academic Session Router                                                    */
+/* -------------------------------------------------------------------------- */
 
 const sessionRouter = router({
   list: publicProcedure.query(() => z.array(schoolSessionSummary).parse(schoolSessions)),
@@ -64,6 +285,10 @@ const sessionRouter = router({
     return found ? schoolSessionSummary.parse(found) : null;
   }),
 });
+
+/* -------------------------------------------------------------------------- */
+/* Roster Router                                                              */
+/* -------------------------------------------------------------------------- */
 
 const rosterRouter = router({
   list: publicProcedure.query(() => {
@@ -93,6 +318,10 @@ const rosterRouter = router({
   }),
 });
 
+/* -------------------------------------------------------------------------- */
+/* Project Showcase & Proposals Router (Phase 4 Extended)                     */
+/* -------------------------------------------------------------------------- */
+
 const projectRouter = router({
   list: publicProcedure
     .input(
@@ -111,9 +340,11 @@ const projectRouter = router({
       });
       return z.array(projectSummary).parse(filtered);
     }),
+
   bySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(({ input }) => bySlug(projects, input.slug, projectSummary)),
+
   /** Scoped to the editor's own department; admins pass. */
   review: departmentEditorProcedure
     .input(
@@ -130,10 +361,207 @@ const projectRouter = router({
       if (input.status === "rejected" && !input.rejectionReason) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "A rejection needs a reason." });
       }
-      // Phase 3 writes the status through Drizzle.
       return { slug: found.slug, status: input.status };
     }),
+
+  /** Phase 4: Submit a project proposal */
+  submit: protectedProcedure
+    .input(
+      z.object({
+        title: z.string().trim().min(3, "Title must be at least 3 characters").max(255),
+        tagline: z.string().trim().min(5, "Tagline must be at least 5 characters").max(255),
+        descriptionJson: richTextDoc,
+        departmentId: z.string().min(1, "Please select a valid department"),
+        sessionId: z.string().nullable().optional(),
+        category: projectCategory,
+        courseCode: z.string().trim().max(32).nullable().optional(),
+        cohortGroupNumber: z.number().int().min(1).max(50).nullable().optional(),
+        teamDisplayName: z.string().trim().max(128).nullable().optional(),
+        leadContributors: z.array(leadContributor).default([]),
+        bannerUrl: z.string().url().nullable().optional(),
+        bannerPublicId: z.string().max(255).nullable().optional(),
+        galleryUrls: z.array(z.string().url()).default([]),
+        repoUrl: z.string().url().nullable().optional().or(z.literal("")),
+        demoUrl: z.string().url().nullable().optional().or(z.literal("")),
+        saveAsDraft: z.boolean().default(false),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const resolvedDeptId = await resolveDepartmentId(input.departmentId);
+      if (!resolvedDeptId) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Selected department does not exist." });
+      }
+
+      const resolvedSessionId = input.sessionId ? await resolveSessionId(input.sessionId) : null;
+      const slug = generateUniqueSlug(input.title);
+      const status = input.saveAsDraft ? "draft" : "submitted";
+
+      const [created] = await db
+        .insert(project)
+        .values({
+          slug,
+          title: input.title,
+          tagline: input.tagline,
+          descriptionJson: input.descriptionJson,
+          departmentId: resolvedDeptId,
+          sessionId: resolvedSessionId,
+          category: input.category,
+          courseCode: input.courseCode || null,
+          cohortGroupNumber: input.cohortGroupNumber ?? null,
+          teamDisplayName: input.teamDisplayName || null,
+          leadContributors: input.leadContributors,
+          bannerUrl: input.bannerUrl || null,
+          bannerPublicId: input.bannerPublicId || null,
+          galleryUrls: input.galleryUrls,
+          repoUrl: input.repoUrl || null,
+          demoUrl: input.demoUrl || null,
+          status,
+          authorUserId: ctx.session.userId,
+        })
+        .returning({
+          id: project.id,
+          slug: project.slug,
+          status: project.status,
+          title: project.title,
+        });
+
+      return created;
+    }),
+
+  /** Phase 4: Retrieve current user's submitted projects */
+  mySubmissions: protectedProcedure
+    .input(
+      z
+        .object({
+          status: z.enum(["draft", "submitted", "approved", "rejected"]).optional(),
+        })
+        .optional(),
+    )
+    .query(async ({ ctx, input }) => {
+      const conditions = [eq(project.authorUserId, ctx.session.userId)];
+      if (input?.status) {
+        conditions.push(eq(project.status, input.status));
+      }
+
+      const rows = await db
+        .select({
+          id: project.id,
+          slug: project.slug,
+          title: project.title,
+          tagline: project.tagline,
+          category: project.category,
+          departmentId: project.departmentId,
+          departmentName: department.name,
+          departmentSlug: department.slug,
+          status: project.status,
+          rejectionReason: project.rejectionReason,
+          bannerUrl: project.bannerUrl,
+          createdAt: project.createdAt,
+          updatedAt: project.updatedAt,
+        })
+        .from(project)
+        .leftJoin(department, eq(project.departmentId, department.id))
+        .where(and(...conditions))
+        .orderBy(desc(project.createdAt));
+
+      return rows;
+    }),
+
+  /** Phase 4: Update an owned project proposal */
+  updateMySubmission: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        title: z.string().trim().min(3).max(255),
+        tagline: z.string().trim().min(5).max(255),
+        descriptionJson: richTextDoc,
+        departmentId: z.string().min(1),
+        sessionId: z.string().nullable().optional(),
+        category: projectCategory,
+        courseCode: z.string().trim().max(32).nullable().optional(),
+        cohortGroupNumber: z.number().int().min(1).max(50).nullable().optional(),
+        teamDisplayName: z.string().trim().max(128).nullable().optional(),
+        leadContributors: z.array(leadContributor).default([]),
+        bannerUrl: z.string().url().nullable().optional(),
+        bannerPublicId: z.string().max(255).nullable().optional(),
+        galleryUrls: z.array(z.string().url()).default([]),
+        repoUrl: z.string().url().nullable().optional().or(z.literal("")),
+        demoUrl: z.string().url().nullable().optional().or(z.literal("")),
+        submitForReview: z.boolean().default(false),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [existing] = await db
+        .select()
+        .from(project)
+        .where(eq(project.id, input.id))
+        .limit(1);
+
+      if (!existing) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Project proposal not found." });
+      }
+
+      if (existing.authorUserId !== ctx.session.userId) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "You can only modify your own submissions." });
+      }
+
+      if (existing.status === "approved") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Approved projects cannot be modified directly.",
+        });
+      }
+
+      const resolvedDeptId = await resolveDepartmentId(input.departmentId);
+      if (!resolvedDeptId) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Selected department does not exist." });
+      }
+      const resolvedSessionId = input.sessionId ? await resolveSessionId(input.sessionId) : null;
+
+      let newStatus = existing.status;
+      let newRejectionReason = existing.rejectionReason;
+
+      if (input.submitForReview) {
+        newStatus = "submitted";
+        newRejectionReason = null;
+      }
+
+      const [updated] = await db
+        .update(project)
+        .set({
+          title: input.title,
+          tagline: input.tagline,
+          descriptionJson: input.descriptionJson,
+          departmentId: resolvedDeptId,
+          sessionId: resolvedSessionId,
+          category: input.category,
+          courseCode: input.courseCode || null,
+          cohortGroupNumber: input.cohortGroupNumber ?? null,
+          teamDisplayName: input.teamDisplayName || null,
+          leadContributors: input.leadContributors,
+          bannerUrl: input.bannerUrl || null,
+          bannerPublicId: input.bannerPublicId || null,
+          galleryUrls: input.galleryUrls,
+          repoUrl: input.repoUrl || null,
+          demoUrl: input.demoUrl || null,
+          status: newStatus,
+          rejectionReason: newRejectionReason,
+        })
+        .where(eq(project.id, input.id))
+        .returning({
+          id: project.id,
+          slug: project.slug,
+          status: project.status,
+          title: project.title,
+        });
+
+      return updated;
+    }),
 });
+
+/* -------------------------------------------------------------------------- */
+/* Opportunities & Bookmarks Router (Phase 4 Extended)                        */
+/* -------------------------------------------------------------------------- */
 
 const opportunityRouter = router({
   list: publicProcedure
@@ -153,10 +581,181 @@ const opportunityRouter = router({
       });
       return z.array(opportunitySummary).parse(filtered);
     }),
+
+  /** Phase 4: Submit an opportunity listing */
+  submit: protectedProcedure
+    .input(
+      z.object({
+        title: z.string().trim().min(3).max(255),
+        orgName: z.string().trim().min(2).max(128),
+        orgUrl: z.string().url().nullable().optional().or(z.literal("")),
+        orgLogoUrl: z.string().url().nullable().optional().or(z.literal("")),
+        scopeType: z.enum(["faculty", "department", "session"]).default("faculty"),
+        departmentId: z.string().nullable().optional(),
+        sessionId: z.string().nullable().optional(),
+        type: opportunityType,
+        location: z.string().trim().min(2).max(128),
+        descriptionJson: richTextDoc,
+        applyUrl: z.string().url("A valid application URL is required"),
+        deadline: z.string().datetime().nullable().optional(),
+        saveAsDraft: z.boolean().default(false),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const resolvedDeptId = input.departmentId ? await resolveDepartmentId(input.departmentId) : null;
+      const resolvedSessionId = input.sessionId ? await resolveSessionId(input.sessionId) : null;
+
+      const slug = generateUniqueSlug(input.title);
+      const status = input.saveAsDraft ? "draft" : "submitted";
+
+      const [created] = await db
+        .insert(opportunity)
+        .values({
+          slug,
+          title: input.title,
+          orgName: input.orgName,
+          orgUrl: input.orgUrl || null,
+          orgLogoUrl: input.orgLogoUrl || null,
+          scopeType: input.scopeType,
+          departmentId: resolvedDeptId,
+          sessionId: resolvedSessionId,
+          type: input.type,
+          location: input.location,
+          descriptionJson: input.descriptionJson,
+          applyUrl: input.applyUrl,
+          deadline: input.deadline ? new Date(input.deadline) : null,
+          status,
+          submittedByUserId: ctx.session.userId,
+        })
+        .returning({
+          id: opportunity.id,
+          slug: opportunity.slug,
+          status: opportunity.status,
+          title: opportunity.title,
+        });
+
+      return created;
+    }),
+
+  /** Phase 4: Retrieve current user's submitted opportunities */
+  mySubmissions: protectedProcedure.query(async ({ ctx }) => {
+    const rows = await db
+      .select({
+        id: opportunity.id,
+        slug: opportunity.slug,
+        title: opportunity.title,
+        orgName: opportunity.orgName,
+        type: opportunity.type,
+        location: opportunity.location,
+        status: opportunity.status,
+        rejectionReason: opportunity.rejectionReason,
+        applyUrl: opportunity.applyUrl,
+        deadline: opportunity.deadline,
+        createdAt: opportunity.createdAt,
+      })
+      .from(opportunity)
+      .where(eq(opportunity.submittedByUserId, ctx.session.userId))
+      .orderBy(desc(opportunity.createdAt));
+
+    return rows;
+  }),
+
+  /** Phase 4: Toggle bookmark for an opportunity */
+  toggleBookmark: protectedProcedure
+    .input(z.object({ opportunityId: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.userId;
+
+      const [opp] = await db
+        .select({ id: opportunity.id })
+        .from(opportunity)
+        .where(eq(opportunity.id, input.opportunityId))
+        .limit(1);
+
+      if (!opp) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Opportunity not found." });
+      }
+
+      const [existing] = await db
+        .select({ id: opportunityBookmark.id })
+        .from(opportunityBookmark)
+        .where(
+          and(
+            eq(opportunityBookmark.userId, userId),
+            eq(opportunityBookmark.opportunityId, input.opportunityId),
+          ),
+        )
+        .limit(1);
+
+      if (existing) {
+        await db
+          .delete(opportunityBookmark)
+          .where(eq(opportunityBookmark.id, existing.id));
+
+        return { bookmarked: false };
+      }
+
+      await db.insert(opportunityBookmark).values({
+        userId,
+        opportunityId: input.opportunityId,
+      });
+
+      return { bookmarked: true };
+    }),
+
+  /** Phase 4: List bookmarked opportunities for current user */
+  myBookmarks: protectedProcedure.query(async ({ ctx }) => {
+    const rows = await db
+      .select({
+        bookmarkId: opportunityBookmark.id,
+        bookmarkedAt: opportunityBookmark.createdAt,
+        opportunity: {
+          id: opportunity.id,
+          slug: opportunity.slug,
+          title: opportunity.title,
+          orgName: opportunity.orgName,
+          orgLogoUrl: opportunity.orgLogoUrl,
+          type: opportunity.type,
+          location: opportunity.location,
+          deadline: opportunity.deadline,
+          applyUrl: opportunity.applyUrl,
+          status: opportunity.status,
+        },
+      })
+      .from(opportunityBookmark)
+      .innerJoin(opportunity, eq(opportunityBookmark.opportunityId, opportunity.id))
+      .where(eq(opportunityBookmark.userId, ctx.session.userId))
+      .orderBy(desc(opportunityBookmark.createdAt));
+
+    return rows;
+  }),
+
+  /** Phase 4: Check if specific opportunity is bookmarked by user */
+  isBookmarked: protectedProcedure
+    .input(z.object({ opportunityId: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const [existing] = await db
+        .select({ id: opportunityBookmark.id })
+        .from(opportunityBookmark)
+        .where(
+          and(
+            eq(opportunityBookmark.userId, ctx.session.userId),
+            eq(opportunityBookmark.opportunityId, input.opportunityId),
+          ),
+        )
+        .limit(1);
+
+      return { isBookmarked: Boolean(existing) };
+    }),
+
   bySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(({ input }) => bySlug(opportunities, input.slug, opportunitySummary)),
 });
+
+/* -------------------------------------------------------------------------- */
+/* Events, Posts, Goodwill, Settings, Admin Routers                           */
+/* -------------------------------------------------------------------------- */
 
 const eventRouter = router({
   list: publicProcedure.query(() => z.array(eventSummary).parse(events)),
@@ -185,7 +784,6 @@ const settingRouter = router({
   deansMessage: publicProcedure.query(() => deansMessage),
 });
 
-/** Mutation contracts exist now so the admin UI can be built against them. */
 const adminRouter = router({
   updateDeansMessage: adminProcedure
     .input(
@@ -197,12 +795,17 @@ const adminRouter = router({
       }),
     )
     .mutation(() => {
-      // Phase 3 writes to platform_setting through Drizzle.
       return { ok: true as const };
     }),
 });
 
+/* -------------------------------------------------------------------------- */
+/* Main Application Router                                                    */
+/* -------------------------------------------------------------------------- */
+
 export const appRouter = router({
+  user: userRouter,
+  coordinator: coordinatorRouter,
   department: departmentRouter,
   session: sessionRouter,
   roster: rosterRouter,
