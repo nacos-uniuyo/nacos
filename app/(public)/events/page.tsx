@@ -53,7 +53,7 @@ export default function EventsPage() {
             {events.map((e) => (
               <li key={e.slug} className="reveal">
                 <Link
-                  className="group grid grid-cols-1 md:grid-cols-[140px_minmax(0,1fr)_minmax(0,420px)] gap-6 md:gap-10 items-center bg-white rounded-xl p-7 text-[var(--ink)] no-underline transition-all duration-450 hover:-translate-y-1.5 hover:shadow-[0_24px_50px_rgba(6,42,20,0.14)]"
+                  className="group grid grid-cols-1 md:grid-cols-[140px_minmax(0,1fr)_minmax(0,420px)] gap-6 md:gap-10 items-center bg-[var(--card-surface)] rounded-xl p-7 text-[var(--ink)] no-underline transition-all duration-450 hover:-translate-y-1.5 hover:shadow-[0_24px_50px_rgba(6,42,20,0.14)]"
                   href={`/events/${e.slug}`}
                 >
                   <span className="flex flex-row md:flex-col items-baseline md:items-start gap-3 md:gap-1.5 pl-1 md:pl-3">

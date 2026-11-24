@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/EventParts";
 import { JsonLd } from "@/components/JsonLd";
 import { OpportunitiesFeed } from "@/components/OpportunitiesFeed";
 import { HeroOrbits } from "@/components/Orbits";
@@ -50,14 +51,7 @@ export default async function OpportunitiesPage() {
         <HeroOrbits label="{ CAREERS }" />
 
         <div className="wrap relative flex flex-col gap-6 w-full">
-          <nav className="crumbs" aria-label="Breadcrumb">
-            <ol>
-              <li>
-                <Link href="/">NACOS UNIUYO</Link>
-              </li>
-              <li aria-current="page">Opportunities</li>
-            </ol>
-          </nav>
+          <Breadcrumbs items={[{ name: "NACOS UNIUYO", path: "/" }, { name: "Opportunities" }]} />
 
           <h1 id="opportunities-hero-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
             Student <span className="it gold">Opportunities &amp; Careers</span>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/EventParts";
 import { notFound } from "next/navigation";
 import {
   BookOpen,
@@ -131,17 +132,13 @@ export default async function ProjectDetailPage({ params }: Props) {
         <HeroOrbits label={`{ ${project.courseCode ?? "PROJECT"} }`} />
 
         <div className="wrap">
-          <nav className="crumbs" aria-label="Breadcrumb">
-            <ol>
-              <li>
-                <Link href="/">NACOS UNIUYO</Link>
-              </li>
-              <li>
-                <Link href="/projects">Projects</Link>
-              </li>
-              <li aria-current="page">{project.title}</li>
-            </ol>
-          </nav>
+          <Breadcrumbs
+            items={[
+              { name: "NACOS UNIUYO", path: "/" },
+              { name: "Projects", path: "/projects" },
+              { name: project.title },
+            ]}
+          />
 
           <div className="flex flex-wrap items-center gap-2.5 text-xs text-[var(--mint-2)]">
             {dept ? (
@@ -260,7 +257,7 @@ export default async function ProjectDetailPage({ params }: Props) {
               </div>
 
               {/* Natural Editorial Article Body */}
-              <div className="bg-white rounded-xl border border-[rgba(15,26,19,0.12)] p-6 sm:p-12 md:p-14 shadow-sm">
+              <div className="bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] p-6 sm:p-12 md:p-14 shadow-sm">
                 <RichTextRenderer
                   doc={articleDoc}
                   className="project-prose"
@@ -270,7 +267,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 
             {/* Right 4-Column Sticky Specifications Panel */}
             <aside className="lg:col-span-4 flex flex-col gap-4 lg:sticky lg:top-24" aria-label="Project Specifications">
-              <div className="bg-white border border-[rgba(15,26,19,0.12)] rounded-xl p-6 shadow-sm flex flex-col gap-5">
+              <div className="bg-[var(--card-surface)] border border-[var(--rule)] rounded-xl p-6 shadow-sm flex flex-col gap-5">
                 <div className="border-b border-[rgba(15,26,19,0.08)] pb-3">
                   <span className="caps eyebrow accent">Attribution</span>
                   <h3 className="serif text-2xl text-[var(--ink)] m-0 mt-0.5">Specifications</h3>
@@ -427,7 +424,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                     <Link
                       key={rel.slug}
                       href={`/projects/${rel.slug}`}
-                      className="group flex flex-col no-underline text-inherit bg-white rounded-xl border border-[rgba(15,26,19,0.12)] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+                      className="group flex flex-col no-underline text-inherit bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
                     >
                       <div className="w-full aspect-[16/10] bg-[var(--forest)] overflow-hidden relative flex flex-col justify-between p-6">
                         <div className="flex items-center justify-between gap-2">

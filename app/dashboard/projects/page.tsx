@@ -9,7 +9,6 @@ import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDate, projectCategoryLabels } from "@/lib/format";
 import { trpc } from "@/lib/trpc/client";
 
@@ -34,7 +33,6 @@ export default function MyProjectsPage() {
   return (
     <div className="space-y-6">
       <DashboardHeader
-        breadcrumbs={[{ label: "Projects" }]}
         title="My Projects"
         description="Track the review status of your coursework and showcase submissions."
         action={
@@ -47,23 +45,31 @@ export default function MyProjectsPage() {
         }
       />
 
-      <Tabs
-        value={filter}
-        onValueChange={(value) => {
-          const next = filters.find((item) => item.key === value);
-          if (next) setFilter(next.key);
-        }}
+      <div
+        role="tablist"
+        aria-label="Filter projects by status"
+        className="-mx-4 flex items-center gap-2 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden"
       >
-        <div className="overflow-x-auto">
-          <TabsList>
-            {filters.map((item) => (
-              <TabsTrigger key={item.key} value={item.key}>
-                {item.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </div>
-      </Tabs>
+        {filters.map((item) => {
+          const active = item.key === filter;
+          return (
+            <button
+              key={item.key}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              onClick={() => setFilter(item.key)}
+              className={`flex shrink-0 cursor-pointer items-center gap-2.5 rounded-[6px] px-4 py-2 text-sm leading-5 transition-colors ${
+                active
+                  ? "bg-primary/15 font-medium text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
 
       {isLoading ? (
         <ListSkeleton />
@@ -92,7 +98,7 @@ export default function MyProjectsPage() {
                         {proj.departmentName ?? "Faculty"} · {projectCategoryLabels[proj.category]}
                       </span>
                     </div>
-                    <h2 className="mt-2 text-lg font-semibold">{proj.title}</h2>
+                    <h2 className="mt-2 text-base font-semibold">{proj.title}</h2>
                     <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{proj.tagline}</p>
                     <p className="mt-2 text-xs text-muted-foreground">
                       Submitted {formatDate(proj.createdAt)}

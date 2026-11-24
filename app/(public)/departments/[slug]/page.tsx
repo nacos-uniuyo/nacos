@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/EventParts";
 import { notFound } from "next/navigation";
 import { DepartmentHubTabs } from "@/components/DepartmentHubTabs";
 import { JsonLd } from "@/components/JsonLd";
@@ -99,17 +100,13 @@ export default async function DepartmentHubPage({ params }: Props) {
         <HeroOrbits label={`{ ${department.name} · UNIUYO }`} />
 
         <div className="wrap relative flex flex-col gap-6 w-full">
-          <nav className="crumbs" aria-label="Breadcrumb">
-            <ol>
-              <li>
-                <Link href="/">NACOS UNIUYO</Link>
-              </li>
-              <li>
-                <Link href="/departments">Departments</Link>
-              </li>
-              <li aria-current="page">{department.name}</li>
-            </ol>
-          </nav>
+          <Breadcrumbs
+            items={[
+              { name: "NACOS UNIUYO", path: "/" },
+              { name: "Departments", path: "/departments" },
+              { name: department.name },
+            ]}
+          />
 
           <h1 id="dept-hero-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
             Department of <span className="it gold">{department.name}</span>

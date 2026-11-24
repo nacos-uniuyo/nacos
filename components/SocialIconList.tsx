@@ -37,7 +37,7 @@ export function SocialIconList({ socials, size = "md", className = "" }: Props) 
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub Profile"
-                className={`inline-flex items-center justify-center rounded-full border border-[rgba(15,26,19,0.14)] bg-white text-[#24292f] hover:bg-[#24292f] hover:text-white hover:border-[#24292f] transition-all shadow-xs ${sizeClasses}`}
+                className={`inline-flex items-center justify-center rounded-full border border-[rgba(15,26,19,0.14)] bg-[var(--card-surface)] text-[#24292f] dark:text-[#e6edf3] hover:bg-[#24292f] hover:text-white hover:border-[#24292f] transition-all shadow-xs ${sizeClasses}`}
               >
                 <FaGithub />
               </a>
@@ -50,7 +50,7 @@ export function SocialIconList({ socials, size = "md", className = "" }: Props) 
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn Profile"
-                className={`inline-flex items-center justify-center rounded-full border border-[rgba(15,26,19,0.14)] bg-white text-[#0a66c2] hover:bg-[#0a66c2] hover:text-white hover:border-[#0a66c2] transition-all shadow-xs ${sizeClasses}`}
+                className={`inline-flex items-center justify-center rounded-full border border-[rgba(15,26,19,0.14)] bg-[var(--card-surface)] text-[#0a66c2] hover:bg-[#0a66c2] hover:text-white hover:border-[#0a66c2] transition-all shadow-xs ${sizeClasses}`}
               >
                 <FaLinkedinIn />
               </a>
@@ -63,7 +63,7 @@ export function SocialIconList({ socials, size = "md", className = "" }: Props) 
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="X (Twitter) Profile"
-                className={`inline-flex items-center justify-center rounded-full border border-[rgba(15,26,19,0.14)] bg-white text-[#000000] hover:bg-[#000000] hover:text-white hover:border-[#000000] transition-all shadow-xs ${sizeClasses}`}
+                className={`inline-flex items-center justify-center rounded-full border border-[rgba(15,26,19,0.14)] bg-[var(--card-surface)] text-[#000000] dark:text-white hover:bg-[#000000] hover:text-white hover:border-[#000000] transition-all shadow-xs ${sizeClasses}`}
               >
                 <FaXTwitter />
               </a>
@@ -76,7 +76,7 @@ export function SocialIconList({ socials, size = "md", className = "" }: Props) 
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram Profile"
-                className={`inline-flex items-center justify-center rounded-full border border-[rgba(15,26,19,0.14)] bg-white text-[#e4405f] hover:bg-[#e4405f] hover:text-white hover:border-[#e4405f] transition-all shadow-xs ${sizeClasses}`}
+                className={`inline-flex items-center justify-center rounded-full border border-[rgba(15,26,19,0.14)] bg-[var(--card-surface)] text-[#e4405f] hover:bg-[#e4405f] hover:text-white hover:border-[#e4405f] transition-all shadow-xs ${sizeClasses}`}
               >
                 <FaInstagram />
               </a>
@@ -89,7 +89,7 @@ export function SocialIconList({ socials, size = "md", className = "" }: Props) 
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook Profile"
-                className={`inline-flex items-center justify-center rounded-full border border-[rgba(15,26,19,0.14)] bg-white text-[#1877f2] hover:bg-[#1877f2] hover:text-white hover:border-[#1877f2] transition-all shadow-xs ${sizeClasses}`}
+                className={`inline-flex items-center justify-center rounded-full border border-[rgba(15,26,19,0.14)] bg-[var(--card-surface)] text-[#1877f2] hover:bg-[#1877f2] hover:text-white hover:border-[#1877f2] transition-all shadow-xs ${sizeClasses}`}
               >
                 <FaFacebookF />
               </a>
@@ -102,7 +102,7 @@ export function SocialIconList({ socials, size = "md", className = "" }: Props) 
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Personal Website"
-                className={`inline-flex items-center justify-center rounded-full border border-[rgba(15,26,19,0.14)] bg-white text-[var(--forest)] hover:bg-[var(--forest)] hover:text-white hover:border-[var(--forest)] transition-all shadow-xs ${sizeClasses}`}
+                className={`inline-flex items-center justify-center rounded-full border border-[rgba(15,26,19,0.14)] bg-[var(--card-surface)] text-[var(--ink)] hover:bg-[var(--forest)] hover:text-white hover:border-[var(--forest)] transition-all shadow-xs ${sizeClasses}`}
               >
                 <FaGlobe />
               </a>

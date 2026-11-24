@@ -44,7 +44,7 @@ export default async function ExecutivesPage() {
       aides,
       devTeam,
     };
-  });
+  }).filter((s) => s.excos.length > 0 || s.aides.length > 0 || s.devTeam.length > 0);
 
   const currentSessionExcos = sessionsData[0]?.excos ?? [];
 

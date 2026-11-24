@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "nextjs-toploader/app";
+import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import nacosLogoImg from "@/assets/images/nacos-logo.png";
 import {
@@ -11,8 +12,10 @@ import {
   Code2,
   Cpu,
   Database,
+  Moon,
   Network,
   ShieldAlert,
+  Sun,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { Menu } from "./icons";
@@ -79,6 +82,7 @@ export function Header() {
 
   const { data: sessionData } = authClient.useSession();
   const user = sessionData?.user;
+  const { resolvedTheme, setTheme } = useTheme();
 
   useEffect(() => {
     setOpen(false);
@@ -234,28 +238,57 @@ export function Header() {
                   aria-haspopup="menu"
                   onClick={() => setUserMenuOpen((prev) => !prev)}
                 >
-                  <span className="size-6 rounded-full bg-[var(--gold)] text-[var(--forest)] text-[11px] font-bold inline-flex items-center justify-center" aria-hidden="true">
-                    {userInitials}
-                  </span>
+                  {user.image ? (
+                    <img
+                      src={user.image}
+                      alt=""
+                      referrerPolicy="no-referrer"
+                      className="size-6 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="size-6 rounded-full bg-[var(--gold)] text-[var(--forest)] text-[11px] font-bold inline-flex items-center justify-center" aria-hidden="true">
+                      {userInitials}
+                    </span>
+                  )}
                   <span>{user.name.split(" ")[0]}</span>
                 </button>
 
                 {userMenuOpen ? (
-                  <div className="absolute right-0 top-[calc(100%+10px)] w-[250px] bg-white text-[var(--ink)] rounded-2xl border border-[var(--rule)] shadow-[0_24px_48px_rgba(6,42,20,0.24)] overflow-hidden z-60" role="menu">
+                  <div className="absolute right-0 top-[calc(100%+10px)] w-[250px] bg-[var(--card-surface)] text-[var(--ink)] rounded-2xl border border-[var(--rule)] shadow-[0_24px_48px_rgba(6,42,20,0.24)] overflow-hidden z-60" role="menu">
                     <div className="p-4 bg-[var(--paper)] border-b border-[var(--rule)]">
-                      <p className="caps m-0 text-[10px] text-[var(--green)]">Signed in member</p>
-                      <p className="m-0 mt-1 text-sm font-semibold text-[var(--ink)]">{user.name}</p>
+                      <p className="m-0 text-sm font-semibold text-[var(--ink)]">{user.name}</p>
                       <p className="m-0 mt-0.5 text-xs text-[var(--muted)] break-all">{user.email}</p>
                     </div>
                     <div className="flex flex-col p-1.5">
                       <Link
-                        href="/login"
+                        href="/dashboard"
                         role="menuitem"
                         className="flex items-center w-full p-2.5 rounded-lg bg-transparent text-[13px] font-semibold text-[var(--ink)] hover:bg-[var(--sand)] no-underline transition-colors"
                         onClick={() => setUserMenuOpen(false)}
                       >
-                        Account &amp; Session
+                        Dashboard
                       </Link>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        className="flex items-center justify-between w-full p-2.5 rounded-lg bg-transparent text-[13px] font-semibold text-[var(--ink)] hover:bg-[var(--sand)] cursor-pointer transition-colors"
+                        onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+                      >
+                        <span>Theme</span>
+                        <span className="inline-flex items-center gap-1.5 text-xs font-normal text-[var(--muted)]">
+                          {resolvedTheme === "dark" ? (
+                            <>
+                              <Sun className="size-3.5" />
+                              Light
+                            </>
+                          ) : (
+                            <>
+                              <Moon className="size-3.5" />
+                              Dark
+                            </>
+                          )}
+                        </span>
+                      </button>
                       <button
                         type="button"
                         role="menuitem"
@@ -368,13 +401,21 @@ export function Header() {
             ))}
             <li className="pt-4">
               {user ? (
-                <button
-                  type="button"
-                  onClick={handleSignOut}
-                  className="w-full text-left py-2 text-base font-semibold text-destructive bg-transparent border-0 cursor-pointer"
-                >
-                  Sign Out ({user.name.split(" ")[0]})
-                </button>
+                <div className="flex flex-col gap-2">
+                  <Link
+                    href="/dashboard"
+                    className="inline-flex items-center justify-center w-full py-3 rounded-full border border-[var(--gold)] text-white text-sm font-semibold no-underline"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    className="w-full text-left py-2 text-base font-semibold text-destructive bg-transparent border-0 cursor-pointer"
+                  >
+                    Sign Out ({user.name.split(" ")[0]})
+                  </button>
+                </div>
               ) : (
                 <Link
                   href="/login"

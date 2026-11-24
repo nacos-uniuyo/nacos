@@ -222,7 +222,7 @@ export default async function EventPage({ params }: Props) {
 
       <section id="venue" className="py-[var(--section-y)]" aria-labelledby="venue-title">
         <div className="wrap">
-          <div className="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] bg-white rounded-3xl overflow-hidden shadow-[0_30px_70px_rgba(6,42,20,0.1)]">
+          <div className="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] bg-[var(--card-surface)] rounded-3xl overflow-hidden shadow-[0_30px_70px_rgba(6,42,20,0.1)]">
             <div className="p-[clamp(32px,5vw,64px)] flex flex-col gap-5.5">
               <span className="eyebrow caps accent">Venue</span>
               <h2 id="venue-title" className="serif m-0 text-[clamp(44px,5.4vw,72px)] leading-none tracking-[-0.02em]">

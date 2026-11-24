@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/EventParts";
 import { Suspense } from "react";
 import { JsonLd } from "@/components/JsonLd";
 import { HeroOrbits } from "@/components/Orbits";
@@ -54,14 +55,7 @@ export default async function YearbookPage() {
         <HeroOrbits label="{ YEARBOOK }" />
 
         <div className="wrap relative flex flex-col gap-6 w-full">
-          <nav className="crumbs" aria-label="Breadcrumb">
-            <ol>
-              <li>
-                <Link href="/">NACOS UNIUYO</Link>
-              </li>
-              <li aria-current="page">Yearbook &amp; Alumni</li>
-            </ol>
-          </nav>
+          <Breadcrumbs items={[{ name: "NACOS UNIUYO", path: "/" }, { name: "Yearbook & Alumni" }]} />
 
           <h1 id="yearbook-hero-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
             Living <span className="it gold">Digital Yearbook</span>

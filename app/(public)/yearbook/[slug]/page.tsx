@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/EventParts";
 import { notFound } from "next/navigation";
 import {
   Award,
@@ -109,17 +110,13 @@ export default async function AlumniProfilePage({ params }: Props) {
         <HeroOrbits label={`{ ${session?.name?.replace(" Academic Session", "").toUpperCase() ?? "ALUMNI"} }`} />
 
         <div className="wrap">
-          <nav className="crumbs" aria-label="Breadcrumb">
-            <ol>
-              <li>
-                <Link href="/">NACOS UNIUYO</Link>
-              </li>
-              <li>
-                <Link href="/yearbook">Yearbook &amp; Alumni</Link>
-              </li>
-              <li aria-current="page">{person.fullName}</li>
-            </ol>
-          </nav>
+          <Breadcrumbs
+            items={[
+              { name: "NACOS UNIUYO", path: "/" },
+              { name: "Yearbook & Alumni", path: "/yearbook" },
+              { name: person.fullName },
+            ]}
+          />
 
           <div className="flex flex-wrap items-center gap-x-2.5 gap-y-4 text-xs text-[var(--mint-2)]">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.12)] text-[var(--mint-2)] font-semibold">
@@ -157,7 +154,7 @@ export default async function AlumniProfilePage({ params }: Props) {
         <div className="wrap">
           <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-12 sm:gap-16 items-start">
             {/* Left Sidebar: Photo & Professional Info */}
-            <aside className="flex flex-col gap-6 p-6 sm:p-8 bg-white rounded-xl border border-[rgba(15,26,19,0.12)] shadow-sm">
+            <aside className="lg:sticky lg:top-28 flex flex-col gap-6 p-6 sm:p-8 bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] shadow-sm">
               <div className="relative aspect-[4/4.2] rounded-lg bg-[var(--forest)] overflow-hidden shadow-inner">
                 {person.photoUrl ? (
                   <Image
@@ -297,7 +294,7 @@ export default async function AlumniProfilePage({ params }: Props) {
                       return (
                         <div
                           key={mate.slug}
-                          className="group relative bg-white rounded-xl border border-[rgba(15,26,19,0.12)] overflow-hidden shadow-xs hover:shadow-md hover:border-[var(--green)] transition-all duration-300 flex flex-col justify-between"
+                          className="group relative bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] overflow-hidden shadow-xs hover:shadow-md hover:border-[var(--green)] transition-all duration-300 flex flex-col justify-between"
                         >
                           <div>
                             {/* Portrait / Monogram Top Half */}

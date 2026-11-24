@@ -91,15 +91,57 @@ export const departments: DepartmentSummary[] = [
 
 export const schoolSessions: SchoolSessionSummary[] = [
   {
+    slug: "2026-2027",
+    name: "2026/2027 Academic Session",
+    theme: null,
+    isCurrent: false,
+  },
+  {
+    slug: "2025-2026",
+    name: "2025/2026 Academic Session",
+    theme: null,
+    isCurrent: false,
+  },
+  {
     slug: "2024-2025",
     name: "2024/2025 Academic Session",
     theme: "The Revolution",
     isCurrent: true,
   },
   {
+    slug: "2023-2024",
+    name: "2023/2024 Academic Session",
+    theme: null,
+    isCurrent: false,
+  },
+  {
     slug: "2022-2023",
     name: "2022/2023 Academic Session",
     theme: "The Pioneer Administration",
+    isCurrent: false,
+  },
+  {
+    slug: "2021-2022",
+    name: "2021/2022 Academic Session",
+    theme: null,
+    isCurrent: false,
+  },
+  {
+    slug: "2020-2021",
+    name: "2020/2021 Academic Session",
+    theme: null,
+    isCurrent: false,
+  },
+  {
+    slug: "2019-2020",
+    name: "2019/2020 Academic Session",
+    theme: null,
+    isCurrent: false,
+  },
+  {
+    slug: "2018-2019",
+    name: "2018/2019 Academic Session",
+    theme: null,
     isCurrent: false,
   },
 ];

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/EventParts";
 import { notFound } from "next/navigation";
 import { BookOpen, Building2, Mail, MapPin } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
-import { HeroOrbits } from "@/components/Orbits";
+import { PageHero } from "@/components/PageHero";
 import { SocialIconList } from "@/components/SocialIconList";
 import { StaffCard } from "@/components/StaffCard";
 import { breadcrumbSchema, personSchema } from "@/lib/schema";
@@ -82,22 +83,14 @@ export default async function StaffProfilePage({ params }: Props) {
 
   return (
     <>
-      <section className="page-hero" aria-labelledby="staff-profile-title">
-        <div className="grid-bg drift" aria-hidden="true" />
-        <HeroOrbits label="{ FACULTY PROFILE }" />
-
-        <div className="wrap">
-          <nav className="crumbs" aria-label="Breadcrumb">
-            <ol>
-              <li>
-                <Link href="/">NACOS UNIUYO</Link>
-              </li>
-              <li>
-                <Link href="/staff">Staff Directory</Link>
-              </li>
-              <li aria-current="page">{person.fullName}</li>
-            </ol>
-          </nav>
+      <PageHero id="staff-profile-title" orbitLabel="{ FACULTY PROFILE }">
+          <Breadcrumbs
+            items={[
+              { name: "NACOS UNIUYO", path: "/" },
+              { name: "Staff Directory", path: "/staff" },
+              { name: person.fullName },
+            ]}
+          />
 
           <div className="flex flex-wrap items-center gap-2.5 text-xs text-[var(--mint-2)]">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.12)] text-[var(--mint-2)] font-semibold">
@@ -116,14 +109,13 @@ export default async function StaffProfilePage({ params }: Props) {
           <p className="max-w-[620px] text-[var(--mint-2)] font-medium text-[clamp(16px,1.6vw,19px)] leading-relaxed mt-2 mb-0">
             {person.roleTitle}
           </p>
-        </div>
-      </section>
+      </PageHero>
 
       <section className="py-[var(--section-y)]" aria-label="Staff Details and Background">
         <div className="wrap">
           <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-12 sm:gap-16 items-start">
             {/* Sidebar with portrait and official details */}
-            <aside className="flex flex-col gap-6 p-6 sm:p-8 bg-white rounded-2xl border border-[rgba(15,26,19,0.12)] shadow-sm">
+            <aside className="lg:sticky lg:top-28 flex flex-col gap-6 p-6 sm:p-8 bg-[var(--card-surface)] rounded-2xl border border-[var(--rule)] shadow-sm">
               <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-[var(--forest)]">
                 {person.photoUrl ? (
                   <Image
@@ -149,7 +141,7 @@ export default async function StaffProfilePage({ params }: Props) {
                       <span className="text-[11px] font-mono uppercase text-[var(--muted)]">Institutional Email</span>
                       <a
                         href={`mailto:${person.email}`}
-                        className="text-[var(--forest)] font-medium hover:underline break-all"
+                        className="text-primary font-medium hover:underline break-all"
                       >
                         {person.email}
                       </a>
@@ -179,7 +171,7 @@ export default async function StaffProfilePage({ params }: Props) {
             {/* Content column */}
             <div className="flex flex-col gap-10">
               {person.quote && (
-                <blockquote className="serif text-xl sm:text-2xl text-[var(--forest)] italic border-l-2 border-[var(--gold)] pl-6 py-2 m-0 bg-[rgba(6,42,20,0.02)] rounded-r-xl">
+                <blockquote className="serif text-xl sm:text-2xl text-[var(--ink)] italic border-l-2 border-[var(--gold)] pl-6 py-2 m-0 bg-[var(--sand)] rounded-r-xl">
                   &ldquo;{person.quote}&rdquo;
                 </blockquote>
               )}
@@ -194,14 +186,14 @@ export default async function StaffProfilePage({ params }: Props) {
               {person.researchAreas && person.researchAreas.length > 0 && (
                 <section className="flex flex-col gap-4 pt-4 border-t border-[rgba(15,26,19,0.08)]">
                   <div className="flex items-center gap-2">
-                    <BookOpen size={18} className="text-[var(--forest)]" />
+                    <BookOpen size={18} className="text-primary" />
                     <h2 className="serif text-2xl text-[var(--ink)] m-0">Focus &amp; Specialization Areas</h2>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {person.researchAreas.map((area) => (
                       <span
                         key={area}
-                        className="px-3 py-1 rounded-md bg-[rgba(6,42,20,0.05)] border border-[rgba(6,42,20,0.12)] text-xs font-mono text-[var(--forest)]"
+                        className="px-3 py-1 rounded-md bg-[var(--sand)] border border-[var(--rule)] text-xs font-mono text-[var(--ink)]"
                       >
                         {area}
                       </span>

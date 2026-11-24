@@ -83,9 +83,13 @@ export default function ProfilePage() {
     return (
       <div className="space-y-6">
         <DashboardHeader {...header} />
-        <div className="grid gap-6 lg:grid-cols-[1fr_320px]" aria-busy="true" aria-label="Loading">
+        <div className="mx-auto max-w-2xl space-y-4" aria-busy="true" aria-label="Loading">
+          <div className="flex flex-wrap gap-2">
+            <Skeleton className="h-6 w-24 rounded-full" />
+            <Skeleton className="h-6 w-32 rounded-full" />
+            <Skeleton className="h-6 w-28 rounded-full" />
+          </div>
           <Skeleton className="h-96 rounded-xl" />
-          <Skeleton className="h-64 rounded-xl" />
         </div>
       </div>
     );
@@ -106,7 +110,27 @@ export default function ProfilePage() {
     <div className="space-y-6">
       <DashboardHeader {...header} />
 
-      <div className="grid items-start gap-6 lg:grid-cols-[1fr_320px]">
+      <div className="mx-auto max-w-2xl space-y-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant="outline" className="gap-1.5 py-1">
+            <ShieldCheck className="size-3.5 text-muted-foreground" />
+            {roleLabels[profile.role]}
+          </Badge>
+          <Badge variant="secondary" className="gap-1.5 py-1">
+            <Building2 className="size-3.5 text-muted-foreground" />
+            {profile.departmentName ?? "No department"}
+          </Badge>
+          <Badge variant="secondary" className="gap-1.5 py-1 font-mono">
+            <GraduationCap className="size-3.5 text-muted-foreground" />
+            {profile.regNumber || "No reg. number"}
+          </Badge>
+          {profile.claimedPerson ? (
+            <Badge variant="outline" className="py-1">
+              Yearbook: {profile.claimedPerson.fullName}
+            </Badge>
+          ) : null}
+        </div>
+
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((values) =>
@@ -203,46 +227,6 @@ export default function ProfilePage() {
             </Card>
           </form>
         </Form>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Account status</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 text-sm">
-            <div className="flex items-start gap-3">
-              <ShieldCheck className="mt-0.5 size-4 text-muted-foreground" />
-              <div>
-                <p className="text-muted-foreground">Portal role</p>
-                <Badge variant="outline" className="mt-1">
-                  {roleLabels[profile.role]}
-                </Badge>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Building2 className="mt-0.5 size-4 text-muted-foreground" />
-              <div>
-                <p className="text-muted-foreground">Department</p>
-                <p className="font-medium">{profile.departmentName ?? "Not assigned yet"}</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <GraduationCap className="mt-0.5 size-4 text-muted-foreground" />
-              <div>
-                <p className="text-muted-foreground">Registration number</p>
-                <p className="font-mono font-medium">{profile.regNumber || "Not added"}</p>
-              </div>
-            </div>
-            {profile.claimedPerson ? (
-              <div className="rounded-lg border bg-muted p-3">
-                <p className="font-medium">Yearbook linked</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  Connected to {profile.claimedPerson.fullName}
-                  {profile.claimedPerson.currentRole ? `, ${profile.claimedPerson.currentRole}` : ""}
-                </p>
-              </div>
-            ) : null}
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

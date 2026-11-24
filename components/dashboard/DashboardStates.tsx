@@ -1,4 +1,4 @@
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Inbox } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -32,16 +32,23 @@ export function ErrorState({ title, message }: { title: string; message: string 
 export function EmptyState({
   title,
   description,
+  icon,
   action,
 }: {
   title: string;
-  description: string;
+  description?: string;
+  icon?: React.ReactNode;
   action?: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-dashed px-6 py-8">
-      <h2 className="text-xl">{title}</h2>
-      <p className="mt-1 max-w-md text-sm text-muted-foreground">{description}</p>
+    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed px-6 py-10 text-center">
+      <div className="mb-3 flex size-11 items-center justify-center rounded-full bg-muted text-muted-foreground">
+        {icon ?? <Inbox className="size-5" />}
+      </div>
+      <h2 className="text-base font-medium">{title}</h2>
+      {description ? (
+        <p className="mt-1 max-w-xs text-xs text-muted-foreground">{description}</p>
+      ) : null}
       {action ? <div className="mt-4">{action}</div> : null}
     </div>
   );

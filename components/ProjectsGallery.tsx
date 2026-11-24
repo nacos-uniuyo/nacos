@@ -105,7 +105,7 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
               <Link
                 key={project.slug}
                 href={`/projects/${project.slug}`}
-                className="group flex flex-col no-underline text-inherit bg-white rounded-xl border border-[rgba(15,26,19,0.12)] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+                className="group flex flex-col no-underline text-inherit bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
               >
                 {/* Visual Cover Container */}
                 <div className="w-full aspect-[16/10] bg-[var(--forest)] overflow-hidden relative flex flex-col justify-between p-6">

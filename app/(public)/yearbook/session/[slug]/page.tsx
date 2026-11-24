@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/EventParts";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ArrowLeft, GraduationCap } from "lucide-react";
@@ -81,17 +82,13 @@ export default async function SessionCohortPage({ params }: Props) {
         <HeroOrbits label={`{ ${session.name.replace(" Academic Session", "").toUpperCase()} }`} />
 
         <div className="wrap">
-          <nav className="crumbs" aria-label="Breadcrumb">
-            <ol>
-              <li>
-                <Link href="/">NACOS UNIUYO</Link>
-              </li>
-              <li>
-                <Link href="/yearbook">Yearbook &amp; Alumni</Link>
-              </li>
-              <li aria-current="page">{session.name}</li>
-            </ol>
-          </nav>
+          <Breadcrumbs
+            items={[
+              { name: "NACOS UNIUYO", path: "/" },
+              { name: "Yearbook & Alumni", path: "/yearbook" },
+              { name: session.name },
+            ]}
+          />
 
           <div className="flex flex-wrap items-center gap-x-2.5 gap-y-3.5 text-xs text-[var(--mint-2)]">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.12)] text-[var(--mint-2)] font-semibold">

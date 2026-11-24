@@ -25,7 +25,6 @@ export default function MyOpportunitiesPage() {
   return (
     <div className="space-y-6">
       <DashboardHeader
-        breadcrumbs={[{ label: "Opportunities" }]}
         title="My Opportunities"
         description="SIWES openings, internships, scholarships and jobs you shared with NACOS."
         action={
@@ -63,7 +62,7 @@ export default function MyOpportunitiesPage() {
                       <StatusBadge status={opp.status} />
                       <Badge variant="outline">{opportunityTypeLabels[opp.type]}</Badge>
                     </div>
-                    <h2 className="mt-2 text-lg font-semibold">{opp.title}</h2>
+                    <h2 className="mt-2 text-base font-semibold">{opp.title}</h2>
                     <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Building2 className="size-3.5" />

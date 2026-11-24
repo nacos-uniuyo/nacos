@@ -4,12 +4,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRouter } from "nextjs-toploader/app";
 import { useEffect, useState } from "react";
-import { Plus, Trash2, UploadCloud } from "lucide-react";
+import { Plus, Search, Trash2, UploadCloud } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Card,
   CardAction,
@@ -57,11 +65,6 @@ const projectSchema = z.object({
   session: z.string(),
   category: z.enum(projectCategories),
   courseCode: z.string().trim().max(32),
-  groupNumber: z.string().refine((value) => {
-    if (!value) return true;
-    const group = Number(value);
-    return Number.isInteger(group) && group >= 1 && group <= 50;
-  }, "Enter a group number from 1 to 50."),
   teamDisplayName: z.string().trim().max(128),
   contributors: z.array(z.object({ name: z.string().trim().max(128), role: z.string().trim().max(128) })),
   repoUrl: optionalUrl,
@@ -79,6 +82,29 @@ export default function SubmitProjectPage() {
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
   const [bannerUploading, setBannerUploading] = useState(false);
+  const [memberPickerOpen, setMemberPickerOpen] = useState(false);
+  const [memberSearch, setMemberSearch] = useState("");
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+
+  const { data: memberResults, isFetching: searchingMembers } = trpc.user.searchMembers.useQuery(
+    { query: memberSearch },
+    { enabled: memberPickerOpen },
+  );
+
+  function addContributorName(name: string) {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    const current = form.getValues("contributors");
+    const emptyIdx = current.findIndex((c) => !c.name.trim());
+    if (emptyIdx !== -1) {
+      form.setValue(`contributors.${emptyIdx}.name`, trimmed);
+    } else {
+      contributors.append({ name: trimmed, role: "Contributor" });
+    }
+    setMemberPickerOpen(false);
+    setMemberSearch("");
+    setHighlightedIndex(0);
+  }
 
   useEffect(() => {
     if (!bannerFile) {
@@ -100,7 +126,6 @@ export default function SubmitProjectPage() {
       session: NO_SESSION,
       category: "software_engineering",
       courseCode: "",
-      groupNumber: "",
       teamDisplayName: "",
       contributors: [{ name: "", role: "Lead Developer" }],
       repoUrl: "",
@@ -143,7 +168,6 @@ export default function SubmitProjectPage() {
       sessionId: values.session === NO_SESSION ? undefined : values.session,
       category: values.category,
       courseCode: values.courseCode || undefined,
-      cohortGroupNumber: values.groupNumber ? Number(values.groupNumber) : undefined,
       teamDisplayName: values.teamDisplayName || undefined,
       leadContributors: values.contributors
         .filter((person) => person.name)
@@ -172,7 +196,6 @@ export default function SubmitProjectPage() {
   return (
     <div className="space-y-6">
       <DashboardHeader
-        breadcrumbs={[{ label: "Projects", href: "/dashboard/projects" }, { label: "Submit" }]}
         title="Submit a Project"
         description="Send coursework, group projects or personal builds for coordinator review."
       />
@@ -332,25 +355,12 @@ export default function SubmitProjectPage() {
                   />
                   <FormField
                     control={form.control}
-                    name="groupNumber"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Group number</FormLabel>
-                        <FormControl>
-                          <Input type="number" min={1} max={50} placeholder="e.g. 4" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
                     name="teamDisplayName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Team name</FormLabel>
+                        <FormLabel>Team or group name (optional)</FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g. Group 4" maxLength={128} {...field} />
+                          <Input placeholder="e.g. Helium, Apex A, Group 4" maxLength={128} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -369,7 +379,7 @@ export default function SubmitProjectPage() {
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => contributors.append({ name: "", role: "Contributor" })}
+                    onClick={() => setMemberPickerOpen(true)}
                   >
                     <Plus />
                     Add member
@@ -508,6 +518,93 @@ export default function SubmitProjectPage() {
           </div>
         </form>
       </Form>
+
+      <Dialog open={memberPickerOpen} onOpenChange={setMemberPickerOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add NACOS member</DialogTitle>
+            <DialogDescription>
+              Search signed-in members by name, email, or registration number.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <Input
+              value={memberSearch}
+              onChange={(e) => {
+                setMemberSearch(e.target.value);
+                setHighlightedIndex(0);
+              }}
+              onKeyDown={(e) => {
+                const count = memberResults?.length ?? 0;
+                if (e.key === "ArrowDown" && count > 0) {
+                  e.preventDefault();
+                  setHighlightedIndex((prev) => (prev + 1) % count);
+                } else if (e.key === "ArrowUp" && count > 0) {
+                  e.preventDefault();
+                  setHighlightedIndex((prev) => (prev - 1 + count) % count);
+                } else if (e.key === "Enter") {
+                  e.preventDefault();
+                  const selected = memberResults?.[highlightedIndex];
+                  if (selected) {
+                    addContributorName(selected.name);
+                  } else if (memberSearch.trim()) {
+                    addContributorName(memberSearch);
+                  }
+                }
+              }}
+              placeholder="Search members or type a name..."
+              autoFocus
+            />
+            <div className="max-h-64 space-y-1 overflow-y-auto">
+              {searchingMembers ? (
+                <p className="py-6 text-center text-xs text-muted-foreground">Searching…</p>
+              ) : !memberResults?.length ? (
+                <p className="py-4 text-center text-xs text-muted-foreground">No matching members found.</p>
+              ) : (
+                memberResults.map((member, index) => {
+                  const initials =
+                    member.name
+                      .split(/\s+/)
+                      .slice(0, 2)
+                      .map((p) => p[0]?.toUpperCase() ?? "")
+                      .join("") || "U";
+                  return (
+                    <button
+                      key={member.id}
+                      type="button"
+                      onMouseEnter={() => setHighlightedIndex(index)}
+                      onClick={() => addContributorName(member.name)}
+                      className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors ${
+                        index === highlightedIndex ? "bg-accent" : "hover:bg-accent"
+                      }`}
+                    >
+                      <Avatar className="size-8">
+                        {member.image ? <AvatarImage src={member.image} alt={member.name} /> : null}
+                        <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium">{member.name}</p>
+                        {member.regNumber ? (
+                          <p className="truncate font-mono text-xs text-muted-foreground">{member.regNumber}</p>
+                        ) : null}
+                      </div>
+                    </button>
+                  );
+                })
+              )}
+            </div>
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full rounded-lg"
+              onClick={() => addContributorName(memberSearch)}
+            >
+              <Plus />
+              {memberSearch.trim() ? `Add "${memberSearch.trim()}"` : "Add custom member"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -100,13 +100,12 @@ export default function SubmitOpportunityPage() {
   return (
     <div className="space-y-6">
       <DashboardHeader
-        breadcrumbs={[{ label: "Opportunities", href: "/dashboard/opportunities" }, { label: "Submit" }]}
         title="Post an Opportunity"
         description="Share SIWES placements, internships, scholarships and junior roles."
       />
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit((values) => submit(values, false))} className="max-w-3xl">
+        <form onSubmit={form.handleSubmit((values) => submit(values, false))} className="mx-auto max-w-3xl">
           <Card>
             <CardHeader>
               <CardTitle>Opportunity details</CardTitle>

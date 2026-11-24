@@ -3,29 +3,22 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
+import { useSyncExternalStore } from "react";
 import {
   IconArrowLeft,
   IconBookmark,
   IconBriefcase,
-  IconDotsVertical,
   IconFolder,
   IconLayoutDashboard,
   IconLogout,
-  IconSettings,
+  IconMoon,
   IconShield,
+  IconSun,
   IconUser,
 } from "@tabler/icons-react";
 import nacosLogoImg from "@/assets/images/nacos-logo.png";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -55,11 +48,20 @@ const mainLinks = [
   { title: "Projects", url: "/dashboard/projects", icon: IconFolder, exact: false },
   { title: "Opportunities", url: "/dashboard/opportunities", icon: IconBriefcase, exact: true },
   { title: "Saved", url: "/dashboard/opportunities/saved", icon: IconBookmark, exact: false },
+  { title: "Account", url: "/dashboard/profile", icon: IconUser, exact: false },
 ];
 
 export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
+  const { resolvedTheme, setTheme } = useTheme();
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+  const isLight = mounted && resolvedTheme === "light";
+  const isDark = mounted && resolvedTheme === "dark";
 
   const initials =
     user.name
@@ -70,13 +72,9 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
 
   const isCoordinator = user.role === "department_editor" || user.role === "admin";
 
-  const accountLinks = [
-    ...(isCoordinator
-      ? [{ title: "Coordinator console", url: "/admin/departments", icon: IconShield, exact: false }]
-      : []),
-    { title: "Profile", url: "/dashboard/profile", icon: IconSettings, exact: false },
-    { title: "Back to the website", url: "/", icon: IconArrowLeft, exact: true },
-  ];
+  const accountLinks = isCoordinator
+    ? [{ title: "Coordinator console", url: "/admin/departments", icon: IconShield, exact: false }]
+    : [];
 
   const isActive = (url: string, exact: boolean) =>
     exact ? pathname === url : pathname === url || pathname.startsWith(`${url}/`);
@@ -87,24 +85,34 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
   }
 
   const renderLinks = (links: typeof mainLinks) => (
-    <SidebarMenu>
-      {links.map((item) => (
-        <SidebarMenuItem key={item.url}>
-          <SidebarMenuButton
-            asChild
-            isActive={isActive(item.url, item.exact)}
-            tooltip={item.title}
-            onClick={() => {
-              if (isMobile) setOpenMobile(false);
-            }}
-          >
-            <Link href={item.url}>
-              <item.icon />
-              <span>{item.title}</span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      ))}
+    <SidebarMenu className="gap-1.5">
+      {links.map((item) => {
+        const active = isActive(item.url, item.exact);
+        return (
+          <SidebarMenuItem key={item.url} className="relative">
+            {active ? (
+              <span
+                aria-hidden="true"
+                className="absolute -left-2 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-md bg-sidebar-primary z-10"
+              />
+            ) : null}
+            <SidebarMenuButton
+              asChild
+              size="lg"
+              isActive={active}
+              tooltip={item.title}
+              onClick={() => {
+                if (isMobile) setOpenMobile(false);
+              }}
+            >
+              <Link href={item.url}>
+                <item.icon />
+                <span>{item.title}</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        );
+      })}
     </SidebarMenu>
   );
 
@@ -137,75 +145,75 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Your space</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[10px] font-medium tracking-wider uppercase">
+            Main menu
+          </SidebarGroupLabel>
           <SidebarGroupContent>{renderLinks(mainLinks)}</SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup className="mt-auto">
-          <SidebarGroupContent>{renderLinks(accountLinks)}</SidebarGroupContent>
-        </SidebarGroup>
+        {accountLinks.length > 0 ? (
+          <SidebarGroup className="mt-auto">
+            <SidebarGroupContent>{renderLinks(accountLinks)}</SidebarGroupContent>
+          </SidebarGroup>
+        ) : null}
       </SidebarContent>
 
-      <SidebarFooter>
+      <SidebarFooter className="gap-3">
+        <Link
+          href="/"
+          onClick={() => {
+            if (isMobile) setOpenMobile(false);
+          }}
+          className="flex w-full items-center justify-center rounded-lg bg-sidebar-accent/20 py-2 text-sm font-medium text-sidebar-foreground transition-colors hover:bg-sidebar-accent/35"
+        >
+          Browse
+        </Link>
+        <div className="flex items-center rounded-xl bg-sidebar-accent/40 p-1 text-xs">
+          <button
+            type="button"
+            onClick={() => setTheme("light")}
+            className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 font-medium transition-all cursor-pointer ${
+              isLight
+                ? "bg-background text-foreground shadow-2xs"
+                : "text-sidebar-foreground/70 hover:text-sidebar-foreground"
+            }`}
+          >
+            <IconSun className="size-3.5" />
+            Light
+          </button>
+          <button
+            type="button"
+            onClick={() => setTheme("dark")}
+            className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 font-medium transition-all cursor-pointer ${
+              isDark
+                ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-2xs"
+                : "text-sidebar-foreground/70 hover:text-sidebar-foreground"
+            }`}
+          >
+            <IconMoon className="size-3.5" />
+            Dark
+          </button>
+        </div>
         <SidebarMenu>
           <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                >
-                  {userAvatar}
-                  <span className="grid min-w-0 flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{user.name}</span>
-                    <span className="truncate text-xs text-sidebar-foreground">{user.email}</span>
-                  </span>
-                  <IconDotsVertical className="ml-auto size-4" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-                side={isMobile ? "bottom" : "right"}
-                align="end"
-                sideOffset={4}
-              >
-                <DropdownMenuLabel className="p-0 font-normal">
-                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    {userAvatar}
-                    <div className="grid min-w-0 flex-1 leading-tight">
-                      <span className="truncate font-medium">{user.name}</span>
-                      <span className="truncate text-xs text-muted-foreground">{user.email}</span>
-                    </div>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard/profile">
-                      <IconUser />
-                      Profile
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard/projects">
-                      <IconFolder />
-                      My Projects
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard/opportunities/saved">
-                      <IconBookmark />
-                      Saved
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem variant="destructive" onClick={handleSignOut}>
-                  <IconLogout />
-                  Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <SidebarMenuButton
+              size="lg"
+              tooltip="Log out"
+              onClick={handleSignOut}
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+            >
+              <IconLogout />
+              <span>Log out</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <div className="flex items-center gap-2 px-2 py-1.5 text-left text-sm">
+              {userAvatar}
+              <span className="grid min-w-0 flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate text-xs text-sidebar-foreground/70">{user.email}</span>
+              </span>
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

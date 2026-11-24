@@ -49,7 +49,7 @@ export function ExecutivesInfiniteList({ initialSessionsData }: Props) {
         return (
           <div
             key={session.slug}
-            className={`flex flex-col gap-12 ${sIndex > 0 ? "pt-14 sm:pt-20 border-t border-[rgba(15,26,19,0.12)]" : ""}`}
+            className={`flex flex-col gap-12 ${sIndex > 0 ? "pt-14 sm:pt-20" : ""}`}
           >
             {/* Session Banner */}
             <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
@@ -71,7 +71,7 @@ export function ExecutivesInfiniteList({ initialSessionsData }: Props) {
                     Executive Council
                   </h2>
                 </div>
-                <ul className="exec-grid">
+                <ul className="grid list-none m-0 p-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {excos.map((person, i) => (
                     <li key={person.slug} className="reveal">
                       <CouncilPersonCard
@@ -94,7 +94,7 @@ export function ExecutivesInfiniteList({ initialSessionsData }: Props) {
                     Presidential Aides &amp; Assistants
                   </h2>
                 </div>
-                <ul className="exec-grid">
+                <ul className="grid list-none m-0 p-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {aides.map((person, i) => (
                     <li key={person.slug} className="reveal">
                       <CouncilPersonCard
@@ -116,7 +116,7 @@ export function ExecutivesInfiniteList({ initialSessionsData }: Props) {
                     Software Directorate &amp; Developer Team
                   </h2>
                 </div>
-                <ul className="exec-grid">
+                <ul className="grid list-none m-0 p-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {devTeam.map((person, i) => (
                     <li key={person.slug} className="reveal">
                       <CouncilPersonCard

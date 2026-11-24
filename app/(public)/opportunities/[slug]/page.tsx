@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/EventParts";
 import { notFound } from "next/navigation";
 import {
   Briefcase,
@@ -13,7 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight } from "@/components/icons";
 import { JsonLd } from "@/components/JsonLd";
-import { HeroOrbits } from "@/components/Orbits";
+import { PageHero } from "@/components/PageHero";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
 import type { OpportunityType } from "@/lib/enums";
 import { breadcrumbSchema, opportunitySchema } from "@/lib/schema";
@@ -136,22 +137,14 @@ export default async function OpportunityDetailPage({ params }: Props) {
 
   return (
     <>
-      <section className="page-hero" aria-labelledby="opportunity-detail-title">
-        <div className="grid-bg drift" aria-hidden="true" />
-        <HeroOrbits label={`{ ${typeLabel.toUpperCase()} }`} />
-
-        <div className="wrap">
-          <nav className="crumbs" aria-label="Breadcrumb">
-            <ol>
-              <li>
-                <Link href="/">NACOS UNIUYO</Link>
-              </li>
-              <li>
-                <Link href="/opportunities">Opportunities</Link>
-              </li>
-              <li aria-current="page">{opportunity.title}</li>
-            </ol>
-          </nav>
+      <PageHero id="opportunity-detail-title" orbitLabel={`{ ${typeLabel.toUpperCase()} }`}>
+          <Breadcrumbs
+            items={[
+              { name: "NACOS UNIUYO", path: "/" },
+              { name: "Opportunities", path: "/opportunities" },
+              { name: opportunity.title },
+            ]}
+          />
 
           <div className="flex flex-wrap items-center gap-2.5 text-xs text-[var(--mint-2)]">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.12)] text-[var(--mint-2)] font-semibold">
@@ -189,8 +182,7 @@ export default async function OpportunityDetailPage({ params }: Props) {
           <p className="max-w-[580px] text-[var(--mint-2)] font-medium text-[clamp(16px,1.6vw,19px)] leading-relaxed">
             Offered by {opportunity.orgName} for computing students and researchers at the University of Uyo.
           </p>
-        </div>
-      </section>
+      </PageHero>
 
       <section className="py-[var(--section-y)]" aria-label="Opportunity Details and Guidelines">
         <div className="wrap">
@@ -199,13 +191,13 @@ export default async function OpportunityDetailPage({ params }: Props) {
               <RichTextRenderer doc={articleDoc} />
             </article>
 
-            <aside className="sticky top-28 flex flex-col gap-6 p-6 sm:p-8 bg-white rounded-xl border border-[rgba(15,26,19,0.12)] shadow-sm">
+            <aside className="sticky top-28 flex flex-col gap-6 p-6 sm:p-8 bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] shadow-sm">
               <h2 className="serif text-xl text-[var(--ink)] m-0">Opportunity Summary</h2>
 
               <dl className="flex flex-col gap-4 text-xs sm:text-sm m-0">
                 <div className="flex flex-col gap-1 pb-3 border-b border-[rgba(15,26,19,0.08)]">
                   <dt className="text-[var(--muted)] font-medium flex items-center gap-1.5">
-                    <Building2 size={14} className="text-[var(--forest)]" />
+                    <Building2 size={14} className="text-primary" />
                     <span>Host Organization</span>
                   </dt>
                   <dd className="font-semibold text-[var(--ink)] m-0">{opportunity.orgName}</dd>
@@ -213,7 +205,7 @@ export default async function OpportunityDetailPage({ params }: Props) {
 
                 <div className="flex flex-col gap-1 pb-3 border-b border-[rgba(15,26,19,0.08)]">
                   <dt className="text-[var(--muted)] font-medium flex items-center gap-1.5">
-                    <MapPin size={14} className="text-[var(--forest)]" />
+                    <MapPin size={14} className="text-primary" />
                     <span>Location</span>
                   </dt>
                   <dd className="font-semibold text-[var(--ink)] m-0">{opportunity.location}</dd>
@@ -221,7 +213,7 @@ export default async function OpportunityDetailPage({ params }: Props) {
 
                 <div className="flex flex-col gap-1 pb-3 border-b border-[rgba(15,26,19,0.08)]">
                   <dt className="text-[var(--muted)] font-medium flex items-center gap-1.5">
-                    <Calendar size={14} className="text-[var(--forest)]" />
+                    <Calendar size={14} className="text-primary" />
                     <span>Application Deadline</span>
                   </dt>
                   <dd className="font-semibold text-[var(--ink)] m-0">
@@ -231,7 +223,7 @@ export default async function OpportunityDetailPage({ params }: Props) {
 
                 <div className="flex flex-col gap-1">
                   <dt className="text-[var(--muted)] font-medium flex items-center gap-1.5">
-                    <GraduationCap size={14} className="text-[var(--forest)]" />
+                    <GraduationCap size={14} className="text-primary" />
                     <span>Eligibility Scope</span>
                   </dt>
                   <dd className="font-semibold text-[var(--ink)] m-0">
@@ -253,7 +245,7 @@ export default async function OpportunityDetailPage({ params }: Props) {
                     </a>
                   </Button>
                 ) : (
-                  <div className="p-4 rounded-xl bg-[var(--sand)] text-xs text-[var(--forest)] leading-relaxed">
+                  <div className="p-4 rounded-xl bg-[var(--sand)] text-xs text-[var(--ink)] leading-relaxed">
                     Applications for this faculty opportunity are submitted directly through the administrative instructions described on this page.
                   </div>
                 )}

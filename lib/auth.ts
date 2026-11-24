@@ -15,6 +15,7 @@ import { env } from "@/env";
  */
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
+  trustedOrigins: [env.BETTER_AUTH_URL, "http://localhost:3000", "http://127.0.0.1:3000"],
   secret: env.BETTER_AUTH_SECRET,
   database: drizzleAdapter(db, { provider: "pg", schema }),
   socialProviders: {

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Briefcase, FolderGit2 } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { EmptyState } from "@/components/dashboard/DashboardStates";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
@@ -62,7 +62,7 @@ function RecentList({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl font-normal">{title}</CardTitle>
+        <CardTitle className="text-base font-semibold">{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
         {items.length > 0 ? (
           <CardAction>
@@ -118,22 +118,19 @@ export default function DashboardOverviewPage() {
 
   return (
     <div className="space-y-8">
-      <div className="space-y-1">
-        <p className="text-sm text-muted-foreground">{today}</p>
-        <DashboardHeader
-          title={firstName ? `${greeting(now)}, ${firstName}` : greeting(now)}
-          action={
-            <div className="flex flex-wrap items-center gap-2">
-              <Button asChild size="sm">
-                <Link href="/dashboard/projects/submit">Submit a project</Link>
-              </Button>
-              <Button asChild size="sm" variant="outline">
-                <Link href="/dashboard/opportunities/submit">Post an opportunity</Link>
-              </Button>
-            </div>
-          }
-        />
-      </div>
+      <DashboardHeader
+        title={firstName ? `${greeting(now)}, ${firstName}` : greeting(now)}
+        action={
+          <div className="flex flex-wrap items-center gap-2">
+            <Button asChild size="sm">
+              <Link href="/dashboard/projects/submit">Submit a project</Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/dashboard/opportunities/submit">Post an opportunity</Link>
+            </Button>
+          </div>
+        }
+      />
 
       {!profileLoading && isProfileIncomplete ? (
         <Alert>
@@ -194,8 +191,9 @@ export default function DashboardOverviewPage() {
           }))}
           empty={
             <EmptyState
+              icon={<FolderGit2 className="size-5" />}
               title="No projects yet"
-              description="Coursework, a final year project or something you built on your own all count."
+              description="Share coursework, a final year project, or a side build."
               action={
                 <Button asChild size="sm" variant="outline">
                   <Link href="/dashboard/projects/submit">Submit your first project</Link>
@@ -217,8 +215,9 @@ export default function DashboardOverviewPage() {
           }))}
           empty={
             <EmptyState
+              icon={<Briefcase className="size-5" />}
               title="Nothing posted yet"
-              description="If you hear about a SIWES slot, internship or scholarship, post it so others can apply in time."
+              description="Share a SIWES slot, internship, or scholarship."
               action={
                 <Button asChild size="sm" variant="outline">
                   <Link href="/dashboard/opportunities/submit">Post an opportunity</Link>

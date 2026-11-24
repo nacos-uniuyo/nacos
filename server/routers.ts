@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { and, count, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, ilike, or } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { leadContributor, richTextDoc } from "@/db/json";
@@ -95,6 +95,30 @@ async function resolveSessionId(idOrSlug: string): Promise<string | null> {
 /* -------------------------------------------------------------------------- */
 
 const userRouter = router({
+  searchMembers: protectedProcedure
+    .input(z.object({ query: z.string().trim().max(100).default("") }))
+    .query(async ({ input }) => {
+      const q = input.query;
+      const rows = await db
+        .select({
+          id: user.id,
+          name: user.name,
+          image: user.image,
+          regNumber: user.regNumber,
+        })
+        .from(user)
+        .where(
+          q
+            ? or(
+                ilike(user.name, `%${q}%`),
+                ilike(user.email, `%${q}%`),
+                ilike(user.regNumber, `%${q}%`),
+              )
+            : undefined,
+        )
+        .limit(12);
+      return rows;
+    }),
   getProfile: protectedProcedure.query(async ({ ctx }) => {
     const [row] = await db
       .select({

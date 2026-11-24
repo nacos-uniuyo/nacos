@@ -30,7 +30,6 @@ export default function SavedOpportunitiesPage() {
   return (
     <div className="space-y-6">
       <DashboardHeader
-        breadcrumbs={[{ label: "Opportunities", href: "/dashboard/opportunities" }, { label: "Saved" }]}
         title="Saved Opportunities"
         description="Placements, scholarships and internships you bookmarked."
       />
@@ -57,7 +56,7 @@ export default function SavedOpportunitiesPage() {
                 <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
                   <div className="min-w-0 flex-1">
                     <Badge variant="outline">{opportunityTypeLabels[opp.type]}</Badge>
-                    <h2 className="mt-2 text-lg font-semibold">{opp.title}</h2>
+                    <h2 className="mt-2 text-base font-semibold">{opp.title}</h2>
                     <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Building2 className="size-3.5" />
