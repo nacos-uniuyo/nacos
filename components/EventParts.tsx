@@ -37,15 +37,12 @@ export function Timeline({ items }: { items: ProgrammeItem[] }) {
 
 export function Breadcrumbs({ items }: { items: { name: string; path?: string }[] }) {
   return (
-    <nav aria-label="Breadcrumb">
-      <ol className="list-none flex flex-wrap items-center gap-2 m-0 p-0 text-[13px] text-white/75 [&_li+li]:before:content-['/'] [&_li+li]:before:mr-2 [&_li+li]:before:text-white/35 [&_a]:text-white/75 [&_a:hover]:text-white [&_[aria-current]]:text-white [&_[aria-current]]:font-medium">
+    <nav className="crumbs" aria-label="Breadcrumb">
+      <ol>
         {items.map((it) => (
           <li key={it.name}>
             {it.path ? (
-              <Link
-                href={it.path}
-                className="text-white/75 hover:text-white transition-colors no-underline"
-              >
+              <Link href={it.path}>
                 {it.name}
               </Link>
             ) : (

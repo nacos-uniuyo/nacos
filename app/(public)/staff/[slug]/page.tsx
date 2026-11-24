@@ -82,28 +82,18 @@ export default async function StaffProfilePage({ params }: Props) {
 
   return (
     <>
-      <section className="relative bg-[var(--forest)] text-white overflow-hidden min-h-[min(780px,calc(100svh-80px))] flex items-center py-[clamp(64px,8vw,100px)]" aria-labelledby="staff-profile-title">
+      <section className="page-hero" aria-labelledby="staff-profile-title">
         <div className="grid-bg drift" aria-hidden="true" />
         <HeroOrbits label="{ FACULTY PROFILE }" />
 
-        <div className="wrap relative flex flex-col gap-6 w-full">
-          <nav aria-label="Breadcrumb">
-            <ol className="list-none flex flex-wrap items-center gap-2 m-0 p-0 text-[13px] text-white/75 [&_li+li]:before:content-['/'] [&_li+li]:before:mr-2 [&_li+li]:before:text-white/35 [&_a]:text-white/75 [&_a:hover]:text-white [&_[aria-current]]:text-white [&_[aria-current]]:font-medium">
+        <div className="wrap">
+          <nav className="crumbs" aria-label="Breadcrumb">
+            <ol>
               <li>
-                <Link
-                  href="/"
-                  className="text-white/75 hover:text-white transition-colors no-underline"
-                >
-                  NACOS UNIUYO
-                </Link>
+                <Link href="/">NACOS UNIUYO</Link>
               </li>
               <li>
-                <Link
-                  href="/staff"
-                  className="text-white/75 hover:text-white transition-colors no-underline"
-                >
-                  Staff Directory
-                </Link>
+                <Link href="/staff">Staff Directory</Link>
               </li>
               <li aria-current="page">{person.fullName}</li>
             </ol>
@@ -130,7 +120,7 @@ export default async function StaffProfilePage({ params }: Props) {
       </section>
 
       <section className="py-[var(--section-y)]" aria-label="Staff Details and Background">
-        <div className="wrap relative flex flex-col gap-6 w-full">
+        <div className="wrap">
           <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-12 sm:gap-16 items-start">
             {/* Sidebar with portrait and official details */}
             <aside className="flex flex-col gap-6 p-6 sm:p-8 bg-white rounded-2xl border border-[rgba(15,26,19,0.12)] shadow-sm">

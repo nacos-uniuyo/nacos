@@ -14,10 +14,7 @@ import { env } from "@/env";
  * only an admin or a database update can.
  */
 export const auth = betterAuth({
-  baseURL: {
-    allowedHosts: ["localhost:3000", "localhost:3001", "127.0.0.1:3000", "nnacos.vercel.app"],
-    fallback: env.BETTER_AUTH_URL,
-  },
+  baseURL: env.BETTER_AUTH_URL,
   secret: env.BETTER_AUTH_SECRET,
   database: drizzleAdapter(db, { provider: "pg", schema }),
   socialProviders: {

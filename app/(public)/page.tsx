@@ -110,8 +110,8 @@ export default async function Home() {
           </h2>
           <div className="md:col-span-9 flex flex-col gap-9">
             <p className="statement serif reveal m-0 text-[clamp(36px,5vw,64px)] leading-[1.08] tracking-[-0.01em]">
-              <span className="block min-[961px]:whitespace-nowrap">We want to be known not just for studying</span>{" "}
-              <span className="block min-[961px]:whitespace-nowrap">
+              <span className="statement-line">We want to be known not just for studying</span>{" "}
+              <span className="statement-line">
                 Computing, but for <span className="it accent nowrap">what we build with it.</span>
               </span>
             </p>
@@ -143,7 +143,7 @@ export default async function Home() {
               <Link
                 key={dept.slug}
                 href={`/departments/${dept.slug}`}
-                className={`group flex flex-col justify-between gap-5.5 rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--card-surface)] p-7 text-[var(--ink)] no-underline transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(15,26,19,0.08)] ${
+                className={`group flex flex-col justify-between gap-5.5 rounded-[var(--radius)] border border-[var(--rule)] bg-white p-7 text-[var(--ink)] no-underline transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(15,26,19,0.08)] ${
                   index >= 3 ? "md:col-span-3" : "md:col-span-2"
                 }`}
               >
@@ -340,7 +340,7 @@ export default async function Home() {
 
             <div className="lg:col-span-6 grid grid-rows-1 sm:grid-rows-2 gap-5">
               <Link
-                className="group flex flex-col sm:flex-row gap-6 bg-[var(--card-surface)] rounded-[var(--radius)] p-7.5 text-[var(--ink)] no-underline transition-all duration-450 hover:-translate-y-1.5 hover:shadow-[0_24px_50px_rgba(6,42,20,0.14)]"
+                className="group flex flex-col sm:flex-row gap-6 bg-white rounded-[var(--radius)] p-7.5 text-[var(--ink)] no-underline transition-all duration-450 hover:-translate-y-1.5 hover:shadow-[0_24px_50px_rgba(6,42,20,0.14)]"
                 href={`/events/${ev.slug}/programme`}
               >
                 <span className="w-full sm:w-40 shrink-0 rounded-xl bg-[var(--forest)] text-[var(--gold)] flex flex-col justify-between p-4 min-h-[100px] overflow-hidden" aria-hidden="true">
@@ -355,7 +355,7 @@ export default async function Home() {
               </Link>
 
               <Link
-                className="group flex flex-col sm:flex-row gap-6 bg-[var(--card-surface)] rounded-[var(--radius)] p-7.5 text-[var(--ink)] no-underline transition-all duration-450 hover:-translate-y-1.5 hover:shadow-[0_24px_50px_rgba(6,42,20,0.14)]"
+                className="group flex flex-col sm:flex-row gap-6 bg-white rounded-[var(--radius)] p-7.5 text-[var(--ink)] no-underline transition-all duration-450 hover:-translate-y-1.5 hover:shadow-[0_24px_50px_rgba(6,42,20,0.14)]"
                 href="/executives"
               >
                 <span className="w-full sm:w-40 shrink-0 rounded-xl bg-[var(--sand)] text-[var(--green)] flex flex-col justify-between p-4 min-h-[100px] overflow-hidden" aria-hidden="true">

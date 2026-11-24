@@ -33,7 +33,7 @@ export function PriorityTile({
   const variantStyles = {
     forest: "bg-[var(--forest-2)] text-white hover:bg-[var(--forest-3)]",
     green: "bg-[var(--green)] text-white hover:bg-[var(--green-hover)]",
-    light: "bg-[var(--paper)] text-[var(--ink)] hover:bg-[var(--card-surface)]",
+    light: "bg-[var(--paper)] text-[var(--ink)] hover:bg-white",
   };
 
   const numberStyles = {

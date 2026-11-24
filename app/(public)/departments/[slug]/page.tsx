@@ -99,23 +99,13 @@ export default async function DepartmentHubPage({ params }: Props) {
         <HeroOrbits label={`{ ${department.name} · UNIUYO }`} />
 
         <div className="wrap relative flex flex-col gap-6 w-full">
-          <nav aria-label="Breadcrumb">
-            <ol className="list-none flex flex-wrap items-center gap-2 m-0 p-0 text-[13px] text-white/75 [&_li+li]:before:content-['/'] [&_li+li]:before:mr-2 [&_li+li]:before:text-white/35 [&_a]:text-white/75 [&_a:hover]:text-white [&_[aria-current]]:text-white [&_[aria-current]]:font-medium">
+          <nav className="crumbs" aria-label="Breadcrumb">
+            <ol>
               <li>
-                <Link
-                  href="/"
-                  className="text-white/75 hover:text-white transition-colors no-underline"
-                >
-                  NACOS UNIUYO
-                </Link>
+                <Link href="/">NACOS UNIUYO</Link>
               </li>
               <li>
-                <Link
-                  href="/departments"
-                  className="text-white/75 hover:text-white transition-colors no-underline"
-                >
-                  Departments
-                </Link>
+                <Link href="/departments">Departments</Link>
               </li>
               <li aria-current="page">{department.name}</li>
             </ol>

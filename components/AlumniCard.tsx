@@ -23,7 +23,7 @@ export function AlumniCard({ alum, deptName, sessionName }: Props) {
   const initials = getAlumniInitials(alum.fullName);
 
   return (
-    <article className="group relative flex flex-col justify-between w-full max-w-full bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] overflow-hidden shadow-[0_4px_20px_rgba(15,26,19,0.12),0_1px_4px_rgba(15,26,19,0.08)] hover:-translate-y-1 hover:shadow-[0_20px_42px_rgba(15,26,19,0.15),0_3px_8px_rgba(15,26,19,0.08)] transition-all duration-300">
+    <article className="yearbook-card group relative">
       <div>
         {/* Card Media Header */}
         <div className="relative w-full aspect-[4/3.4] bg-[var(--forest)] overflow-hidden">

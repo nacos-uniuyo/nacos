@@ -35,7 +35,7 @@ export function SignInButton() {
   async function signIn() {
     setPending(true);
     setError(null);
-    const result = await authClient.signIn.social({ provider: "google", callbackURL: "/dashboard" });
+    const result = await authClient.signIn.social({ provider: "google", callbackURL: "/" });
     if (result.error) {
       setError(result.error.message ?? "Google sign-in could not start. Try again.");
       setPending(false);

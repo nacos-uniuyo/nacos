@@ -5,7 +5,6 @@ import { httpBatchLink } from "@trpc/client";
 import { useState, type ReactNode } from "react";
 import superjson from "superjson";
 import { trpc } from "@/lib/trpc/client";
-import { ThemeProvider } from "@/components/theme-provider";
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
@@ -23,15 +22,8 @@ export function Providers({ children }: { children: ReactNode }) {
   );
 
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="light"
-      enableSystem
-      disableTransitionOnChange
-    >
-      <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-      </trpc.Provider>
-    </ThemeProvider>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </trpc.Provider>
   );
 }

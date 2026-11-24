@@ -126,28 +126,18 @@ export default async function ProjectDetailPage({ params }: Props) {
   return (
     <>
       {/* 1. Hero Header */}
-      <section className="relative bg-[var(--forest)] text-white overflow-hidden min-h-[min(780px,calc(100svh-80px))] flex items-center py-[clamp(64px,8vw,100px)]" aria-labelledby="project-detail-title">
+      <section className="page-hero" aria-labelledby="project-detail-title">
         <div className="grid-bg drift" aria-hidden="true" />
         <HeroOrbits label={`{ ${project.courseCode ?? "PROJECT"} }`} />
 
-        <div className="wrap relative flex flex-col gap-6 w-full">
-          <nav aria-label="Breadcrumb">
-            <ol className="list-none flex flex-wrap items-center gap-2 m-0 p-0 text-[13px] text-white/75 [&_li+li]:before:content-['/'] [&_li+li]:before:mr-2 [&_li+li]:before:text-white/35 [&_a]:text-white/75 [&_a:hover]:text-white [&_[aria-current]]:text-white [&_[aria-current]]:font-medium">
+        <div className="wrap">
+          <nav className="crumbs" aria-label="Breadcrumb">
+            <ol>
               <li>
-                <Link
-                  href="/"
-                  className="text-white/75 hover:text-white transition-colors no-underline"
-                >
-                  NACOS UNIUYO
-                </Link>
+                <Link href="/">NACOS UNIUYO</Link>
               </li>
               <li>
-                <Link
-                  href="/projects"
-                  className="text-white/75 hover:text-white transition-colors no-underline"
-                >
-                  Projects
-                </Link>
+                <Link href="/projects">Projects</Link>
               </li>
               <li aria-current="page">{project.title}</li>
             </ol>
@@ -236,7 +226,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 
       {/* 2. Editorial Case Study Layout */}
       <section className="py-[var(--section-y)]" aria-label="Project Case Study and Technical Specifications">
-        <div className="wrap relative flex flex-col gap-6 w-full">
+        <div className="wrap">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             {/* Left 8-Column Article Canvas */}
             <article className="lg:col-span-8 flex flex-col gap-8">
