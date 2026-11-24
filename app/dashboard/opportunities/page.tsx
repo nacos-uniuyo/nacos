@@ -3,7 +3,6 @@
 import Link from "next/link";
 import {
   AlertCircle,
-  Briefcase,
   Building2,
   Calendar,
   ExternalLink,
@@ -11,25 +10,28 @@ import {
   PlusCircle,
 } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { EmptyState, ErrorState, ListSkeleton } from "@/components/dashboard/DashboardStates";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatDate, opportunityTypeLabels } from "@/lib/format";
 import { trpc } from "@/lib/trpc/client";
 
 export default function MyOpportunitiesPage() {
-  const { data: opportunities, isLoading, error } =
-    trpc.opportunity.mySubmissions.useQuery();
+  const { data: opportunities, isLoading, error } = trpc.opportunity.mySubmissions.useQuery();
 
   return (
     <div className="space-y-6">
       <DashboardHeader
         breadcrumbs={[{ label: "Opportunities" }]}
-        title="My Submitted Opportunities"
-        description="SIWES openings, internships, tech scholarships and job placements you contributed to NACOS."
+        title="My Opportunities"
+        description="SIWES openings, internships, scholarships and jobs you shared with NACOS."
         action={
-          <Button asChild size="sm" className="gap-1.5 bg-[var(--forest)] text-[var(--paper)] hover:bg-[var(--forest-2)]">
+          <Button asChild size="sm">
             <Link href="/dashboard/opportunities/submit">
-              <PlusCircle className="size-4" />
+              <PlusCircle />
               Post Opportunity
             </Link>
           </Button>
@@ -37,90 +39,62 @@ export default function MyOpportunitiesPage() {
       />
 
       {isLoading ? (
-        <div className="rounded-xl border border-[var(--rule)] bg-white/70 p-12 text-center text-sm text-[var(--muted)]">
-          Loading your opportunity listings…
-        </div>
+        <ListSkeleton />
       ) : error ? (
-        <div className="flex items-center gap-3 rounded-xl border border-destructive/30 bg-destructive/10 p-5 text-sm text-destructive">
-          <AlertCircle className="size-5 shrink-0" />
-          <span>Error loading opportunities: {error.message}</span>
-        </div>
-      ) : !opportunities || opportunities.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-[var(--rule)] bg-white/50 p-12 text-center">
-          <Briefcase className="mx-auto size-12 text-[var(--muted)]/40" />
-          <h3 className="mt-3 text-base font-semibold text-[var(--ink)]">
-            No opportunity listings submitted yet
-          </h3>
-          <p className="mx-auto mt-1 max-w-sm text-xs leading-relaxed text-[var(--muted)]">
-            Help fellow computing students discover verified SIWES placements, scholarships, and junior software internships.
-          </p>
-          <Button asChild size="sm" className="mt-5 bg-[var(--forest)] text-[var(--paper)]">
-            <Link href="/dashboard/opportunities/submit">
-              <PlusCircle className="mr-1 size-4" />
-              Submit Opportunity
-            </Link>
-          </Button>
-        </div>
+        <ErrorState title="Could not load your opportunities" message={error.message} />
+      ) : !opportunities?.length ? (
+        <EmptyState
+          title="You haven't posted anything yet"
+          description="Heard about a SIWES slot, internship or scholarship? Post it here so other students can apply before it closes."
+          action={
+            <Button asChild size="sm">
+              <Link href="/dashboard/opportunities/submit">Post an opportunity</Link>
+            </Button>
+          }
+        />
       ) : (
         <div className="grid gap-4">
           {opportunities.map((opp) => (
-            <Card
-              key={opp.id}
-              className="border-[var(--rule)] bg-white/80 shadow-xs transition-all hover:shadow-md"
-            >
-              <CardContent className="p-5 sm:p-6">
+            <Card key={opp.id}>
+              <CardContent className="space-y-4">
                 <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <StatusBadge status={opp.status} />
-                      <span className="rounded bg-[var(--sand)]/60 px-2 py-0.5 text-[0.68rem] font-semibold uppercase text-[var(--forest)]">
-                        {opp.type.replace(/_/g, " ")}
-                      </span>
+                      <Badge variant="outline">{opportunityTypeLabels[opp.type]}</Badge>
                     </div>
-
-                    <h3 className="mt-2 text-lg font-bold text-[var(--ink)]">
-                      {opp.title}
-                    </h3>
-
-                    <div className="mt-2 flex flex-wrap items-center gap-4 text-xs text-[var(--muted)]">
-                      <span className="flex items-center gap-1 font-medium text-[var(--ink)]">
-                        <Building2 className="size-3.5 text-[var(--muted)]" />
+                    <h2 className="mt-2 text-lg font-semibold">{opp.title}</h2>
+                    <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Building2 className="size-3.5" />
                         {opp.orgName}
                       </span>
                       <span className="flex items-center gap-1">
-                        <MapPin className="size-3.5 text-[var(--muted)]" />
+                        <MapPin className="size-3.5" />
                         {opp.location}
                       </span>
-                      {opp.deadline && (
+                      {opp.deadline ? (
                         <span className="flex items-center gap-1">
-                          <Calendar className="size-3.5 text-[var(--muted)]" />
-                          Deadline: {new Date(opp.deadline).toLocaleDateString()}
+                          <Calendar className="size-3.5" />
+                          Deadline {formatDate(opp.deadline)}
                         </span>
-                      )}
+                      ) : null}
                     </div>
                   </div>
-
-                  <div className="flex shrink-0 items-center gap-2">
-                    <Button
-                      asChild
-                      variant="outline"
-                      size="sm"
-                      className="gap-1.5 border-[var(--rule)] text-xs"
-                    >
-                      <a href={opp.applyUrl} target="_blank" rel="noreferrer">
-                        <ExternalLink className="size-3.5" />
-                        Application Link
-                      </a>
-                    </Button>
-                  </div>
+                  <Button asChild variant="outline" size="sm">
+                    <a href={opp.applyUrl} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink />
+                      Application link
+                    </a>
+                  </Button>
                 </div>
-
-                {opp.status === "rejected" && opp.rejectionReason && (
-                  <div className="mt-4 rounded-lg border border-destructive/20 bg-destructive/5 p-3.5 text-xs text-destructive">
-                    <p className="font-semibold">Review Feedback:</p>
-                    <p className="mt-0.5 text-destructive/90">{opp.rejectionReason}</p>
-                  </div>
-                )}
+                {opp.status === "rejected" && opp.rejectionReason ? (
+                  <Alert variant="destructive">
+                    <AlertCircle />
+                    <AlertTitle>Review feedback</AlertTitle>
+                    <AlertDescription>{opp.rejectionReason}</AlertDescription>
+                  </Alert>
+                ) : null}
               </CardContent>
             </Card>
           ))}

@@ -1,66 +1,56 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
-
-interface BreadcrumbItem {
-  label: string;
-  href?: string;
-}
+import { Fragment } from "react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 interface DashboardHeaderProps {
-  breadcrumbs?: BreadcrumbItem[];
+  breadcrumbs?: { label: string; href?: string }[];
   title: string;
   description?: string;
   action?: React.ReactNode;
 }
 
-export function DashboardHeader({
-  breadcrumbs,
-  title,
-  description,
-  action,
-}: DashboardHeaderProps) {
+export function DashboardHeader({ breadcrumbs, title, description, action }: DashboardHeaderProps) {
   return (
-    <div className="mb-6 flex flex-col gap-3 border-b border-[var(--rule)] pb-5 md:flex-row md:items-center md:justify-between">
-      <div>
-        {breadcrumbs && breadcrumbs.length > 0 && (
-          <nav
-            aria-label="Breadcrumb"
-            className="mb-2 flex items-center gap-1.5 text-xs text-[var(--muted)]"
-          >
-            <Link
-              href="/dashboard"
-              className="hover:text-[var(--forest)] hover:underline"
-            >
-              Dashboard
-            </Link>
-            {breadcrumbs.map((crumb, idx) => (
-              <div key={idx} className="flex items-center gap-1.5">
-                <ChevronRight className="size-3 text-[var(--muted)]/60" />
-                {crumb.href ? (
-                  <Link
-                    href={crumb.href}
-                    className="hover:text-[var(--forest)] hover:underline"
-                  >
-                    {crumb.label}
-                  </Link>
-                ) : (
-                  <span className="font-medium text-[var(--ink)]">
-                    {crumb.label}
-                  </span>
-                )}
-              </div>
-            ))}
-          </nav>
-        )}
-        <h1 className="serif text-2xl font-bold tracking-tight text-[var(--ink)] sm:text-3xl">
-          {title}
-        </h1>
-        {description && (
-          <p className="mt-1 text-sm text-[var(--muted)]">{description}</p>
-        )}
+    <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="min-w-0">
+        {breadcrumbs?.length ? (
+          <Breadcrumb className="mb-2">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href="/dashboard">Dashboard</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              {breadcrumbs.map((crumb) => (
+                <Fragment key={crumb.label}>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    {crumb.href ? (
+                      <BreadcrumbLink asChild>
+                        <Link href={crumb.href}>{crumb.label}</Link>
+                      </BreadcrumbLink>
+                    ) : (
+                      <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                    )}
+                  </BreadcrumbItem>
+                </Fragment>
+              ))}
+            </BreadcrumbList>
+          </Breadcrumb>
+        ) : null}
+        <h1 className="text-3xl tracking-tight sm:text-4xl">{title}</h1>
+        {description ? (
+          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{description}</p>
+        ) : null}
       </div>
-
-      {action && <div className="shrink-0">{action}</div>}
+      {action ? <div className="shrink-0">{action}</div> : null}
     </div>
   );
 }

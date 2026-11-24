@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Instrument_Sans, Instrument_Serif, Onest } from "next/font/google";
+import { Archivo, Instrument_Sans, Instrument_Serif, Inter, Onest } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import { Analytics } from "@vercel/analytics/next";
 import { JsonLd } from "@/components/JsonLd";
@@ -18,6 +18,7 @@ const serif = Instrument_Serif({
 });
 const display = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
 const onest = Onest({ subsets: ["latin"], variable: "--font-onest", display: "swap" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap", preload: false });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -79,9 +80,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html
       lang="en-NG"
       suppressHydrationWarning
-      className={`${sans.variable} ${serif.variable} ${display.variable} ${onest.variable}`}
+      className={`${sans.variable} ${serif.variable} ${display.variable} ${onest.variable} ${inter.variable}`}
     >
-      <body>
+      <body className="has-data-dashboard:font-[family-name:var(--font-inter)]!">
         <NextTopLoader color="#007a1e" showSpinner={false} />
         <a className="skip" href="#main">
           Skip to content

@@ -1,16 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  AlertCircle,
-  Building2,
-  CheckCircle2,
-  GraduationCap,
-  Mail,
-  ShieldCheck,
-  User as UserIcon,
-} from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Building2, GraduationCap, ShieldCheck } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { ErrorState } from "@/components/dashboard/DashboardStates";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,75 +17,75 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { roleLabels } from "@/lib/format";
 import { trpc } from "@/lib/trpc/client";
+
+const NO_DEPARTMENT = "none";
+
+const profileSchema = z.object({
+  name: z.string().trim().min(2, "Name must be at least 2 characters.").max(128),
+  department: z.string(),
+  regNumber: z.string().trim().max(32, "Registration number must not exceed 32 characters."),
+});
+
+const header = {
+  breadcrumbs: [{ label: "Profile" }],
+  title: "My Profile",
+  description: "Manage your name, department and UNIUYO registration number.",
+};
 
 export default function ProfilePage() {
   const utils = trpc.useUtils();
   const { data: profile, isLoading, error } = trpc.user.getProfile.useQuery();
   const { data: departments } = trpc.department.list.useQuery();
 
-  const [name, setName] = useState("");
-  const [departmentId, setDepartmentId] = useState<string>("");
-  const [regNumber, setRegNumber] = useState("");
-  const [feedback, setFeedback] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
-
-  useEffect(() => {
-    if (profile) {
-      setName(profile.name ?? "");
-      setDepartmentId(profile.departmentId ?? "");
-      setRegNumber(profile.regNumber ?? "");
-    }
-  }, [profile]);
+  const form = useForm({
+    resolver: zodResolver(profileSchema),
+    defaultValues: { name: "", department: NO_DEPARTMENT, regNumber: "" },
+    values: profile
+      ? {
+          name: profile.name,
+          department: profile.departmentSlug ?? NO_DEPARTMENT,
+          regNumber: profile.regNumber ?? "",
+        }
+      : undefined,
+  });
 
   const updateMutation = trpc.user.updateProfile.useMutation({
     onSuccess: () => {
-      setFeedback({
-        type: "success",
-        message: "Your profile details have been saved successfully.",
-      });
+      toast.success("Your profile has been saved.");
       utils.user.getProfile.invalidate();
       utils.user.getDashboardStats.invalidate();
-      setTimeout(() => setFeedback(null), 4000);
     },
-    onError: (err) => {
-      setFeedback({
-        type: "error",
-        message: err.message || "Failed to update profile. Please try again.",
-      });
-    },
+    onError: (err) => toast.error(err.message),
   });
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setFeedback(null);
-
-    if (!name.trim()) {
-      setFeedback({ type: "error", message: "Full name cannot be empty." });
-      return;
-    }
-
-    updateMutation.mutate({
-      name: name.trim(),
-      departmentId: departmentId ? departmentId : null,
-      regNumber: regNumber.trim() ? regNumber.trim() : null,
-    });
-  }
 
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <DashboardHeader
-          breadcrumbs={[{ label: "Profile" }]}
-          title="My Profile"
-          description="Manage your NACOS student credentials and personal details."
-        />
-        <div className="rounded-xl border border-[var(--rule)] bg-white/70 p-12 text-center text-sm text-[var(--muted)]">
-          Loading your profile…
+        <DashboardHeader {...header} />
+        <div className="grid gap-6 lg:grid-cols-[1fr_320px]" aria-busy="true" aria-label="Loading">
+          <Skeleton className="h-96 rounded-xl" />
+          <Skeleton className="h-64 rounded-xl" />
         </div>
       </div>
     );
@@ -97,211 +94,155 @@ export default function ProfilePage() {
   if (error || !profile) {
     return (
       <div className="space-y-6">
-        <DashboardHeader
-          breadcrumbs={[{ label: "Profile" }]}
-          title="My Profile"
-        />
-        <div className="flex items-center gap-3 rounded-xl border border-destructive/30 bg-destructive/10 p-5 text-sm text-destructive">
-          <AlertCircle className="size-5 shrink-0" />
-          <span>Could not load profile. Please refresh or sign in again.</span>
-        </div>
+        <DashboardHeader {...header} />
+        <ErrorState title="Could not load your profile" message="Refresh the page or sign in again." />
       </div>
     );
   }
 
+  const departmentLocked = profile.role !== "user";
+
   return (
-    <div className="space-y-8">
-      <DashboardHeader
-        breadcrumbs={[{ label: "Profile" }]}
-        title="My Profile"
-        description="Manage your NACOS student credentials, registered department, and matriculation number."
-      />
+    <div className="space-y-6">
+      <DashboardHeader {...header} />
 
-      {feedback && (
-        <div
-          className={`flex items-center gap-3 rounded-xl p-4 text-sm font-medium ${
-            feedback.type === "success"
-              ? "border border-emerald-300 bg-emerald-50 text-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-300"
-              : "border border-destructive/30 bg-destructive/10 text-destructive"
-          }`}
-        >
-          {feedback.type === "success" ? (
-            <CheckCircle2 className="size-5 shrink-0 text-emerald-600" />
-          ) : (
-            <AlertCircle className="size-5 shrink-0" />
-          )}
-          <span>{feedback.message}</span>
-        </div>
-      )}
+      <div className="grid items-start gap-6 lg:grid-cols-[1fr_320px]">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit((values) =>
+              updateMutation.mutate({
+                name: values.name,
+                departmentId: values.department === NO_DEPARTMENT ? null : values.department,
+                regNumber: values.regNumber || null,
+              }),
+            )}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle>Student information</CardTitle>
+                <CardDescription>
+                  Accurate details keep your coursework and SIWES records matched to you.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-5">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. John Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-      <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
-        {/* Main Profile Form */}
-        <form onSubmit={handleSubmit}>
-          <Card className="border-[var(--rule)] bg-white/80 shadow-xs">
-            <CardHeader className="border-b border-[var(--rule)] px-6 py-5">
-              <CardTitle className="text-lg font-bold text-[var(--ink)]">
-                Student & Academic Information
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Accurate information ensures your coursework group submissions and SIWES records are matched correctly.
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent className="space-y-5 px-6 py-6">
-              {/* Full Name */}
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-sm font-semibold text-[var(--ink)]">
-                  Full Name
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. John Doe"
-                    required
-                    className="border-[var(--rule)] bg-white pl-9"
-                  />
-                  <UserIcon className="pointer-events-none absolute left-3 top-2.5 size-4 text-[var(--muted)]" />
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email address</Label>
+                  <Input id="email" value={profile.email} disabled readOnly />
+                  <p className="text-sm text-muted-foreground">Your email comes from your Google account.</p>
                 </div>
-              </div>
 
-              {/* Email Address (Read-only) */}
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-semibold text-[var(--ink)]">
-                  Email Address
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="email"
-                    value={profile.email}
-                    disabled
-                    readOnly
-                    className="cursor-not-allowed border-[var(--rule)] bg-[var(--sand)]/50 pl-9 text-[var(--muted)]"
-                  />
-                  <Mail className="pointer-events-none absolute left-3 top-2.5 size-4 text-[var(--muted)]" />
-                </div>
-                <p className="text-[0.72rem] text-[var(--muted)]">
-                  Google account email cannot be edited directly on the portal.
-                </p>
-              </div>
+                <FormField
+                  control={form.control}
+                  name="department"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Department</FormLabel>
+                      <Select value={field.value} onValueChange={field.onChange} disabled={departmentLocked}>
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select your department" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value={NO_DEPARTMENT}>No department</SelectItem>
+                          {departments?.map((dept) => (
+                            <SelectItem key={dept.slug} value={dept.slug}>
+                              {dept.name} ({dept.shortName})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        {departmentLocked
+                          ? "Your department is assigned by a faculty administrator."
+                          : "This department reviews your coursework proposals."}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              {/* Department */}
-              <div className="space-y-2">
-                <Label htmlFor="department" className="text-sm font-semibold text-[var(--ink)]">
-                  Academic Department
-                </Label>
-                <div className="relative">
-                  <select
-                    id="department"
-                    value={departmentId}
-                    onChange={(e) => setDepartmentId(e.target.value)}
-                    className="flex h-9 w-full rounded-md border border-[var(--rule)] bg-white px-3 py-1 text-sm shadow-xs transition-colors outline-none focus-visible:border-[var(--gold)] focus-visible:ring-2 focus-visible:ring-[var(--gold)]/30"
-                  >
-                    <option value="">Select your department</option>
-                    {departments?.map((dept) => (
-                      <option key={dept.slug} value={dept.slug}>
-                        {dept.name} ({dept.shortName})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <p className="text-[0.72rem] text-[var(--muted)]">
-                  The department responsible for reviewing your coursework proposals.
-                </p>
-              </div>
+                <FormField
+                  control={form.control}
+                  name="regNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>UNIUYO registration number</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="e.g. 22/SC/CO/1199"
+                          maxLength={32}
+                          {...field}
+                          onChange={(event) => field.onChange(event.target.value.toUpperCase())}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+              <CardFooter className="justify-end">
+                <Button type="submit" disabled={updateMutation.isPending}>
+                  {updateMutation.isPending ? "Saving…" : "Save changes"}
+                </Button>
+              </CardFooter>
+            </Card>
+          </form>
+        </Form>
 
-              {/* UNIUYO Registration Number */}
-              <div className="space-y-2">
-                <Label htmlFor="regNumber" className="text-sm font-semibold text-[var(--ink)]">
-                  UNIUYO Registration Number
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="regNumber"
-                    value={regNumber}
-                    onChange={(e) => setRegNumber(e.target.value.toUpperCase())}
-                    placeholder="e.g. 22/SC/CO/1199"
-                    maxLength={32}
-                    className="border-[var(--rule)] bg-white pl-9 uppercase tracking-wider"
-                  />
-                  <GraduationCap className="pointer-events-none absolute left-3 top-2.5 size-4 text-[var(--muted)]" />
-                </div>
-                <p className="text-[0.72rem] text-[var(--muted)]">
-                  Supports double-batch merged prefixes (e.g. 22 or 23 for pioneer sessions).
-                </p>
-              </div>
-            </CardContent>
-
-            <CardFooter className="flex justify-end border-t border-[var(--rule)] bg-[var(--sand)]/20 px-6 py-4">
-              <Button
-                type="submit"
-                disabled={updateMutation.isPending}
-                className="bg-[var(--forest)] text-[var(--paper)] hover:bg-[var(--forest-2)]"
-              >
-                {updateMutation.isPending ? "Saving changes…" : "Save Changes"}
-              </Button>
-            </CardFooter>
-          </Card>
-        </form>
-
-        {/* Sidebar Status Card */}
-        <div className="space-y-6">
-          {/* Identity & Role Card */}
-          <Card className="border-[var(--rule)] bg-white/80 shadow-xs">
-            <CardHeader className="border-b border-[var(--rule)] pb-4">
-              <CardTitle className="text-base font-bold text-[var(--ink)]">
-                Account Status
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 pt-4 text-xs">
+        <Card>
+          <CardHeader>
+            <CardTitle>Account status</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 text-sm">
+            <div className="flex items-start gap-3">
+              <ShieldCheck className="mt-0.5 size-4 text-muted-foreground" />
               <div>
-                <p className="caps text-[0.66rem] tracking-[0.2em] text-[var(--muted)]">
-                  Portal Role
-                </p>
-                <div className="mt-1 flex items-center gap-1.5">
-                  <ShieldCheck className="size-4 text-[var(--forest)]" />
-                  <span className="font-semibold capitalize text-[var(--ink)]">
-                    {profile.role.replace("_", " ")}
-                  </span>
-                </div>
+                <p className="text-muted-foreground">Portal role</p>
+                <Badge variant="outline" className="mt-1">
+                  {roleLabels[profile.role]}
+                </Badge>
               </div>
-
+            </div>
+            <div className="flex items-start gap-3">
+              <Building2 className="mt-0.5 size-4 text-muted-foreground" />
               <div>
-                <p className="caps text-[0.66rem] tracking-[0.2em] text-[var(--muted)]">
-                  Registered Department
-                </p>
-                <div className="mt-1 flex items-center gap-1.5">
-                  <Building2 className="size-4 text-[var(--muted)]" />
-                  <span className="font-medium text-[var(--ink)]">
-                    {profile.departmentName ?? "Not assigned yet"}
-                  </span>
-                </div>
+                <p className="text-muted-foreground">Department</p>
+                <p className="font-medium">{profile.departmentName ?? "Not assigned yet"}</p>
               </div>
-
+            </div>
+            <div className="flex items-start gap-3">
+              <GraduationCap className="mt-0.5 size-4 text-muted-foreground" />
               <div>
-                <p className="caps text-[0.66rem] tracking-[0.2em] text-[var(--muted)]">
-                  Registration Number
-                </p>
-                <p className="mt-1 font-mono font-medium text-[var(--ink)]">
-                  {profile.regNumber || "None registered"}
+                <p className="text-muted-foreground">Registration number</p>
+                <p className="font-mono font-medium">{profile.regNumber || "Not added"}</p>
+              </div>
+            </div>
+            {profile.claimedPerson ? (
+              <div className="rounded-lg border bg-muted p-3">
+                <p className="font-medium">Yearbook linked</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Connected to {profile.claimedPerson.fullName}
+                  {profile.claimedPerson.currentRole ? `, ${profile.claimedPerson.currentRole}` : ""}
                 </p>
               </div>
-
-              {profile.claimedPerson && (
-                <div className="rounded-lg border border-[var(--gold)]/40 bg-[var(--gold)]/10 p-3">
-                  <p className="font-semibold text-[var(--forest)]">
-                    Yearbook Linked
-                  </p>
-                  <p className="mt-0.5 text-[0.72rem] text-[var(--muted)]">
-                    Connected to {profile.claimedPerson.fullName} (
-                    {profile.claimedPerson.currentRole ?? "Alumnus / Officer"})
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+            ) : null}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
