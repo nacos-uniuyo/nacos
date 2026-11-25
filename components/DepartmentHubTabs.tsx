@@ -103,7 +103,6 @@ export function DepartmentHubTabs({
   const candidateSections: { id: string; label: string; count?: number; hasContent: boolean }[] = [
     { id: "overview", label: "Overview", hasContent: true },
     { id: "officers", label: "Executive Officers", count: initialOfficers.length, hasContent: initialOfficers.length > 0 },
-    // { id: "staff", label: "Staff", count: staffList.length, hasContent: staffList.length > 0 },
     { id: "projects", label: "Projects", count: deptProjects.length, hasContent: deptProjects.length > 0 },
     { id: "alumni", label: "Alumni", count: initialAlumni.length, hasContent: initialAlumni.length > 0 },
     { id: "notices", label: "Notices", count: totalNotices, hasContent: totalNotices > 0 },
@@ -119,23 +118,22 @@ export function DepartmentHubTabs({
     const ids = sectionIdsKey.split(",");
     const elements = ids
       .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => el !== null);
+      .filter((el): el is HTMLElement => Boolean(el));
 
     if (elements.length === 0) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const visibleEntries = entries.filter((e) => e.isIntersecting);
-        if (visibleEntries.length > 0) {
-          visibleEntries.sort(
-            (a, b) => a.boundingClientRect.top - b.boundingClientRect.top,
-          );
-          setActiveSectionId(visibleEntries[0].target.id);
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]?.target?.id) {
+          setActiveSectionId(visible[0].target.id);
         }
       },
       {
-        rootMargin: "-20% 0px -65% 0px",
-        threshold: [0, 0.2, 0.5],
+        rootMargin: "-20% 0px -60% 0px",
+        threshold: [0, 0.2, 0.5, 0.8, 1],
       },
     );
 
@@ -157,22 +155,31 @@ export function DepartmentHubTabs({
   };
 
   return (
-    <div className="dept-tabs-container">
+    <div>
       {/* In-Page Jump Navigation Bar */}
       {showNav && (
-        <nav className="dept-tablist-bar" aria-label={`${department.name} sections`}>
+        <nav
+          className="sticky top-[70px] sm:top-[82px] z-20 bg-[var(--paper)] border-b border-[var(--rule)]"
+          aria-label={`${department.name} sections`}
+        >
           <div className="wrap">
-            <div className="dept-tablist">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-3">
               {activeSections.map((sec) => (
                 <button
                   key={sec.id}
                   type="button"
-                  className={`dept-tab-btn ${activeSectionId === sec.id ? "active" : ""}`}
+                  className={`inline-flex items-center gap-2 px-4.5 py-2.5 rounded-full border border-transparent font-sans text-sm font-semibold whitespace-nowrap cursor-pointer transition-colors ${
+                    activeSectionId === sec.id
+                      ? "bg-transparent border-[var(--gold)] text-[var(--ink)]"
+                      : "bg-transparent text-[var(--muted)] hover:bg-[var(--sand)] hover:text-[var(--ink)]"
+                  }`}
                   onClick={() => scrollToSection(sec.id)}
                 >
                   <span>{sec.label}</span>
                   {typeof sec.count === "number" ? (
-                    <span className="dept-tab-count">{sec.count}</span>
+                    <span className="inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded-full text-[11px] bg-[rgba(15,26,19,0.08)] text-inherit">
+                      {sec.count}
+                    </span>
                   ) : null}
                 </button>
               ))}
@@ -182,34 +189,38 @@ export function DepartmentHubTabs({
       )}
 
       {/* Appended Content Sections */}
-      <div className="wrap dept-tabpanel-wrap flex flex-col gap-24">
+      <div className="wrap pt-[clamp(44px,6vw,72px)] flex flex-col gap-24 pb-[clamp(88px,11vw,140px)]">
         {/* 1. Overview */}
-        <section id="overview" className="dept-overview-grid scroll-mt-24" aria-labelledby="heading-overview">
-          <div className="dept-overview-main flex flex-col gap-6">
-            <h2 id="heading-overview" className="serif dept-section-heading">
+        <section
+          id="overview"
+          className="grid grid-cols-1 lg:grid-cols-[minmax(0,7fr)_minmax(300px,5fr)] gap-7 items-start scroll-mt-24"
+          aria-labelledby="heading-overview"
+        >
+          <div className="flex flex-col gap-6">
+            <h2 id="heading-overview" className="serif m-0 mt-2 text-[clamp(34px,4.4vw,56px)] leading-[1.02] text-[var(--ink)]">
               Department of {department.name}
             </h2>
 
-            <div className="dept-overview-prose">
+            <div className="pl-4.5 border-l-[3px] border-[var(--green)]">
               <RichTextRenderer
                 doc={department.summary}
                 className="text-[18px] leading-relaxed text-[var(--ink)]"
               />
             </div>
 
-            <div className="dept-pillar-grid">
-              <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div className="bg-[var(--paper)] rounded-[10px] p-5 flex flex-col gap-2">
                 <span className="caps text-[10px] text-[var(--green)]">Academic Rigour</span>
-                <h3 className="serif text-2xl mt-1">Coursework &amp; Labs</h3>
-                <p className="text-sm leading-relaxed text-[var(--muted)] mt-2">
+                <h3 className="serif text-2xl mt-1 m-0">Coursework &amp; Labs</h3>
+                <p className="text-sm leading-relaxed text-[var(--muted)] mt-2 m-0">
                   Structured undergraduate practicals, group engineering milestones, and final-year research
                   supervision within the department.
                 </p>
               </div>
-              <div>
+              <div className="bg-[var(--paper)] rounded-[10px] p-5 flex flex-col gap-2">
                 <span className="caps text-[10px] text-[var(--green)]">Industry Readiness</span>
-                <h3 className="serif text-2xl mt-1">SIWES &amp; Career Pathways</h3>
-                <p className="text-sm leading-relaxed text-[var(--muted)] mt-2">
+                <h3 className="serif text-2xl mt-1 m-0">SIWES &amp; Career Pathways</h3>
+                <p className="text-sm leading-relaxed text-[var(--muted)] mt-2 m-0">
                   Verified six-month industrial training placements, technical mentorship, and public project
                   portfolios.
                 </p>
@@ -218,8 +229,8 @@ export function DepartmentHubTabs({
           </div>
 
           {/* Highlighted Card for the Head of Department */}
-          <aside className="dept-hod-highlight-card" aria-label="Head of Department">
-            <div className="dept-hod-visual">
+          <aside className="bg-[var(--forest)] text-white rounded-xl overflow-hidden flex flex-col" aria-label="Head of Department">
+            <div className="relative min-h-[280px] bg-[var(--forest-2)] flex items-center justify-center overflow-hidden">
               <Image
                 src={hodPlaceholder}
                 alt={department.hodName ?? `Head of Department, Department of ${department.name}`}
@@ -229,25 +240,28 @@ export function DepartmentHubTabs({
               />
             </div>
 
-            <div className="dept-hod-details">
-              <span className="caps dept-hod-label">Head of Department</span>
-              <h3 className="serif dept-hod-name">
+            <div className="p-[clamp(24px,3.2vw,36px)] flex flex-col gap-3">
+              <span className="caps text-[11px] text-[var(--gold)] tracking-[0.08em]">Head of Department</span>
+              <h3 className="serif m-0 text-[32px] leading-[1.06] text-white">
                 {department.hodName ?? `Office of the HOD`}
               </h3>
-              <p className="dept-hod-role">
+              <p className="m-0 text-sm text-[var(--mint-2)]">
                 Department of {department.name}, Faculty of Computing, University of Uyo
               </p>
 
-              <div className="dept-hod-quote">
+              <div className="mt-1.5 p-4 rounded-lg bg-white/5 flex flex-col gap-2">
                 <QuoteMark size={20} className="text-[var(--gold)]" />
-                <p>
+                <p className="m-0 text-sm leading-[1.55] text-[var(--mint-3)]">
                   Advancing academic excellence, laboratory innovation, and industry collaboration in{" "}
                   {department.name}.
                 </p>
               </div>
 
-              <div className="dept-hod-contact">
-                <a href={`mailto:${hodEmail}`} className="dept-hod-email">
+              <div className="flex items-center justify-between flex-wrap gap-3 pt-3.5 border-t border-white/10">
+                <a
+                  href={`mailto:${hodEmail}`}
+                  className="text-[13px] text-[var(--mint-2)] no-underline hover:text-white hover:underline transition-colors"
+                >
                   {hodEmail}
                 </a>
               </div>
@@ -260,23 +274,23 @@ export function DepartmentHubTabs({
           <section
             id="officers"
             aria-labelledby="heading-officers"
-            className="dept-panel-stack scroll-mt-24"
+            className="flex flex-col gap-9 scroll-mt-24"
           >
-            <div className="dept-panel-header">
+            <div className="flex items-end justify-between flex-wrap gap-5">
               <div>
                 <span className="caps eyebrow accent">
                   {currentSession ? currentSession.name : "Active Academic Session"} · Department of {department.name}
                 </span>
-                <h2 id="heading-officers" className="serif dept-section-heading">
+                <h2 id="heading-officers" className="serif m-0 mt-2 text-[clamp(34px,4.4vw,56px)] leading-[1.02] text-[var(--ink)]">
                   Executive Officers &amp; Representatives
                 </h2>
               </div>
             </div>
 
-            <ul className="dept-person-grid">
+            <ul className="list-none m-0 p-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {initialOfficers.map((officer, idx) => (
-                <li key={`${officer.slug}-${idx}`} className="dept-person-card">
-                  <div className="dept-person-media">
+                <li key={`${officer.slug}-${idx}`} className="bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] overflow-hidden flex flex-col">
+                  <div className="relative aspect-[4/4.2] bg-[var(--forest)] overflow-hidden">
                     {officer.photoUrl ? (
                       <Image
                         src={officer.photoUrl}
@@ -286,23 +300,23 @@ export function DepartmentHubTabs({
                         className="object-cover"
                       />
                     ) : (
-                      <div className="dept-person-monogram" aria-hidden="true">
+                      <div className="size-full flex items-center justify-center text-[72px] text-[var(--gold)]" aria-hidden="true">
                         <span className="serif">{initials(officer.fullName)}</span>
                       </div>
                     )}
-                    <span className="caps dept-person-tier-tag">
+                    <span className="caps absolute left-4 bottom-3.5 px-2.5 py-1 rounded bg-[rgba(6,42,20,0.92)] text-[var(--gold)] text-[10px] tracking-[0.06em]">
                       {tierLabels[officer.tier] ?? officer.tier}
                     </span>
                   </div>
 
-                  <div className="dept-person-body">
-                    <span className="caps dept-person-role">{officer.roleTitle}</span>
-                    <h3 className="serif dept-person-name">{officer.fullName}</h3>
-                    <p className="dept-person-dept">
+                  <div className="p-[22px] flex flex-col gap-2 flex-1">
+                    <span className="caps text-[11px] text-[var(--green)]">{officer.roleTitle}</span>
+                    <h3 className="serif m-0 text-[26px] leading-[1.1] text-[var(--ink)]">{officer.fullName}</h3>
+                    <p className="m-0 text-[13.5px] text-[var(--muted)]">
                       Department of {department.name}
                     </p>
 
-                    <div className="dept-person-socials">
+                    <div className="mt-auto pt-3.5 border-t border-[var(--rule-soft)] flex items-center justify-between gap-3">
                       <span className="caps text-[10px] text-[var(--muted)]">
                         Session {officer.sessionSlug}
                       </span>
@@ -314,100 +328,49 @@ export function DepartmentHubTabs({
           </section>
         )}
 
-        {/* 3. Staff Directory - Commented out while lecturers remain shared across departments */}
-        {/*
-        {staffList.length > 0 && (
-          <section
-            id="staff"
-            aria-labelledby="heading-staff"
-            className="dept-panel-stack scroll-mt-24"
-          >
-            <div className="dept-panel-header">
-              <div>
-                <span className="caps eyebrow accent">Directory</span>
-                <h2 id="heading-staff" className="serif dept-section-heading">
-                  Staff
-                </h2>
-              </div>
-              <p className="m-0 max-w-[420px] text-sm text-[var(--muted)]">
-                Faculty staff records for the Department of {department.name}, led by the Head of
-                Department.
-              </p>
-            </div>
-
-            <div className="dept-staff-list">
-              {staffList.map((staff) => (
-                <article key={staff.slug} className="dept-staff-card">
-                  <div className="dept-staff-avatar" aria-hidden="true">
-                    <span className="serif">{initials(staff.fullName)}</span>
-                  </div>
-
-                  <div className="dept-staff-info">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="caps dept-staff-tag">{staff.roleTag}</span>
-                      <a href={`mailto:${staff.email}`} className="dept-staff-email">
-                        {staff.email}
-                      </a>
-                    </div>
-
-                    <h3 className="serif dept-staff-name">{staff.fullName}</h3>
-                    <p className="dept-staff-designation">{staff.designation}</p>
-
-                    <div className="dept-staff-bio">
-                      <RichTextRenderer
-                        doc={staff.bio}
-                        className="text-[15px] leading-relaxed text-[var(--muted)]"
-                      />
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-        )}
-        */}
-
         {/* 4. Projects */}
         {deptProjects.length > 0 && (
           <section
             id="projects"
             aria-labelledby="heading-projects"
-            className="dept-panel-stack scroll-mt-24"
+            className="flex flex-col gap-9 scroll-mt-24"
           >
-            <div className="dept-panel-header">
+            <div className="flex items-end justify-between flex-wrap gap-5">
               <div>
                 <span className="caps eyebrow accent">
                   Coursework, Hardware &amp; Research
                 </span>
-                <h2 id="heading-projects" className="serif dept-section-heading">
+                <h2 id="heading-projects" className="serif m-0 mt-2 text-[clamp(34px,4.4vw,56px)] leading-[1.02] text-[var(--ink)]">
                   Student Projects
                 </h2>
               </div>
             </div>
 
-            <div className="project-preview-grid">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {deptProjects.map((proj) => (
-                <article key={proj.slug} className="project-preview-card">
-                  <div className="project-preview-top">
-                    <span className="caps project-cat-tag">
+                <article key={proj.slug} className="bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] p-[clamp(20px,3vw,30px)] flex flex-col justify-between gap-5">
+                  <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <span className="caps text-[11px] font-semibold tracking-[0.06em] text-[var(--forest)]">
                       {categoryLabels[proj.category] ?? proj.category}
                     </span>
                     {proj.courseCode ? (
-                      <span className="caps project-dept-tag">
+                      <span className="caps text-[11px] text-[var(--green)]">
                         {proj.courseCode}
                       </span>
                     ) : null}
                   </div>
 
-                  <div className="project-preview-body">
-                    <h3 className="serif project-preview-title">
-                      <Link href={`/projects/${proj.slug}`}>{proj.title}</Link>
+                  <div className="flex flex-col gap-2.5">
+                    <h3 className="serif m-0 text-[clamp(26px,2.6vw,34px)] leading-[1.08]">
+                      <Link href={`/projects/${proj.slug}`} className="text-[var(--ink)] no-underline hover:text-[var(--green)] transition-colors">
+                        {proj.title}
+                      </Link>
                     </h3>
-                    <p className="project-preview-tagline">{proj.tagline}</p>
+                    <p className="m-0 text-[15px] leading-relaxed text-[var(--muted)]">{proj.tagline}</p>
                   </div>
 
-                  <footer className="project-preview-foot">
-                    <div className="project-team-meta">
+                  <footer className="flex items-center justify-between gap-4 pt-4 border-t border-[var(--rule-soft)]">
+                    <div className="flex flex-col gap-0.5">
                       <span className="caps text-[10px] text-[var(--muted)]">Attributed Team</span>
                       <span className="text-xs font-semibold text-[var(--ink)]">
                         {proj.teamDisplayName ?? `Department Project Team`}
@@ -420,13 +383,16 @@ export function DepartmentHubTabs({
                           href={proj.repoUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="project-icon-link"
+                          className="size-9 rounded-full border border-[var(--rule)] inline-flex items-center justify-center text-[var(--ink)] hover:bg-[var(--forest)] hover:text-white transition-colors"
                           aria-label={`${proj.title} repository`}
                         >
                           <GithubIcon size={16} />
                         </a>
                       ) : null}
-                      <Link href={`/projects/${proj.slug}`} className="project-detail-link">
+                      <Link
+                        href={`/projects/${proj.slug}`}
+                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--green)] no-underline hover:text-[var(--green-hover)]"
+                      >
                         <span>View Project</span>
                         <ArrowRight size={15} />
                       </Link>
@@ -443,23 +409,23 @@ export function DepartmentHubTabs({
           <section
             id="alumni"
             aria-labelledby="heading-alumni"
-            className="dept-panel-stack scroll-mt-24"
+            className="flex flex-col gap-9 scroll-mt-24"
           >
-            <div className="dept-panel-header">
+            <div className="flex items-end justify-between flex-wrap gap-5">
               <div>
                 <span className="caps eyebrow accent">Graduating Cohorts &amp; Industry Mentors</span>
-                <h2 id="heading-alumni" className="serif dept-section-heading">
+                <h2 id="heading-alumni" className="serif m-0 mt-2 text-[clamp(34px,4.4vw,56px)] leading-[1.02] text-[var(--ink)]">
                   {department.name} Alumni Spotlight
                 </h2>
               </div>
             </div>
 
-            <ul className="dept-person-grid">
+            <ul className="list-none m-0 p-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {initialAlumni.map((alum) => {
                 const sess = sessionMap.get(alum.sessionSlug);
                 return (
-                  <li key={alum.slug} className="dept-person-card group relative">
-                    <div className="dept-person-media">
+                  <li key={alum.slug} className="bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] overflow-hidden flex flex-col group relative">
+                    <div className="relative aspect-[4/4.2] bg-[var(--forest)] overflow-hidden">
                       {alum.photoUrl ? (
                         <Image
                           src={alum.photoUrl}
@@ -469,20 +435,20 @@ export function DepartmentHubTabs({
                           className="object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
-                        <div className="dept-person-monogram" aria-hidden="true">
+                        <div className="size-full flex items-center justify-center text-[72px] text-[var(--gold)]" aria-hidden="true">
                           <span className="serif">{initials(alum.fullName)}</span>
                         </div>
                       )}
-                      <span className="caps dept-person-tier-tag">
+                      <span className="caps absolute left-4 bottom-3.5 px-2.5 py-1 rounded bg-[rgba(6,42,20,0.92)] text-[var(--gold)] text-[10px] tracking-[0.06em]">
                         Cohort {alum.sessionSlug}
                       </span>
                     </div>
 
-                    <div className="dept-person-body">
-                      <span className="caps dept-person-role">
+                    <div className="p-[22px] flex flex-col gap-2 flex-1">
+                      <span className="caps text-[11px] text-[var(--green)]">
                         {alum.roleTitle}
                       </span>
-                      <h3 className="serif dept-person-name">
+                      <h3 className="serif m-0 text-[26px] leading-[1.1] text-[var(--ink)]">
                         <Link
                           href={`/yearbook/${alum.slug}`}
                           className="before:absolute before:inset-0 before:z-10 no-underline text-inherit group-hover:text-[var(--green)] transition-colors"
@@ -490,7 +456,7 @@ export function DepartmentHubTabs({
                           {alum.fullName}
                         </Link>
                       </h3>
-                      <p className="dept-person-dept">
+                      <p className="m-0 text-[13.5px] text-[var(--muted)]">
                         {sess ? sess.name : `${alum.sessionSlug} Academic Session`}
                       </p>
                     </div>
@@ -506,24 +472,24 @@ export function DepartmentHubTabs({
           <section
             id="notices"
             aria-labelledby="heading-notices"
-            className="dept-panel-stack scroll-mt-24"
+            className="flex flex-col gap-9 scroll-mt-24"
           >
-            <div className="dept-panel-header">
+            <div className="flex items-end justify-between flex-wrap gap-5">
               <div>
                 <span className="caps eyebrow accent">
                   Announcements &amp; Updates
                 </span>
-                <h2 id="heading-notices" className="serif dept-section-heading">
+                <h2 id="heading-notices" className="serif m-0 mt-2 text-[clamp(34px,4.4vw,56px)] leading-[1.02] text-[var(--ink)]">
                   Notices &amp; Bulletins
                 </h2>
               </div>
             </div>
 
-            <div className="dept-notices-grid">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {initialOpportunities.map((opp) => (
-                <article key={opp.slug} className="dept-notice-card">
-                  <div className="dept-notice-meta">
-                    <span className="caps dept-notice-tag">
+                <article key={opp.slug} className="bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] p-7 flex flex-col justify-between gap-4">
+                  <div className="flex items-center justify-between flex-wrap gap-2.5">
+                    <span className="caps text-[11px] text-[var(--forest)] font-semibold tracking-[0.06em]">
                       {opp.departmentSlug === department.slug
                         ? "Department Circular"
                         : "Faculty Circular"}
@@ -534,13 +500,13 @@ export function DepartmentHubTabs({
                     </span>
                   </div>
 
-                  <h3 className="serif dept-notice-title">{opp.title}</h3>
-                  <p className="dept-notice-excerpt">
+                  <h3 className="serif m-0 text-[26px] leading-[1.12] text-[var(--ink)]">{opp.title}</h3>
+                  <p className="m-0 text-[14.5px] leading-relaxed text-[var(--muted)]">
                     {opportunityTypeLabels[opp.type] ?? opp.type} with <strong>{opp.orgName}</strong> ({opp.location}).
                     Open to eligible {department.name} students.
                   </p>
 
-                  <footer className="dept-notice-foot">
+                  <footer className="flex items-center justify-between gap-3 pt-3.5 border-t border-[var(--rule-soft)]">
                     <span className="caps text-[10px] text-[var(--green)]">
                       {opportunityTypeLabels[opp.type] ?? opp.type}
                     </span>
@@ -558,19 +524,19 @@ export function DepartmentHubTabs({
               ))}
 
               {posts.map((post) => (
-                <article key={post.slug} className="dept-notice-card">
-                  <div className="dept-notice-meta">
-                    <span className="caps dept-notice-tag">Official Bulletin</span>
+                <article key={post.slug} className="bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] p-7 flex flex-col justify-between gap-4">
+                  <div className="flex items-center justify-between flex-wrap gap-2.5">
+                    <span className="caps text-[11px] text-[var(--forest)] font-semibold tracking-[0.06em]">Official Bulletin</span>
                     <span className="inline-flex items-center gap-1.5 text-xs text-[var(--muted)]">
                       <Calendar size={13} />
                       <span>Published {formatReadableDate(post.publishedAt)}</span>
                     </span>
                   </div>
 
-                  <h3 className="serif dept-notice-title">{post.title}</h3>
-                  <p className="dept-notice-excerpt">{post.excerpt}</p>
+                  <h3 className="serif m-0 text-[26px] leading-[1.12] text-[var(--ink)]">{post.title}</h3>
+                  <p className="m-0 text-[14.5px] leading-relaxed text-[var(--muted)]">{post.excerpt}</p>
 
-                  <footer className="dept-notice-foot">
+                  <footer className="flex items-center justify-between gap-3 pt-3.5 border-t border-[var(--rule-soft)]">
                     <span className="caps text-[10px] text-[var(--muted)]">
                       NACOS UNIUYO
                     </span>
