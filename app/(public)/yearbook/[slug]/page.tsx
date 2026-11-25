@@ -105,11 +105,11 @@ export default async function AlumniProfilePage({ params }: Props) {
 
   return (
     <>
-      <section className="page-hero" aria-labelledby="alumni-profile-title">
+      <section className="relative flex min-h-[min(780px,calc(100svh-80px))] items-center overflow-hidden bg-[var(--deep)] py-[clamp(64px,8vw,100px)] text-white" aria-labelledby="alumni-profile-title">
         <div className="grid-bg drift" aria-hidden="true" />
         <HeroOrbits label={`{ ${session?.name?.replace(" Academic Session", "").toUpperCase() ?? "ALUMNI"} }`} />
 
-        <div className="wrap">
+        <div className="wrap relative flex w-full flex-col gap-6">
           <Breadcrumbs
             items={[
               { name: "NACOS UNIUYO", path: "/" },
@@ -139,7 +139,7 @@ export default async function AlumniProfilePage({ params }: Props) {
 
           <h1
             id="alumni-profile-title"
-            className="serif text-white max-w-[62%] max-lg:max-w-none text-[clamp(44px,6vw,92px)] leading-[0.98]"
+            className="serif text-white max-w-[62%] max-lg:max-w-none text-[clamp(36.1px,4.9vw,75.4px)] leading-[0.98]"
           >
             {person.fullName}
           </h1>
@@ -154,7 +154,7 @@ export default async function AlumniProfilePage({ params }: Props) {
         <div className="wrap">
           <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-12 sm:gap-16 items-start">
             {/* Left Sidebar: Photo & Professional Info */}
-            <aside className="lg:sticky lg:top-28 flex flex-col gap-6 p-6 sm:p-8 bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] shadow-sm">
+            <aside className="lg:sticky lg:top-28 flex flex-col gap-6 p-6 sm:p-8 tile rounded-xl border border-[var(--rule)] shadow-sm">
               <div className="relative aspect-[4/4.2] rounded-lg bg-[var(--forest)] overflow-hidden shadow-inner">
                 {person.photoUrl ? (
                   <Image
@@ -242,7 +242,7 @@ export default async function AlumniProfilePage({ params }: Props) {
               {person.quote && (
                 <div className="py-2 relative">
                   <Quote size={32} className="text-[var(--gold)] mb-3 opacity-75" />
-                  <blockquote className="serif text-2xl sm:text-3xl text-[var(--ink)] italic leading-relaxed m-0 border-0 p-0">
+                  <blockquote className="serif text-2xl sm:text-3xl text-[var(--ink)] leading-relaxed m-0 border-0 p-0">
                     &ldquo;{person.quote}&rdquo;
                   </blockquote>
                   <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)] mt-4 mb-0">
@@ -294,7 +294,7 @@ export default async function AlumniProfilePage({ params }: Props) {
                       return (
                         <div
                           key={mate.slug}
-                          className="group relative bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] overflow-hidden shadow-xs hover:shadow-md hover:border-[var(--green)] transition-all duration-300 flex flex-col justify-between"
+                          className="group relative tile rounded-xl border border-[var(--rule)] overflow-hidden shadow-xs hover:shadow-md hover:border-[var(--green)] transition-all duration-300 flex flex-col justify-between"
                         >
                           <div>
                             {/* Portrait / Monogram Top Half */}

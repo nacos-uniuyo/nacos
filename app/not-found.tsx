@@ -7,7 +7,7 @@ export default function NotFound() {
       <div className="wrap flex flex-col gap-6 items-start">
         <span className="eyebrow caps accent">Error 404</span>
         <h1 className="h2 serif">
-          This page has <span className="it accent">moved on.</span>
+          This page has <span className="accent">moved on.</span>
         </h1>
         <p className="lead">The link may be old or mistyped. Try the homepage or the events list.</p>
         <div className="flex flex-wrap items-center gap-3.5">

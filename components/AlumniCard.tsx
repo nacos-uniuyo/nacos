@@ -23,16 +23,15 @@ export function AlumniCard({ alum, deptName, sessionName }: Props) {
   const initials = getAlumniInitials(alum.fullName);
 
   return (
-    <article className="yearbook-card group relative flex h-full w-full flex-col bg-[var(--card-surface)] border border-[var(--rule)] rounded-xl overflow-hidden">
-      <div>
+    <article className="group relative flex h-full w-full flex-col rounded-[26px] tile p-3.5 shadow-[0_2px_10px_rgba(6,42,20,0.06)] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.2,0.7,0.1,1)]">
         {/* Card Media Header */}
-        <div className="relative w-full aspect-[4/3.4] bg-[var(--forest)] overflow-hidden">
+        <div className="relative w-full aspect-[4/3.4] overflow-hidden rounded-[18px] bg-[var(--forest)]">
           {alum.photoUrl ? (
             <Image
               src={alum.photoUrl}
               alt={alum.fullName}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.7,0.1,1)] motion-safe:group-hover:scale-[1.06]"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 320px"
             />
           ) : (
@@ -53,13 +52,17 @@ export function AlumniCard({ alum, deptName, sessionName }: Props) {
             </div>
           )}
 
-          <span className="absolute left-3.5 bottom-3 px-2.5 py-1 rounded-md bg-[rgba(6,42,20,0.85)] backdrop-blur-xs border border-white/12 text-[11px] font-semibold text-[var(--gold)]">
+          <div
+            className="pointer-events-none absolute inset-y-0 -left-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-900 ease-out motion-safe:group-hover:translate-x-[400%]"
+            aria-hidden="true"
+          />
+          <span className="caps absolute left-3 top-3 rounded-full bg-[rgba(6,42,20,0.45)] px-2.5 py-1 text-[9.5px] tracking-[0.06em] text-white/90 backdrop-blur-sm">
             {sessionName.replace(" Academic Session", "")}
           </span>
         </div>
 
         {/* Card Body */}
-        <div className="p-5 flex flex-col gap-2 flex-1">
+      <div className="flex flex-1 flex-col gap-2 px-2 pt-4 pb-1">
           <div className="flex items-center justify-between gap-2">
             {deptName ? (
               <span className="text-[11px] font-semibold uppercase tracking-wider text-primary">
@@ -104,16 +107,15 @@ export function AlumniCard({ alum, deptName, sessionName }: Props) {
           )}
 
           {alum.quote && (
-            <p className="text-xs text-[var(--muted)] leading-relaxed italic border-l-2 border-[var(--gold)] pl-2.5 my-1.5 line-clamp-2">
+            <p className="text-xs text-[var(--muted)] leading-relaxed border-l-2 border-[var(--gold)] pl-2.5 my-1.5 line-clamp-2">
               &ldquo;{alum.quote}&rdquo;
             </p>
           )}
-        </div>
       </div>
 
       {/* Card Footer: Social icons sit above the full-card click layer */}
       {alum.socials && alum.socials.length > 0 && (
-        <div className="py-3.5 px-5 bg-[var(--paper)] border-t border-[rgba(15,26,19,0.06)] flex items-center justify-between relative z-20">
+        <div className="relative z-20 mt-auto flex items-center justify-between border-t border-[rgba(15,26,19,0.08)] px-2 pt-3.5">
           <SocialIconList socials={alum.socials} size="sm" />
         </div>
       )}

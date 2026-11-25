@@ -379,7 +379,7 @@ export const env = createEnv({
 - Configure pure Bun GitHub Actions workflow for Vercel production deployment.
 
 ### Phase 2: Public Portals & Department Hubs (Dev Team Stream)
-- Department hubs (`/departments/[slug]`) for Computer Science, Cybersecurity, Information Systems, Data Analytics, and Software Engineering.
+- Department hubs (`/departments/[slug]`) for Computer Science, Cybersecurity, Information Systems, Data Science, and Software Engineering.
 - Student & faculty project showcase gallery (`/projects`) with embedded systems and cyber security category tagging.
 - Opportunities and SIWES/IT discovery portal (`/opportunities`).
 - Permanent alumni archives and graduating class yearbooks (`/yearbook`, `/alumni`).

@@ -127,11 +127,11 @@ export default async function ProjectDetailPage({ params }: Props) {
   return (
     <>
       {/* 1. Hero Header */}
-      <section className="page-hero" aria-labelledby="project-detail-title">
+      <section className="relative flex min-h-[min(780px,calc(100svh-80px))] items-center overflow-hidden bg-[var(--deep)] py-[clamp(64px,8vw,100px)] text-white" aria-labelledby="project-detail-title">
         <div className="grid-bg drift" aria-hidden="true" />
         <HeroOrbits label={`{ ${project.courseCode ?? "PROJECT"} }`} />
 
-        <div className="wrap">
+        <div className="wrap relative flex w-full flex-col gap-6">
           <Breadcrumbs
             items={[
               { name: "NACOS UNIUYO", path: "/" },
@@ -257,7 +257,7 @@ export default async function ProjectDetailPage({ params }: Props) {
               </div>
 
               {/* Natural Editorial Article Body */}
-              <div className="bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] p-6 sm:p-12 md:p-14 shadow-sm">
+              <div className="tile rounded-xl border border-[var(--rule)] p-6 sm:p-12 md:p-14 shadow-sm">
                 <RichTextRenderer
                   doc={articleDoc}
                   className="project-prose"
@@ -267,7 +267,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 
             {/* Right 4-Column Sticky Specifications Panel */}
             <aside className="lg:col-span-4 flex flex-col gap-4 lg:sticky lg:top-24" aria-label="Project Specifications">
-              <div className="bg-[var(--card-surface)] border border-[var(--rule)] rounded-xl p-6 shadow-sm flex flex-col gap-5">
+              <div className="tile border border-[var(--rule)] rounded-xl p-6 shadow-sm flex flex-col gap-5">
                 <div className="border-b border-[rgba(15,26,19,0.08)] pb-3">
                   <span className="caps eyebrow accent">Attribution</span>
                   <h3 className="serif text-2xl text-[var(--ink)] m-0 mt-0.5">Specifications</h3>
@@ -424,7 +424,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                     <Link
                       key={rel.slug}
                       href={`/projects/${rel.slug}`}
-                      className="group flex flex-col no-underline text-inherit bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+                      className="group flex flex-col no-underline text-inherit tile rounded-xl border border-[var(--rule)] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
                     >
                       <div className="w-full aspect-[16/10] bg-[var(--forest)] overflow-hidden relative flex flex-col justify-between p-6">
                         <div className="flex items-center justify-between gap-2">

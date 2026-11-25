@@ -57,8 +57,8 @@ export default async function ProjectsPage() {
         <div className="wrap relative flex flex-col gap-6 w-full">
           <Breadcrumbs items={[{ name: "NACOS UNIUYO", path: "/" }, { name: "Projects" }]} />
 
-          <h1 id="projects-hero-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
-            What We <span className="it gold">Build &amp; Ship</span>
+          <h1 id="projects-hero-title" className="serif m-0 text-[clamp(42.6px,6.6vw,91.8px)] leading-[0.95] tracking-[-0.02em]">
+            What We <span className="gold">Build &amp; Ship</span>
           </h1>
           <p className="m-0 max-w-[620px] text-[clamp(17px,1.7vw,19px)] leading-relaxed text-[var(--mint-2)]">
             Verified software platforms, passive threat monitors, ESP32 hardware rigs, and coursework group

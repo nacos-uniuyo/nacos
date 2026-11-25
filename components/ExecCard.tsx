@@ -6,27 +6,31 @@ const SIZES = "(max-width: 680px) 46vw, (max-width: 1100px) 31vw, 300px";
 export function ExecCard({ exec, index, priority }: { exec: Executive; index: number; priority?: boolean }) {
   return (
     <article
-      className="group flex flex-col h-full bg-[var(--paper)] rounded-[var(--radius)] overflow-hidden shadow-sm transition-all duration-450 hover:-translate-y-1.5 hover:shadow-[0_24px_50px_rgba(6,42,20,0.14)]"
+      className="group relative flex h-full flex-col rounded-[26px] tile p-3.5 shadow-[0_2px_10px_rgba(6,42,20,0.06)] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.2,0.7,0.1,1)]"
       id={exec.slug}
     >
       {exec.photo ? (
-        <div className="relative aspect-[4/5] bg-[var(--forest)] overflow-hidden">
+        <div className="relative aspect-[4/5] overflow-hidden rounded-[18px] bg-[var(--forest)]">
           <Image
             src={exec.photo}
             alt={`${exec.name}, ${exec.role}`}
             fill
             sizes={SIZES}
             priority={priority}
-            className="object-cover transition-all duration-800 ease-[cubic-bezier(0.2,0.7,0.1,1)] group-hover:scale-105 group-hover:saturate-110"
+            className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.7,0.1,1)] motion-safe:group-hover:scale-[1.06]"
           />
-          <div className="absolute inset-x-0 bottom-0 h-[32%] bg-gradient-to-t from-[rgba(6,42,20,0.6)] to-transparent pointer-events-none" />
-          <span className="absolute left-4.5 bottom-4 text-[10px] text-white/80 caps z-1" aria-hidden="true">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[rgba(6,42,20,0.55)] via-transparent to-transparent" />
+          <div
+            className="pointer-events-none absolute inset-y-0 -left-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-900 ease-out motion-safe:group-hover:translate-x-[400%]"
+            aria-hidden="true"
+          />
+          <span className="caps absolute left-3 top-3 rounded-full bg-[rgba(6,42,20,0.45)] px-2.5 py-1 text-[9.5px] text-white/90 backdrop-blur-sm" aria-hidden="true">
             4th Exco
           </span>
         </div>
       ) : (
         <div
-          className={`relative aspect-[4/5] overflow-hidden flex items-center justify-center text-white ${
+          className={`relative flex aspect-[4/5] items-center justify-center overflow-hidden rounded-[18px] text-white ${
             index % 2 ? "bg-[var(--forest-2)]" : "bg-[var(--forest)]"
           }`}
           aria-hidden="true"
@@ -36,15 +40,18 @@ export function ExecCard({ exec, index, priority }: { exec: Executive; index: nu
             <circle cx="100" cy="125" r="104" fill="none" stroke="rgba(255,255,255,.08)" strokeDasharray="2 7" />
             <circle cx="100" cy="21" r="3" fill="#D8B45C" />
           </svg>
-          <span className="serif relative text-[clamp(72px,8vw,112px)] leading-none tracking-[-0.02em] text-[var(--gold)] transition-transform duration-600 group-hover:scale-105">
+          <span className="serif relative text-[clamp(59px,6.6vw,91.8px)] leading-none tracking-[-0.02em] text-[var(--gold)] transition-transform duration-600 ease-[cubic-bezier(0.2,0.7,0.1,1)] motion-safe:group-hover:scale-105">
             {initials(exec.name)}
           </span>
-          <span className="caps absolute left-4.5 bottom-4 text-[10px] text-white/55">4th Exco</span>
+          <span className="caps absolute left-3 top-3 rounded-full bg-[rgba(6,42,20,0.45)] px-2.5 py-1 text-[9.5px] text-white/75 backdrop-blur-sm">
+            4th Exco
+          </span>
         </div>
       )}
-      <div className="p-5.5 sm:pb-6.5 flex flex-col gap-2">
-        <span className="caps text-[11px] text-[var(--green)] leading-normal">{exec.role}</span>
-        <h3 className="serif m-0 font-normal text-[clamp(24px,2.2vw,30px)] leading-[1.1] text-[var(--ink)]">{exec.name}</h3>
+
+      <div className="flex flex-1 flex-col gap-1.5 px-2 pt-4 pb-2">
+        <span className="caps text-[11px] leading-normal text-[var(--green)]">{exec.role}</span>
+        <h3 className="serif m-0 text-[clamp(24px,2.2vw,30px)] leading-[1.1] font-normal text-[var(--ink)]">{exec.name}</h3>
       </div>
     </article>
   );

@@ -44,7 +44,7 @@ const departmentItems = [
   },
   {
     slug: "data-analytics",
-    name: "Data Analytics",
+    name: "Data Science",
     shortName: "DAN",
     summary: "Statistical intelligence, machine learning, and decision-science pipelines.",
     icon: Database,

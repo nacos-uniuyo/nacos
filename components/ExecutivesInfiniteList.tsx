@@ -57,7 +57,7 @@ export function ExecutivesInfiniteList({ initialSessionsData }: Props) {
                 {session.name}
               </span>
               {session.theme && (
-                <span className="serif italic text-lg sm:text-xl text-[var(--gold)]">
+                <span className="serif text-lg sm:text-xl text-[var(--gold)]">
                   &ldquo;{session.theme}&rdquo;
                 </span>
               )}

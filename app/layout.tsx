@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Instrument_Sans, Instrument_Serif, Inter, Onest } from "next/font/google";
+import { Outfit } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import { Analytics } from "@vercel/analytics/next";
 import { JsonLd } from "@/components/JsonLd";
@@ -8,17 +8,7 @@ import { SITE_URL, site } from "@/lib/site";
 import { Providers } from "./providers";
 import "./globals.css";
 
-const sans = Instrument_Sans({ subsets: ["latin"], variable: "--font-instrument-sans", display: "swap" });
-const serif = Instrument_Serif({
-  subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
-  variable: "--font-instrument-serif",
-  display: "swap",
-});
-const display = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
-const onest = Onest({ subsets: ["latin"], variable: "--font-onest", display: "swap" });
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap", preload: false });
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -37,7 +27,7 @@ export const metadata: Metadata = {
     "Computer Science UNIUYO",
     "Cybersecurity UNIUYO",
     "Information Systems UNIUYO",
-    "Data Analytics UNIUYO",
+    "Data Science UNIUYO",
     "Software Engineering UNIUYO",
     "UNIUYO hackathon",
     "SIWES Uyo",
@@ -80,9 +70,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html
       lang="en-NG"
       suppressHydrationWarning
-      className={`${sans.variable} ${serif.variable} ${display.variable} ${onest.variable} ${inter.variable}`}
+      className={outfit.variable}
     >
-      <body className="has-data-dashboard:font-[family-name:var(--font-inter)]!">
+      <body>
         <NextTopLoader color="#007a1e" showSpinner={false} />
         <a className="skip" href="#main">
           Skip to content

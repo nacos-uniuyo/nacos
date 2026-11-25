@@ -20,7 +20,7 @@ We are introducing the **NACOS UNIUYO Web Portal and Faculty Management System**
 1. **Zero-Code Operations:** 100% of executive listings, department directories, project showcases, event schedules, opportunities, yearbook and alumni records, and announcements update through a secure web dashboard.
 2. **Institutional Identity & Co-Branding:** Prominently unite NACOS and the University of Uyo (UNIUYO) institutional identity across the entire portal, headers, and social preview cards.
 3. **Student Innovation & Project Showcase:** Provide a dedicated gallery displaying embedded systems, cybersecurity tools, software applications, and academic research created by students, departments, and faculty teams.
-4. **Autonomous Department Hubs:** Give each of the five departments (Computer Science, Cybersecurity, Information Systems, Data Analytics, Software Engineering) its own dedicated section featuring its executives, staff, alumni, projects, and announcements.
+4. **Autonomous Department Hubs:** Give each of the five departments (Computer Science, Cybersecurity, Information Systems, Data Science, Software Engineering) its own dedicated section featuring its executives, staff, alumni, projects, and announcements.
 5. **Career & Opportunity Discovery:** Direct channel for students to discover verified SIWES/IT internships, scholarships, sponsorships, and technical partnerships.
 6. **Alumni & Cohort Preservation:** Comprehensive archive honoring graduating cohorts and faculty alumni, providing students with professional visibility and preserving institutional memory.
 7. **Executive Leadership & Goodwill Voices:** Featured platform for the Dean of the Faculty, staff advisers, alumni, and student leaders to publish welcome notes and goodwill messages.
@@ -41,7 +41,7 @@ Development is structured into disciplined phases to ensure developer ergonomics
 
 ### Phase 2: Public Portals & Department Hubs (Dev Team Stream)
 1. **Departmental Hubs (`/departments/[slug]`):**
-   - Dedicated spaces for each of the 5 departments: Computer Science, Cybersecurity, Information Systems, Data Analytics, and Software Engineering.
+   - Dedicated spaces for each of the 5 departments: Computer Science, Cybersecurity, Information Systems, Data Science, and Software Engineering.
    - Each department hub features its department overview, executive officers, academic and non-teaching staff, featured student projects, alumni spotlight, and department notices.
 2. **Student & Faculty Project Showcase (`/projects`):**
    - Searchable, categorized gallery displaying student innovations, department projects, and faculty research.

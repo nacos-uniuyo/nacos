@@ -25,6 +25,17 @@
   --mint-2: #c8dbcd;
   --mint-3: #eaf6ef;
   --card-surface: #ffffff;
+
+  /* Cards invert in light mode: a charcoal-green surface on a white page.
+     The `tile` utility redefines --ink, --muted and friends inside the card,
+     so every descendant corrects itself by inheritance. */
+  --tile: #16211a;
+  --tile-ink: #f1efe6;
+  --tile-muted: #a7bbad;
+  --tile-rule: rgba(255, 255, 255, 0.14);
+  --tile-rule-soft: rgba(255, 255, 255, 0.08);
+  --tile-green: #46c86c;
+  --tile-raised: rgba(255, 255, 255, 0.07);
   --gutter: clamp(20px, 5vw, 64px);
   --max: 1312px;
   --section-y: clamp(88px, 11vw, 140px);
@@ -73,6 +84,14 @@
   --rule-soft: #1d251f;
   --card-surface: #131715;
 
+  --tile: #131715;
+  --tile-ink: #ece6d8;
+  --tile-muted: #96a79c;
+  --tile-rule: #252e27;
+  --tile-rule-soft: #1d251f;
+  --tile-green: #35b457;
+  --tile-raised: #1a1f1c;
+
   --background: oklch(0.1552 0.0053 173.5297); /* #0a0d0c - Obsidian charcoal canvas */
   --foreground: oklch(0.9258 0.0198 87.5167); /* #ece6d8 - Warm paper typography */
   --card: oklch(0.1995 0.0073 164.1445); /* #131715 - Elevated charcoal surface */
@@ -107,10 +126,9 @@
   --sidebar-ring: oklch(0.6363 0.1968 145.5728);
 }
 
-/* Dashboard text: Inter everywhere, including buttons, in pure black in light mode and pure white in dark mode.
+/* Dashboard text: pure black in light mode and pure white in dark mode.
    Text on green surfaces keeps its readable colour, and links and errors keep theirs. */
 :root:has([data-dashboard]) {
-  --font-instrument-sans: var(--font-inter);
   --ink: #000000;
   --muted: #000000;
   --foreground: oklch(0 0 0);
@@ -170,9 +188,9 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --font-sans: var(--font-instrument-sans);
-  --font-serif: var(--font-instrument-serif);
-  --font-display: var(--font-archivo);
+  --font-sans: var(--font-outfit);
+  --font-serif: var(--font-outfit);
+  --font-display: var(--font-outfit);
 }
 
 @layer base {
@@ -195,7 +213,7 @@ html {
 
 body {
     margin: 0;
-    font-family: var(--font-instrument-sans), system-ui, sans-serif;
+    font-family: var(--font-outfit), system-ui, sans-serif;
     background: var(--paper);
     color: var(--ink);
     -webkit-font-smoothing: antialiased;
@@ -264,20 +282,15 @@ a:not([data-slot="button"]):not([data-slot="sidebar-menu-button"]):not(
 }
 
 @utility caps {
-    font-family: var(--font-archivo), var(--font-instrument-sans), sans-serif;
-    font-stretch: 125%;
+    font-family: var(--font-outfit), sans-serif;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.14em;
 }
 
 @utility serif {
-    font-family: var(--font-instrument-serif), Georgia, serif;
+    font-family: var(--font-outfit), sans-serif;
     font-weight: 400;
-}
-
-@utility it {
-    font-style: italic;
 }
 
 @utility gold {
@@ -357,6 +370,272 @@ a:not([data-slot="button"]):not([data-slot="sidebar-menu-button"]):not(
     background-size: 64px 64px;
 }
 
+@utility tile {
+    background: var(--tile);
+    color: var(--tile-ink);
+
+    /* Redefining the inherited tokens is what fixes descendant text without
+       editing every element that reads them. */
+    --ink: var(--tile-ink);
+    --muted: var(--tile-muted);
+    --rule: var(--tile-rule);
+    --rule-soft: var(--tile-rule-soft);
+    --green: var(--tile-green);
+    --primary: var(--tile-green);
+    --card-surface: var(--tile-raised);
+}
+
+@utility industry-trace {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* One 63s cycle of nine 7s phases. The line and its travelling highlight
+   share the morph animation so the lit segment always sits on the line. Each set
+   piece clears before its phase starts morphing: the helix overlay is drawn to
+   match the line exactly, so if it outlived the shape you would see a static
+   helix crossed by a line that had already become something else. */
+@utility trace-line {
+    d: path("M0 259.7L20 259.7L41 259.7L61 203.6L81 203.6L101 296.0L122 296.0L142 296.0L162 167.3L183 167.3L203 236.6L223 236.6L243 197.0L264 197.0L284 197.0L304 259.7L325 259.7L345 203.6L365 203.6L385 296.0L406 296.0L426 296.0L446 167.3L466 167.3L487 236.6L507 236.6L527 236.6L548 197.0L568 197.0L588 259.7L608 259.7L629 203.6L649 203.6L669 203.6L690 296.0L710 296.0L730 167.3L750 167.3L771 236.6L791 236.6L811 236.6L832 197.0L852 197.0L872 259.7L892 259.7L913 203.6L933 203.6L953 203.6L974 296.0L994 296.0L1014 167.3L1034 167.3L1055 167.3L1075 236.6L1095 236.6L1115 197.0L1136 197.0L1156 259.7L1176 259.7L1197 259.7L1217 203.6L1237 203.6L1257 296.0L1278 296.0L1298 167.3L1318 167.3L1339 167.3L1359 236.6L1379 236.6L1399 197.0L1420 197.0L1440 259.7");
+
+    @media (prefers-reduced-motion: no-preference) {
+        animation: trace-morph 63s ease-in-out infinite;
+    }
+}
+
+@utility trace-comet {
+    d: path("M0 259.7L20 259.7L41 259.7L61 203.6L81 203.6L101 296.0L122 296.0L142 296.0L162 167.3L183 167.3L203 236.6L223 236.6L243 197.0L264 197.0L284 197.0L304 259.7L325 259.7L345 203.6L365 203.6L385 296.0L406 296.0L426 296.0L446 167.3L466 167.3L487 236.6L507 236.6L527 236.6L548 197.0L568 197.0L588 259.7L608 259.7L629 203.6L649 203.6L669 203.6L690 296.0L710 296.0L730 167.3L750 167.3L771 236.6L791 236.6L811 236.6L832 197.0L852 197.0L872 259.7L892 259.7L913 203.6L933 203.6L953 203.6L974 296.0L994 296.0L1014 167.3L1034 167.3L1055 167.3L1075 236.6L1095 236.6L1115 197.0L1136 197.0L1156 259.7L1176 259.7L1197 259.7L1217 203.6L1237 203.6L1257 296.0L1278 296.0L1298 167.3L1318 167.3L1339 167.3L1359 236.6L1379 236.6L1399 197.0L1420 197.0L1440 259.7");
+    stroke-dasharray: 210 4000;
+
+    @media (prefers-reduced-motion: no-preference) {
+        animation:
+            trace-morph 63s ease-in-out infinite,
+            trace-sweep 7s linear infinite;
+    }
+}
+
+@utility trace-atom-spin {
+    @media (prefers-reduced-motion: no-preference) {
+        animation: spin 24s linear infinite;
+        transform-origin: 50% 50%;
+        transform-box: fill-box;
+    }
+}
+
+@utility trace-atom-spin-rev {
+    @media (prefers-reduced-motion: no-preference) {
+        animation: spin 18s linear infinite reverse;
+        transform-origin: 50% 50%;
+        transform-box: fill-box;
+    }
+}
+
+@utility trace-twinkle {
+    @media (prefers-reduced-motion: no-preference) {
+        animation: trace-twinkle 3.6s ease-in-out infinite;
+    }
+}
+
+@utility trace-pcb {
+    opacity: 0;
+
+    @media (prefers-reduced-motion: no-preference) {
+        animation: trace-pcb 63s linear infinite;
+    }
+}
+
+@utility trace-binary {
+    opacity: 0;
+
+    @media (prefers-reduced-motion: no-preference) {
+        animation: trace-binary 63s linear infinite;
+    }
+}
+
+@utility trace-neural {
+    opacity: 0;
+
+    @media (prefers-reduced-motion: no-preference) {
+        animation: trace-neural 63s linear infinite;
+    }
+}
+
+@utility trace-helix {
+    opacity: 0;
+
+    @media (prefers-reduced-motion: no-preference) {
+        animation: trace-helix 63s linear infinite;
+    }
+}
+
+@utility trace-chain {
+    opacity: 0;
+
+    @media (prefers-reduced-motion: no-preference) {
+        animation: trace-chain 63s linear infinite;
+    }
+}
+
+@utility trace-market {
+    opacity: 0;
+
+    @media (prefers-reduced-motion: no-preference) {
+        animation: trace-market 63s linear infinite;
+    }
+}
+
+@utility trace-robotics {
+    opacity: 0;
+
+    @media (prefers-reduced-motion: no-preference) {
+        animation: trace-robotics 63s linear infinite;
+    }
+}
+
+@utility trace-indent {
+    opacity: 0;
+
+    @media (prefers-reduced-motion: no-preference) {
+        animation: trace-indent 63s linear infinite;
+    }
+}
+
+@keyframes trace-morph {
+    0.00%,
+    8.22% {
+        d: path("M0 259.7L20 259.7L41 259.7L61 203.6L81 203.6L101 296.0L122 296.0L142 296.0L162 167.3L183 167.3L203 236.6L223 236.6L243 197.0L264 197.0L284 197.0L304 259.7L325 259.7L345 203.6L365 203.6L385 296.0L406 296.0L426 296.0L446 167.3L466 167.3L487 236.6L507 236.6L527 236.6L548 197.0L568 197.0L588 259.7L608 259.7L629 203.6L649 203.6L669 203.6L690 296.0L710 296.0L730 167.3L750 167.3L771 236.6L791 236.6L811 236.6L832 197.0L852 197.0L872 259.7L892 259.7L913 203.6L933 203.6L953 203.6L974 296.0L994 296.0L1014 167.3L1034 167.3L1055 167.3L1075 236.6L1095 236.6L1115 197.0L1136 197.0L1156 259.7L1176 259.7L1197 259.7L1217 203.6L1237 203.6L1257 296.0L1278 296.0L1298 167.3L1318 167.3L1339 167.3L1359 236.6L1379 236.6L1399 197.0L1420 197.0L1440 259.7");
+    }
+    11.11%,
+    19.33% {
+        d: path("M0 230.0L20 230.0L41 230.0L61 230.0L81 230.0L101 230.0L122 206.9L142 230.0L162 71.6L183 302.6L203 230.0L223 187.1L243 230.0L264 230.0L284 230.0L304 230.0L325 230.0L345 230.0L365 230.0L385 230.0L406 230.0L426 230.0L446 230.0L466 230.0L487 230.0L507 259.7L527 71.6L548 230.0L568 230.0L588 187.1L608 230.0L629 230.0L649 230.0L669 230.0L690 230.0L710 230.0L730 230.0L750 230.0L771 230.0L791 230.0L811 230.0L832 206.9L852 230.0L872 259.7L892 302.6L913 230.0L933 187.1L953 187.1L974 230.0L994 230.0L1014 230.0L1034 230.0L1055 230.0L1075 230.0L1095 230.0L1115 230.0L1136 230.0L1156 230.0L1176 230.0L1197 206.9L1217 230.0L1237 71.6L1257 302.6L1278 230.0L1298 187.1L1318 230.0L1339 230.0L1359 230.0L1379 230.0L1399 230.0L1420 230.0L1440 230.0");
+    }
+    22.22%,
+    30.44% {
+        d: path("M0 239.9L20 239.9L41 286.1L61 144.2L81 144.2L101 144.2L122 239.9L142 239.9L162 286.1L183 144.2L203 144.2L223 144.2L243 239.9L264 239.9L284 286.1L304 144.2L325 144.2L345 144.2L365 239.9L385 239.9L406 286.1L426 144.2L446 144.2L466 144.2L487 239.9L507 239.9L527 286.1L548 144.2L568 144.2L588 144.2L608 239.9L629 239.9L649 286.1L669 144.2L690 144.2L710 144.2L730 239.9L750 286.1L771 286.1L791 144.2L811 144.2L832 144.2L852 239.9L872 286.1L892 286.1L913 144.2L933 144.2L953 144.2L974 239.9L994 286.1L1014 286.1L1034 144.2L1055 144.2L1075 144.2L1095 239.9L1115 286.1L1136 286.1L1156 144.2L1176 144.2L1197 144.2L1217 239.9L1237 286.1L1257 286.1L1278 144.2L1298 144.2L1318 144.2L1339 239.9L1359 286.1L1379 286.1L1399 144.2L1420 144.2L1440 239.9");
+    }
+    33.33%,
+    41.56% {
+        d: path("M0 197.6L20 180.4L41 170.2L61 167.0L81 169.5L101 175.6L122 182.8L142 188.5L162 190.9L183 189.1L203 183.2L223 174.6L243 165.3L264 158.0L284 155.3L304 159.0L325 170.2L345 188.8L365 213.3L385 241.2L406 269.5L426 294.8L446 314.5L466 326.4L487 329.8L507 325.2L527 314.2L548 299.1L568 283.0L588 268.4L608 257.4L629 251.1L649 249.3L669 250.9L690 253.8L710 255.6L730 254.0L750 247.3L771 234.6L791 216.3L811 194.1L832 170.4L852 148.3L872 130.7L892 120.1L913 118.2L933 125.3L953 140.4L974 161.4L994 185.6L1014 209.7L1034 231.0L1055 247.2L1075 257.4L1095 261.7L1115 261.3L1136 258.3L1156 255.2L1176 254.2L1197 257.1L1217 264.7L1237 276.5L1257 291.0L1278 305.8L1298 318.3L1318 325.6L1339 325.7L1359 317.5L1379 301.2L1399 278.1L1420 250.6L1440 221.9");
+    }
+    44.44%,
+    52.67% {
+        d: path("M0 230.0L20 203.4L41 178.9L61 158.4L81 143.6L101 135.6L122 135.0L142 141.9L162 155.8L183 175.5L203 199.5L223 225.9L243 252.6L264 277.6L284 298.8L304 314.6L325 323.7L345 325.4L365 319.6L385 306.8L406 287.9L426 264.4L446 238.2L466 211.4L487 186.0L507 164.1L527 147.4L548 137.2L568 134.4L588 139.0L608 150.8L629 168.9L649 191.8L669 217.7L690 244.6L710 270.3L730 292.8L750 310.4L771 321.7L791 325.7L811 322.2L832 311.4L852 294.2L872 271.9L892 246.4L913 219.5L933 193.5L953 170.3L974 151.9L994 139.6L1014 134.4L1034 136.8L1055 146.5L1075 162.8L1095 184.4L1115 209.6L1136 236.4L1156 262.7L1176 286.4L1197 305.7L1217 319.0L1237 325.3L1257 324.0L1278 315.4L1298 300.1L1318 279.2L1339 254.4L1359 227.7L1379 201.2L1399 177.0L1420 156.9L1440 142.6");
+    }
+    55.56%,
+    63.78% {
+        d: path("M0 173.9L20 173.9L41 173.9L61 286.1L81 286.1L101 173.9L122 173.9L142 173.9L162 286.1L183 286.1L203 173.9L223 173.9L243 286.1L264 286.1L284 286.1L304 173.9L325 173.9L345 286.1L365 286.1L385 173.9L406 173.9L426 173.9L446 286.1L466 286.1L487 173.9L507 173.9L527 173.9L548 286.1L568 286.1L588 173.9L608 173.9L629 286.1L649 286.1L669 286.1L690 173.9L710 173.9L730 286.1L750 286.1L771 173.9L791 173.9L811 173.9L832 286.1L852 286.1L872 173.9L892 173.9L913 286.1L933 286.1L953 286.1L974 173.9L994 173.9L1014 286.1L1034 286.1L1055 286.1L1075 173.9L1095 173.9L1115 286.1L1136 286.1L1156 173.9L1176 173.9L1197 173.9L1217 286.1L1237 286.1L1257 173.9L1278 173.9L1298 286.1L1318 286.1L1339 286.1L1359 173.9L1379 173.9L1399 286.1L1420 286.1L1440 173.9");
+    }
+    66.67%,
+    74.89% {
+        d: path("M0 263.0L20 210.2L41 216.6L61 236.1L81 217.3L101 207.8L122 256.8L142 308.3L162 299.9L183 274.7L203 287.8L223 295.2L243 245.3L264 190.4L284 195.6L304 221.3L325 209.1L345 198.7L365 244.3L385 297.5L406 290.5L426 259.3L446 265.6L466 273.9L487 227.7L507 171.5L527 175.3L548 206.8L568 201.4L588 190.2L608 231.9L629 285.8L649 280.2L669 243.6L690 243.0L710 252.0L730 210.1L750 153.5L771 155.9L791 192.5L811 194.1L832 182.3L852 219.3L872 273.2L892 269.1L913 227.6L933 220.0L953 229.5L974 192.6L994 136.5L1014 137.3L1034 178.5L1055 187.0L1075 174.9L1095 206.6L1115 259.6L1136 257.0L1156 211.3L1176 196.9L1197 206.6L1217 175.2L1237 120.4L1257 119.8L1278 164.8L1298 180.1L1318 167.8L1339 193.8L1359 245.0L1379 244.0L1399 194.7L1420 173.6L1440 183.5");
+    }
+    77.78%,
+    86.00% {
+        d: path("M0 325.7L20 325.7L41 325.7L61 325.7L81 325.7L101 220.1L122 220.1L142 220.1L162 220.1L183 127.7L203 127.7L223 127.7L243 127.7L264 127.7L284 220.1L304 220.1L325 220.1L345 220.1L365 325.7L385 325.7L406 325.7L426 325.7L446 325.7L466 220.1L487 220.1L507 220.1L527 220.1L548 127.7L568 127.7L588 127.7L608 127.7L629 127.7L649 220.1L669 220.1L690 220.1L710 220.1L730 325.7L750 325.7L771 325.7L791 325.7L811 220.1L832 220.1L852 220.1L872 220.1L892 220.1L913 127.7L933 127.7L953 127.7L974 127.7L994 220.1L1014 220.1L1034 220.1L1055 220.1L1075 220.1L1095 325.7L1115 325.7L1136 325.7L1156 325.7L1176 220.1L1197 220.1L1217 220.1L1237 220.1L1257 220.1L1278 127.7L1298 127.7L1318 127.7L1339 127.7L1359 220.1L1379 220.1L1399 220.1L1420 220.1L1440 325.7");
+    }
+    88.89%,
+    97.11% {
+        d: path("M0 127.7L20 127.7L41 165.7L61 203.6L81 203.6L101 241.6L122 279.5L142 279.5L162 317.4L183 279.5L203 279.5L223 241.6L243 203.6L264 203.6L284 165.7L304 127.7L325 127.7L345 165.7L365 203.6L385 203.6L406 241.6L426 279.5L446 279.5L466 317.4L487 279.5L507 279.5L527 241.6L548 203.6L568 203.6L588 165.7L608 127.7L629 127.7L649 165.7L669 203.6L690 203.6L710 241.6L730 279.5L750 317.4L771 317.4L791 279.5L811 241.6L832 241.6L852 203.6L872 165.7L892 165.7L913 127.7L933 165.7L953 165.7L974 203.6L994 241.6L1014 241.6L1034 279.5L1055 317.4L1075 317.4L1095 279.5L1115 241.6L1136 241.6L1156 203.6L1176 165.7L1197 165.7L1217 127.7L1237 165.7L1257 165.7L1278 203.6L1298 241.6L1318 241.6L1339 279.5L1359 317.4L1379 317.4L1399 279.5L1420 241.6L1440 203.6");
+    }
+    100% {
+        d: path("M0 259.7L20 259.7L41 259.7L61 203.6L81 203.6L101 296.0L122 296.0L142 296.0L162 167.3L183 167.3L203 236.6L223 236.6L243 197.0L264 197.0L284 197.0L304 259.7L325 259.7L345 203.6L365 203.6L385 296.0L406 296.0L426 296.0L446 167.3L466 167.3L487 236.6L507 236.6L527 236.6L548 197.0L568 197.0L588 259.7L608 259.7L629 203.6L649 203.6L669 203.6L690 296.0L710 296.0L730 167.3L750 167.3L771 236.6L791 236.6L811 236.6L832 197.0L852 197.0L872 259.7L892 259.7L913 203.6L933 203.6L953 203.6L974 296.0L994 296.0L1014 167.3L1034 167.3L1055 167.3L1075 236.6L1095 236.6L1115 197.0L1136 197.0L1156 259.7L1176 259.7L1197 259.7L1217 203.6L1237 203.6L1257 296.0L1278 296.0L1298 167.3L1318 167.3L1339 167.3L1359 236.6L1379 236.6L1399 197.0L1420 197.0L1440 259.7");
+    }
+}
+
+@keyframes trace-sweep {
+    from {
+        stroke-dashoffset: 210;
+    }
+    to {
+        stroke-dashoffset: -3400;
+    }
+}
+
+@keyframes trace-twinkle {
+    0%,
+    100% {
+        opacity: 0.25;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes trace-pcb {
+    0%,
+    0.00% { opacity: 0; }
+    1.60%,
+    6.67% { opacity: 1; }
+    8.00%,
+    100% { opacity: 0; }
+}
+
+@keyframes trace-binary {
+    0%,
+    21.02% { opacity: 0; }
+    23.82%,
+    28.89% { opacity: 1; }
+    30.22%,
+    100% { opacity: 0; }
+}
+
+@keyframes trace-neural {
+    0%,
+    32.13% { opacity: 0; }
+    34.93%,
+    40.00% { opacity: 1; }
+    41.33%,
+    100% { opacity: 0; }
+}
+
+@keyframes trace-helix {
+    0%,
+    43.24% { opacity: 0; }
+    46.04%,
+    51.11% { opacity: 1; }
+    52.44%,
+    100% { opacity: 0; }
+}
+
+@keyframes trace-chain {
+    0%,
+    54.36% { opacity: 0; }
+    57.16%,
+    62.22% { opacity: 1; }
+    63.56%,
+    100% { opacity: 0; }
+}
+
+@keyframes trace-market {
+    0%,
+    65.47% { opacity: 0; }
+    68.27%,
+    73.33% { opacity: 1; }
+    74.67%,
+    100% { opacity: 0; }
+}
+
+@keyframes trace-robotics {
+    0%,
+    76.58% { opacity: 0; }
+    79.38%,
+    84.44% { opacity: 1; }
+    85.78%,
+    100% { opacity: 0; }
+}
+
+@keyframes trace-indent {
+    0%,
+    87.69% { opacity: 0; }
+    90.49%,
+    95.56% { opacity: 1; }
+    96.89%,
+    100% { opacity: 0; }
+}
+
 @utility orbit-svg {
     position: absolute;
     right: -120px;
@@ -422,6 +701,14 @@ a:not([data-slot="button"]):not([data-slot="sidebar-menu-button"]):not(
 @utility orbit {
     @media (prefers-reduced-motion: no-preference) {
         animation: spin 90s linear infinite;
+        transform-origin: 50% 50%;
+        transform-box: fill-box;
+    }
+}
+
+@utility orbit-upright {
+    @media (prefers-reduced-motion: no-preference) {
+        animation: spin 90s linear infinite reverse;
         transform-origin: 50% 50%;
         transform-box: fill-box;
     }

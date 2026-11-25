@@ -47,7 +47,7 @@ export function StatCounter({ stats }: { stats: Stat[] }) {
       {stats.map((s) => (
         <div className="flex flex-col-reverse justify-end gap-2.5 border-t border-white/18 pt-6.5" key={s.label}>
           <dt className="text-[15px] text-[var(--mint)] leading-normal">{s.label}</dt>
-          <dd className="serif m-0 text-[clamp(56px,6vw,84px)] leading-none tabular-nums text-white">
+          <dd className="serif m-0 text-[clamp(45.9px,4.9vw,68.9px)] leading-none tabular-nums text-white">
             {(s.compact ? short : plain).format(Math.round(s.value * t))}
             {s.suffix}
           </dd>

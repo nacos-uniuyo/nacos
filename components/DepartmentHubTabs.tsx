@@ -197,7 +197,7 @@ export function DepartmentHubTabs({
           aria-labelledby="heading-overview"
         >
           <div className="flex flex-col gap-6">
-            <h2 id="heading-overview" className="serif m-0 mt-2 text-[clamp(34px,4.4vw,56px)] leading-[1.02] text-[var(--ink)]">
+            <h2 id="heading-overview" className="serif m-0 mt-2 text-[clamp(27.9px,3.6vw,45.9px)] leading-[1.02] text-[var(--ink)]">
               Department of {department.name}
             </h2>
 
@@ -281,7 +281,7 @@ export function DepartmentHubTabs({
                 <span className="caps eyebrow accent">
                   {currentSession ? currentSession.name : "Active Academic Session"} · Department of {department.name}
                 </span>
-                <h2 id="heading-officers" className="serif m-0 mt-2 text-[clamp(34px,4.4vw,56px)] leading-[1.02] text-[var(--ink)]">
+                <h2 id="heading-officers" className="serif m-0 mt-2 text-[clamp(27.9px,3.6vw,45.9px)] leading-[1.02] text-[var(--ink)]">
                   Executive Officers &amp; Representatives
                 </h2>
               </div>
@@ -289,27 +289,31 @@ export function DepartmentHubTabs({
 
             <ul className="list-none m-0 p-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {initialOfficers.map((officer, idx) => (
-                <li key={`${officer.slug}-${idx}`} className="bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] overflow-hidden flex flex-col">
-                  <div className="relative aspect-[4/4.2] bg-[var(--forest)] overflow-hidden">
+                <li key={`${officer.slug}-${idx}`} className="group relative flex flex-col rounded-[26px] tile p-3.5 shadow-[0_2px_10px_rgba(6,42,20,0.06)] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.2,0.7,0.1,1)]">
+                  <div className="relative aspect-[4/4.2] overflow-hidden rounded-[18px] bg-[var(--forest)]">
                     {officer.photoUrl ? (
                       <Image
                         src={officer.photoUrl}
                         alt={`${officer.fullName}, ${officer.roleTitle}`}
                         fill
                         sizes="(max-width: 680px) 100vw, 320px"
-                        className="object-cover"
+                        className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.7,0.1,1)] motion-safe:group-hover:scale-[1.06]"
                       />
                     ) : (
                       <div className="size-full flex items-center justify-center text-[72px] text-[var(--gold)]" aria-hidden="true">
                         <span className="serif">{initials(officer.fullName)}</span>
                       </div>
                     )}
-                    <span className="caps absolute left-4 bottom-3.5 px-2.5 py-1 rounded bg-[rgba(6,42,20,0.92)] text-[var(--gold)] text-[10px] tracking-[0.06em]">
+                    <div
+                      className="pointer-events-none absolute inset-y-0 -left-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-900 ease-out motion-safe:group-hover:translate-x-[400%]"
+                      aria-hidden="true"
+                    />
+                    <span className="caps absolute left-3 top-3 rounded-full bg-[rgba(6,42,20,0.45)] px-2.5 py-1 text-[9.5px] tracking-[0.06em] text-white/90 backdrop-blur-sm">
                       {tierLabels[officer.tier] ?? officer.tier}
                     </span>
                   </div>
 
-                  <div className="p-[22px] flex flex-col gap-2 flex-1">
+                  <div className="flex flex-1 flex-col gap-2 px-2 pt-4 pb-2">
                     <span className="caps text-[11px] text-[var(--green)]">{officer.roleTitle}</span>
                     <h3 className="serif m-0 text-[26px] leading-[1.1] text-[var(--ink)]">{officer.fullName}</h3>
                     <p className="m-0 text-[13.5px] text-[var(--muted)]">
@@ -340,7 +344,7 @@ export function DepartmentHubTabs({
                 <span className="caps eyebrow accent">
                   Coursework, Hardware &amp; Research
                 </span>
-                <h2 id="heading-projects" className="serif m-0 mt-2 text-[clamp(34px,4.4vw,56px)] leading-[1.02] text-[var(--ink)]">
+                <h2 id="heading-projects" className="serif m-0 mt-2 text-[clamp(27.9px,3.6vw,45.9px)] leading-[1.02] text-[var(--ink)]">
                   Student Projects
                 </h2>
               </div>
@@ -348,7 +352,7 @@ export function DepartmentHubTabs({
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {deptProjects.map((proj) => (
-                <article key={proj.slug} className="bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] p-[clamp(20px,3vw,30px)] flex flex-col justify-between gap-5">
+                <article key={proj.slug} className="tile rounded-xl border border-[var(--rule)] p-[clamp(20px,3vw,30px)] flex flex-col justify-between gap-5">
                   <div className="flex items-center justify-between gap-3 flex-wrap">
                     <span className="caps text-[11px] font-semibold tracking-[0.06em] text-[var(--forest)]">
                       {categoryLabels[proj.category] ?? proj.category}
@@ -414,7 +418,7 @@ export function DepartmentHubTabs({
             <div className="flex items-end justify-between flex-wrap gap-5">
               <div>
                 <span className="caps eyebrow accent">Graduating Cohorts &amp; Industry Mentors</span>
-                <h2 id="heading-alumni" className="serif m-0 mt-2 text-[clamp(34px,4.4vw,56px)] leading-[1.02] text-[var(--ink)]">
+                <h2 id="heading-alumni" className="serif m-0 mt-2 text-[clamp(27.9px,3.6vw,45.9px)] leading-[1.02] text-[var(--ink)]">
                   {department.name} Alumni Spotlight
                 </h2>
               </div>
@@ -424,22 +428,26 @@ export function DepartmentHubTabs({
               {initialAlumni.map((alum) => {
                 const sess = sessionMap.get(alum.sessionSlug);
                 return (
-                  <li key={alum.slug} className="bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] overflow-hidden flex flex-col group relative">
-                    <div className="relative aspect-[4/4.2] bg-[var(--forest)] overflow-hidden">
+                  <li key={alum.slug} className="group relative flex flex-col rounded-[26px] tile p-3.5 shadow-[0_2px_10px_rgba(6,42,20,0.06)] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.2,0.7,0.1,1)]">
+                    <div className="relative aspect-[4/4.2] overflow-hidden rounded-[18px] bg-[var(--forest)]">
                       {alum.photoUrl ? (
                         <Image
                           src={alum.photoUrl}
                           alt={alum.fullName}
                           fill
                           sizes="(max-width: 680px) 100vw, 320px"
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.7,0.1,1)] motion-safe:group-hover:scale-[1.06]"
                         />
                       ) : (
                         <div className="size-full flex items-center justify-center text-[72px] text-[var(--gold)]" aria-hidden="true">
                           <span className="serif">{initials(alum.fullName)}</span>
                         </div>
                       )}
-                      <span className="caps absolute left-4 bottom-3.5 px-2.5 py-1 rounded bg-[rgba(6,42,20,0.92)] text-[var(--gold)] text-[10px] tracking-[0.06em]">
+                      <div
+                        className="pointer-events-none absolute inset-y-0 -left-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-900 ease-out motion-safe:group-hover:translate-x-[400%]"
+                        aria-hidden="true"
+                      />
+                      <span className="caps absolute left-3 top-3 rounded-full bg-[rgba(6,42,20,0.45)] px-2.5 py-1 text-[9.5px] tracking-[0.06em] text-white/90 backdrop-blur-sm">
                         Cohort {alum.sessionSlug}
                       </span>
                     </div>
@@ -479,7 +487,7 @@ export function DepartmentHubTabs({
                 <span className="caps eyebrow accent">
                   Announcements &amp; Updates
                 </span>
-                <h2 id="heading-notices" className="serif m-0 mt-2 text-[clamp(34px,4.4vw,56px)] leading-[1.02] text-[var(--ink)]">
+                <h2 id="heading-notices" className="serif m-0 mt-2 text-[clamp(27.9px,3.6vw,45.9px)] leading-[1.02] text-[var(--ink)]">
                   Notices &amp; Bulletins
                 </h2>
               </div>
@@ -487,7 +495,7 @@ export function DepartmentHubTabs({
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {initialOpportunities.map((opp) => (
-                <article key={opp.slug} className="bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] p-7 flex flex-col justify-between gap-4">
+                <article key={opp.slug} className="tile rounded-xl border border-[var(--rule)] p-7 flex flex-col justify-between gap-4">
                   <div className="flex items-center justify-between flex-wrap gap-2.5">
                     <span className="caps text-[11px] text-[var(--forest)] font-semibold tracking-[0.06em]">
                       {opp.departmentSlug === department.slug
@@ -524,7 +532,7 @@ export function DepartmentHubTabs({
               ))}
 
               {posts.map((post) => (
-                <article key={post.slug} className="bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] p-7 flex flex-col justify-between gap-4">
+                <article key={post.slug} className="tile rounded-xl border border-[var(--rule)] p-7 flex flex-col justify-between gap-4">
                   <div className="flex items-center justify-between flex-wrap gap-2.5">
                     <span className="caps text-[11px] text-[var(--forest)] font-semibold tracking-[0.06em]">Official Bulletin</span>
                     <span className="inline-flex items-center gap-1.5 text-xs text-[var(--muted)]">

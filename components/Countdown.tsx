@@ -35,7 +35,7 @@ export function Countdown({ start, end }: { start: string; end: string }) {
     <div className="grid grid-cols-4 gap-2.5 max-w-[520px]" role="timer" aria-label="Time until the ceremony begins">
       {units.map(([label, value]) => (
         <div className="border border-white/16 rounded-[14px] py-4 px-3 sm:py-3.5 bg-white/3 flex flex-col gap-1.5" key={label}>
-          <span className="serif text-[clamp(36px,4vw,52px)] leading-none tabular-nums text-white">{value === undefined ? "--" : pad(value)}</span>
+          <span className="serif text-[clamp(29.5px,3.3vw,42.6px)] leading-none tabular-nums text-white">{value === undefined ? "--" : pad(value)}</span>
           <span className="caps text-[10px] text-[var(--mint)] tracking-wider">{label}</span>
         </div>
       ))}
