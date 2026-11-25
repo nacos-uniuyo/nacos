@@ -21,10 +21,10 @@ export function DeanWelcome({ message }: DeanWelcomeProps) {
         </div>
 
         <div className="md:col-span-9 flex flex-col gap-4">
-          <h2 id="dean-title" className="serif m-0 text-[clamp(32px,3.5vw,44px)] text-[var(--forest)] leading-[1.1] tracking-[-0.01em]">
+          <h2 id="dean-title" className="serif m-0 text-[clamp(32px,3.5vw,44px)] text-[var(--ink)] leading-[1.1] tracking-[-0.01em]">
             {message.heading}
           </h2>
-          <blockquote className="serif m-0 pl-5 border-l-2 border-[var(--gold)] text-[clamp(18px,1.8vw,22px)] leading-relaxed text-[var(--forest)]">
+          <blockquote className="serif m-0 pl-5 border-l-2 border-[var(--gold)] text-[clamp(18px,1.8vw,22px)] leading-relaxed text-[var(--ink)]">
             <p className="m-0">{message.body}</p>
           </blockquote>
           <figcaption className="flex flex-col gap-1 mt-2">
