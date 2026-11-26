@@ -143,7 +143,7 @@ export default async function Home() {
               <Link
                 key={dept.slug}
                 href={`/departments/${dept.slug}`}
-                className={`group flex flex-col justify-between gap-5.5 rounded-[var(--radius)] border border-[var(--rule)] tile p-7 text-[var(--ink)] no-underline transition-all duration-200 ${
+                className={`group flex flex-col justify-between gap-5.5 rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--sand)] p-7 text-[var(--ink)] no-underline transition-all duration-200 hover:border-[var(--green)] ${
                   index >= 3 ? "md:col-span-3" : "md:col-span-2"
                 }`}
               >
@@ -340,7 +340,7 @@ export default async function Home() {
 
             <div className="lg:col-span-6 grid grid-rows-1 sm:grid-rows-2 gap-5">
               <Link
-                className="group flex flex-col sm:flex-row gap-6 tile rounded-[var(--radius)] p-7.5 text-[var(--ink)] no-underline transition-all duration-450 hover:-translate-y-1.5"
+                className="group flex flex-col sm:flex-row gap-6 bg-[var(--sand)] border border-[var(--rule)] rounded-[var(--radius)] p-7.5 text-[var(--ink)] no-underline transition-all duration-450 hover:-translate-y-1.5"
                 href={`/events/${ev.slug}/programme`}
               >
                 <span className="w-full sm:w-40 shrink-0 rounded-xl bg-[var(--forest)] text-[var(--gold)] flex flex-col justify-between p-4 min-h-[100px] overflow-hidden" aria-hidden="true">
@@ -355,10 +355,10 @@ export default async function Home() {
               </Link>
 
               <Link
-                className="group flex flex-col sm:flex-row gap-6 tile rounded-[var(--radius)] p-7.5 text-[var(--ink)] no-underline transition-all duration-450 hover:-translate-y-1.5"
+                className="group flex flex-col sm:flex-row gap-6 bg-[var(--sand)] border border-[var(--rule)] rounded-[var(--radius)] p-7.5 text-[var(--ink)] no-underline transition-all duration-450 hover:-translate-y-1.5"
                 href="/executives"
               >
-                <span className="w-full sm:w-40 shrink-0 rounded-xl bg-[var(--sand)] text-[var(--green)] flex flex-col justify-between p-4 min-h-[100px] overflow-hidden" aria-hidden="true">
+                <span className="w-full sm:w-40 shrink-0 rounded-xl bg-[var(--card-surface)] text-[var(--green)] flex flex-col justify-between p-4 min-h-[100px] overflow-hidden" aria-hidden="true">
                   <span className="serif text-[54px] leading-[0.9]">12</span>
                   <span className="caps text-[10px]">Officers</span>
                 </span>

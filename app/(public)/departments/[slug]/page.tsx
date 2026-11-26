@@ -120,7 +120,7 @@ export default async function DepartmentHubPage({ params }: Props) {
           </div>
 
           {/* Key Department Stats */}
-          <dl className="grid grid-cols-2 sm:grid-cols-4 gap-5 mt-12 pt-9 border-t border-white/12">
+          <dl className="grid grid-cols-2 sm:grid-cols-4 gap-5 mt-12 pt-9">
             <div className="flex flex-col-reverse justify-end gap-1.5">
               <dt className="caps text-[10.5px] text-[var(--mint)]">Head of Department</dt>
               <dd className="serif m-0 text-[clamp(21.3px,2.5vw,32.8px)] leading-none text-white">{department.hodName ?? "Faculty Leadership"}</dd>

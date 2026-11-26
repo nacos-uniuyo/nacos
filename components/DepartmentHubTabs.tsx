@@ -6,6 +6,10 @@ import { useEffect, useState } from "react";
 import hodPlaceholder from "@/assets/images/hod-placeholder.webp";
 import { ArrowRight, ArrowUpRight, Calendar, GithubIcon, QuoteMark } from "@/components/icons";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
+import { AlumniCard } from "@/components/AlumniCard";
+import { CouncilPersonCard } from "@/components/CouncilPersonCard";
+import { NoticeCard } from "@/components/NoticeCard";
+import { ProjectCard } from "@/components/ProjectCard";
 import { initials } from "@/lib/executives";
 import { trpc } from "@/lib/trpc/client";
 import type {
@@ -159,7 +163,7 @@ export function DepartmentHubTabs({
       {/* In-Page Jump Navigation Bar */}
       {showNav && (
         <nav
-          className="sticky top-[70px] sm:top-[82px] z-20 bg-[var(--paper)] border-b border-[var(--rule)]"
+          className="sticky top-[60px] sm:top-[72px] z-20 bg-[var(--paper)] border-b border-[var(--rule)]"
           aria-label={`${department.name} sections`}
         >
           <div className="wrap">
@@ -289,43 +293,12 @@ export function DepartmentHubTabs({
 
             <ul className="list-none m-0 p-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {initialOfficers.map((officer, idx) => (
-                <li key={`${officer.slug}-${idx}`} className="group relative flex flex-col rounded-[26px] tile p-3.5 shadow-[0_2px_10px_rgba(6,42,20,0.06)] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.2,0.7,0.1,1)]">
-                  <div className="relative aspect-[4/4.2] overflow-hidden rounded-[18px] bg-[var(--forest)]">
-                    {officer.photoUrl ? (
-                      <Image
-                        src={officer.photoUrl}
-                        alt={`${officer.fullName}, ${officer.roleTitle}`}
-                        fill
-                        sizes="(max-width: 680px) 100vw, 320px"
-                        className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.7,0.1,1)] motion-safe:group-hover:scale-[1.06]"
-                      />
-                    ) : (
-                      <div className="size-full flex items-center justify-center text-[72px] text-[var(--gold)]" aria-hidden="true">
-                        <span className="serif">{initials(officer.fullName)}</span>
-                      </div>
-                    )}
-                    <div
-                      className="pointer-events-none absolute inset-y-0 -left-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-900 ease-out motion-safe:group-hover:translate-x-[400%]"
-                      aria-hidden="true"
-                    />
-                    <span className="caps absolute left-3 top-3 rounded-full bg-[rgba(6,42,20,0.45)] px-2.5 py-1 text-[9.5px] tracking-[0.06em] text-white/90 backdrop-blur-sm">
-                      {tierLabels[officer.tier] ?? officer.tier}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-1 flex-col gap-2 px-2 pt-4 pb-2">
-                    <span className="caps text-[11px] text-[var(--green)]">{officer.roleTitle}</span>
-                    <h3 className="serif m-0 text-[26px] leading-[1.1] text-[var(--ink)]">{officer.fullName}</h3>
-                    <p className="m-0 text-[13.5px] text-[var(--muted)]">
-                      Department of {department.name}
-                    </p>
-
-                    <div className="mt-auto pt-3.5 border-t border-[var(--rule-soft)] flex items-center justify-between gap-3">
-                      <span className="caps text-[10px] text-[var(--muted)]">
-                        Session {officer.sessionSlug}
-                      </span>
-                    </div>
-                  </div>
+                <li key={`${officer.slug}-${idx}`} className="h-full">
+                  <CouncilPersonCard
+                    person={officer}
+                    index={idx}
+                    departmentName={department.name}
+                  />
                 </li>
               ))}
             </ul>
@@ -350,59 +323,19 @@ export function DepartmentHubTabs({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {deptProjects.map((proj) => (
-                <article key={proj.slug} className="tile rounded-xl border border-[var(--rule)] p-[clamp(20px,3vw,30px)] flex flex-col justify-between gap-5">
-                  <div className="flex items-center justify-between gap-3 flex-wrap">
-                    <span className="caps text-[11px] font-semibold tracking-[0.06em] text-[var(--forest)]">
-                      {categoryLabels[proj.category] ?? proj.category}
-                    </span>
-                    {proj.courseCode ? (
-                      <span className="caps text-[11px] text-[var(--green)]">
-                        {proj.courseCode}
-                      </span>
-                    ) : null}
-                  </div>
-
-                  <div className="flex flex-col gap-2.5">
-                    <h3 className="serif m-0 text-[clamp(26px,2.6vw,34px)] leading-[1.08]">
-                      <Link href={`/projects/${proj.slug}`} className="text-[var(--ink)] no-underline hover:text-[var(--green)] transition-colors">
-                        {proj.title}
-                      </Link>
-                    </h3>
-                    <p className="m-0 text-[15px] leading-relaxed text-[var(--muted)]">{proj.tagline}</p>
-                  </div>
-
-                  <footer className="flex items-center justify-between gap-4 pt-4 border-t border-[var(--rule-soft)]">
-                    <div className="flex flex-col gap-0.5">
-                      <span className="caps text-[10px] text-[var(--muted)]">Attributed Team</span>
-                      <span className="text-xs font-semibold text-[var(--ink)]">
-                        {proj.teamDisplayName ?? `Department Project Team`}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      {proj.repoUrl ? (
-                        <a
-                          href={proj.repoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="size-9 rounded-full border border-[var(--rule)] inline-flex items-center justify-center text-[var(--ink)] hover:bg-[var(--forest)] hover:text-white transition-colors"
-                          aria-label={`${proj.title} repository`}
-                        >
-                          <GithubIcon size={16} />
-                        </a>
-                      ) : null}
-                      <Link
-                        href={`/projects/${proj.slug}`}
-                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--green)] no-underline hover:text-[var(--green-hover)]"
-                      >
-                        <span>View Project</span>
-                        <ArrowRight size={15} />
-                      </Link>
-                    </div>
-                  </footer>
-                </article>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              {deptProjects.map((proj, idx) => (
+                <ProjectCard
+                  key={proj.slug}
+                  slug={proj.slug}
+                  title={proj.title}
+                  tagline={proj.tagline}
+                  categoryLabel={categoryLabels[proj.category] ?? proj.category}
+                  courseCode={proj.courseCode}
+                  teamDisplayName={proj.teamDisplayName}
+                  index={idx}
+                  surfaceClassName="bg-[var(--sand)]"
+                />
               ))}
             </div>
           </section>
@@ -428,46 +361,12 @@ export function DepartmentHubTabs({
               {initialAlumni.map((alum) => {
                 const sess = sessionMap.get(alum.sessionSlug);
                 return (
-                  <li key={alum.slug} className="group relative flex flex-col rounded-[26px] tile p-3.5 shadow-[0_2px_10px_rgba(6,42,20,0.06)] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.2,0.7,0.1,1)]">
-                    <div className="relative aspect-[4/4.2] overflow-hidden rounded-[18px] bg-[var(--forest)]">
-                      {alum.photoUrl ? (
-                        <Image
-                          src={alum.photoUrl}
-                          alt={alum.fullName}
-                          fill
-                          sizes="(max-width: 680px) 100vw, 320px"
-                          className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.7,0.1,1)] motion-safe:group-hover:scale-[1.06]"
-                        />
-                      ) : (
-                        <div className="size-full flex items-center justify-center text-[72px] text-[var(--gold)]" aria-hidden="true">
-                          <span className="serif">{initials(alum.fullName)}</span>
-                        </div>
-                      )}
-                      <div
-                        className="pointer-events-none absolute inset-y-0 -left-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-900 ease-out motion-safe:group-hover:translate-x-[400%]"
-                        aria-hidden="true"
-                      />
-                      <span className="caps absolute left-3 top-3 rounded-full bg-[rgba(6,42,20,0.45)] px-2.5 py-1 text-[9.5px] tracking-[0.06em] text-white/90 backdrop-blur-sm">
-                        Cohort {alum.sessionSlug}
-                      </span>
-                    </div>
-
-                    <div className="p-[22px] flex flex-col gap-2 flex-1">
-                      <span className="caps text-[11px] text-[var(--green)]">
-                        {alum.roleTitle}
-                      </span>
-                      <h3 className="serif m-0 text-[26px] leading-[1.1] text-[var(--ink)]">
-                        <Link
-                          href={`/yearbook/${alum.slug}`}
-                          className="before:absolute before:inset-0 before:z-10 no-underline text-inherit group-hover:text-[var(--green)] transition-colors"
-                        >
-                          {alum.fullName}
-                        </Link>
-                      </h3>
-                      <p className="m-0 text-[13.5px] text-[var(--muted)]">
-                        {sess ? sess.name : `${alum.sessionSlug} Academic Session`}
-                      </p>
-                    </div>
+                  <li key={alum.slug} className="h-full">
+                    <AlumniCard
+                      alum={alum}
+                      deptName={department.name}
+                      sessionName={sess ? sess.name : `${alum.sessionSlug} Academic Session`}
+                    />
                   </li>
                 );
               })}
@@ -493,67 +392,56 @@ export function DepartmentHubTabs({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {initialOpportunities.map((opp) => (
-                <article key={opp.slug} className="tile rounded-xl border border-[var(--rule)] p-7 flex flex-col justify-between gap-4">
-                  <div className="flex items-center justify-between flex-wrap gap-2.5">
-                    <span className="caps text-[11px] text-[var(--forest)] font-semibold tracking-[0.06em]">
-                      {opp.departmentSlug === department.slug
-                        ? "Department Circular"
-                        : "Faculty Circular"}
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 text-xs text-[var(--muted)]">
-                      <Calendar size={13} />
-                      <span>Deadline: {formatReadableDate(opp.deadline)}</span>
-                    </span>
-                  </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              {initialOpportunities.map((opp) => {
+                const typeLabel = opportunityTypeLabels[opp.type] ?? opp.type;
+                const hasInternal = opp.hasInternalDetails || !opp.applyUrl;
+                const isExternal =
+                  Boolean(opp.applyUrl) &&
+                  (opp.applyUrl!.startsWith("http://") || opp.applyUrl!.startsWith("https://"));
 
-                  <h3 className="serif m-0 text-[26px] leading-[1.12] text-[var(--ink)]">{opp.title}</h3>
-                  <p className="m-0 text-[14.5px] leading-relaxed text-[var(--muted)]">
-                    {opportunityTypeLabels[opp.type] ?? opp.type} with <strong>{opp.orgName}</strong> ({opp.location}).
-                    Open to eligible {department.name} students.
-                  </p>
+                const targetHref = hasInternal ? `/opportunities/${opp.slug}` : (opp.applyUrl ?? "#");
 
-                  <footer className="flex items-center justify-between gap-3 pt-3.5 border-t border-[var(--rule-soft)]">
-                    <span className="caps text-[10px] text-[var(--green)]">
-                      {opportunityTypeLabels[opp.type] ?? opp.type}
-                    </span>
-                    <Link
-                      href={opp.applyUrl ? opp.applyUrl : `/opportunities/${opp.slug}`}
-                      target={opp.applyUrl ? "_blank" : undefined}
-                      rel={opp.applyUrl ? "noopener noreferrer" : undefined}
-                      className="text-link text-sm"
-                    >
-                      View
-                      <ArrowUpRight size={15} />
-                    </Link>
-                  </footer>
-                </article>
-              ))}
+                return (
+                  <NoticeCard
+                    key={opp.slug}
+                    href={targetHref}
+                    isExternal={!hasInternal && isExternal}
+                    dateLabel={formatReadableDate(opp.deadline)}
+                    badgeLabel={typeLabel}
+                    secondaryBadge={
+                      opp.departmentSlug === department.slug
+                        ? { label: department.name }
+                        : { label: "Faculty", highlight: true }
+                    }
+                    eyebrow={`${opp.orgName} · ${opp.location}`}
+                    title={opp.title}
+                    excerpt={opp.excerpt}
+                    imageUrl={opp.imageUrl}
+                  />
+                );
+              })}
 
-              {posts.map((post) => (
-                <article key={post.slug} className="tile rounded-xl border border-[var(--rule)] p-7 flex flex-col justify-between gap-4">
-                  <div className="flex items-center justify-between flex-wrap gap-2.5">
-                    <span className="caps text-[11px] text-[var(--forest)] font-semibold tracking-[0.06em]">Official Bulletin</span>
-                    <span className="inline-flex items-center gap-1.5 text-xs text-[var(--muted)]">
-                      <Calendar size={13} />
-                      <span>Published {formatReadableDate(post.publishedAt)}</span>
-                    </span>
-                  </div>
+              {posts.map((post, idx) => {
+                const bulletinImages = [
+                  "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1000&q=80",
+                  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1000&q=80",
+                ];
+                const bgUrl = bulletinImages[idx % bulletinImages.length];
 
-                  <h3 className="serif m-0 text-[26px] leading-[1.12] text-[var(--ink)]">{post.title}</h3>
-                  <p className="m-0 text-[14.5px] leading-relaxed text-[var(--muted)]">{post.excerpt}</p>
-
-                  <footer className="flex items-center justify-between gap-3 pt-3.5 border-t border-[var(--rule-soft)]">
-                    <span className="caps text-[10px] text-[var(--muted)]">
-                      NACOS UNIUYO
-                    </span>
-                    <span className="text-sm text-[var(--forest)] font-medium">
-                      Notice
-                    </span>
-                  </footer>
-                </article>
-              ))}
+                return (
+                  <NoticeCard
+                    key={post.slug}
+                    href={`/opportunities/${post.slug}`}
+                    dateLabel={formatReadableDate(post.publishedAt)}
+                    badgeLabel="Official Bulletin"
+                    eyebrow="NACOS UNIUYO"
+                    title={post.title}
+                    excerpt={post.excerpt}
+                    imageUrl={bgUrl}
+                  />
+                );
+              })}
             </div>
           </section>
         )}

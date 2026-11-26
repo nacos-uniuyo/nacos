@@ -4,9 +4,11 @@ import { to12h, type NacosEvent, type ProgrammeItem } from "@/lib/events";
 /** Moments in the programme that get a filled node on the timeline. */
 const KEY_MOMENTS = /Processional|Oath|Official Inauguration|Inaugural Address/;
 
-export function Timeline({ items }: { items: ProgrammeItem[] }) {
+export function Timeline({ items, onDark = false }: { items: ProgrammeItem[]; onDark?: boolean }) {
   return (
-    <ol className="relative list-none m-0 p-0 before:content-[''] before:absolute before:left-[104px] before:top-2.5 before:bottom-2.5 before:w-px before:bg-[rgba(15,26,19,0.14)] dark:before:bg-white/16">
+    <ol className={`relative list-none m-0 p-0 before:content-[''] before:absolute before:left-[104px] before:top-2.5 before:bottom-2.5 before:w-px ${
+      onDark ? "before:bg-white/16" : "before:bg-[rgba(15,26,19,0.14)] dark:before:bg-white/16"
+    }`}>
       {items.map((it) => {
         const isKey = KEY_MOMENTS.test(it.title);
         return (
@@ -14,18 +16,29 @@ export function Timeline({ items }: { items: ProgrammeItem[] }) {
             key={it.time + it.title}
             className="grid grid-cols-[80px_48px_minmax(0,1fr)] py-3 items-start reveal"
           >
-            <time dateTime={it.time} className="text-[15px] font-semibold tabular-nums pt-1 text-[var(--green)] dark:text-[var(--gold)] whitespace-nowrap">
+            <time
+              dateTime={it.time}
+              className={`text-[15px] font-semibold tabular-nums pt-1 whitespace-nowrap ${
+                onDark ? "text-[var(--gold)]" : "text-[var(--green)] dark:text-[var(--gold)]"
+              }`}
+            >
               {to12h(it.time)}
             </time>
             <span
               className={`relative justify-self-center mt-2 size-2.5 rounded-full border-2 transition-all ${
                 isKey
-                  ? "bg-[var(--green)] border-[var(--green)] shadow-[0_0_0_6px_rgba(0,122,30,0.14)] dark:bg-[var(--gold)] dark:border-[var(--gold)] dark:shadow-[0_0_0_6px_rgba(216,180,92,0.16)]"
-                  : "bg-[var(--paper)] border-[var(--green)] dark:bg-[var(--forest)] dark:border-[var(--gold)]"
+                  ? onDark
+                    ? "bg-[var(--gold)] border-[var(--gold)] shadow-[0_0_0_6px_rgba(216,180,92,0.16)]"
+                    : "bg-[var(--green)] border-[var(--green)] shadow-[0_0_0_6px_rgba(0,122,30,0.14)] dark:bg-[var(--gold)] dark:border-[var(--gold)] dark:shadow-[0_0_0_6px_rgba(216,180,92,0.16)]"
+                  : onDark
+                    ? "bg-[var(--forest)] border-[var(--gold)]"
+                    : "bg-[var(--paper)] border-[var(--green)] dark:bg-[var(--forest)] dark:border-[var(--gold)]"
               }`}
               aria-hidden="true"
             />
-            <h3 className="serif m-0 font-normal text-[clamp(21px,2.1vw,27px)] leading-[1.2] text-[var(--ink)] dark:text-white">
+            <h3 className={`serif m-0 font-normal text-[clamp(21px,2.1vw,27px)] leading-[1.2] ${
+              onDark ? "text-white" : "text-[var(--ink)] dark:text-white"
+            }`}>
               {it.title}
             </h3>
           </li>

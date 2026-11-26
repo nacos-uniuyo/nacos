@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { CouncilPersonCard } from "@/components/CouncilPersonCard";
-import type { PersonSummary, SchoolSessionSummary } from "@/server/contracts";
+import type { DepartmentSummary, PersonSummary, SchoolSessionSummary } from "@/server/contracts";
 
 type SessionCohortData = {
   session: SchoolSessionSummary;
@@ -13,9 +13,11 @@ type SessionCohortData = {
 
 type Props = {
   initialSessionsData: SessionCohortData[];
+  departments: DepartmentSummary[];
 };
 
-export function ExecutivesInfiniteList({ initialSessionsData }: Props) {
+export function ExecutivesInfiniteList({ initialSessionsData, departments }: Props) {
+  const deptMap = new Map(departments.map((d) => [d.slug, d.name]));
   const [visibleCount, setVisibleCount] = useState(1);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -53,7 +55,7 @@ export function ExecutivesInfiniteList({ initialSessionsData }: Props) {
           >
             {/* Session Banner */}
             <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--forest)]">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--green)]">
                 {session.name}
               </span>
               {session.theme && (
@@ -71,7 +73,7 @@ export function ExecutivesInfiniteList({ initialSessionsData }: Props) {
                     Executive Council
                   </h2>
                 </div>
-                <ul className="grid list-none m-0 p-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <ul className="grid list-none m-0 p-0 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                   {excos.map((person, i) => (
                     <li key={person.slug} className="reveal">
                       <CouncilPersonCard
@@ -79,6 +81,7 @@ export function ExecutivesInfiniteList({ initialSessionsData }: Props) {
                         index={i}
                         priority={sIndex === 0 && i < 4}
                         sessionName={session.name}
+                        departmentName={person.departmentSlug ? deptMap.get(person.departmentSlug) ?? null : null}
                       />
                     </li>
                   ))}
@@ -94,13 +97,14 @@ export function ExecutivesInfiniteList({ initialSessionsData }: Props) {
                     Presidential Aides &amp; Assistants
                   </h2>
                 </div>
-                <ul className="grid list-none m-0 p-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <ul className="grid list-none m-0 p-0 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                   {aides.map((person, i) => (
                     <li key={person.slug} className="reveal">
                       <CouncilPersonCard
                         person={person}
                         index={i}
                         sessionName={session.name}
+                        departmentName={person.departmentSlug ? deptMap.get(person.departmentSlug) ?? null : null}
                       />
                     </li>
                   ))}
@@ -116,13 +120,14 @@ export function ExecutivesInfiniteList({ initialSessionsData }: Props) {
                     Software Directorate &amp; Developer Team
                   </h2>
                 </div>
-                <ul className="grid list-none m-0 p-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <ul className="grid list-none m-0 p-0 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                   {devTeam.map((person, i) => (
                     <li key={person.slug} className="reveal">
                       <CouncilPersonCard
                         person={person}
                         index={i}
                         sessionName={session.name}
+                        departmentName={person.departmentSlug ? deptMap.get(person.departmentSlug) ?? null : null}
                       />
                     </li>
                   ))}

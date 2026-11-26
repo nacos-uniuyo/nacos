@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { AlumniCard } from "@/components/AlumniCard";
 import { Breadcrumbs } from "@/components/EventParts";
 import { notFound } from "next/navigation";
 import {
@@ -154,7 +155,7 @@ export default async function AlumniProfilePage({ params }: Props) {
         <div className="wrap">
           <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-12 sm:gap-16 items-start">
             {/* Left Sidebar: Photo & Professional Info */}
-            <aside className="lg:sticky lg:top-28 flex flex-col gap-6 p-6 sm:p-8 tile rounded-xl border border-[var(--rule)] shadow-sm">
+            <aside className="lg:sticky lg:top-28 flex flex-col gap-6 p-6 sm:p-8 bg-[var(--sand)] rounded-xl border border-[var(--rule)] shadow-sm">
               <div className="relative aspect-[4/4.2] rounded-lg bg-[var(--forest)] overflow-hidden shadow-inner">
                 {person.photoUrl ? (
                   <Image
@@ -186,7 +187,7 @@ export default async function AlumniProfilePage({ params }: Props) {
 
               <div>
                 <h2 className="serif text-2xl text-[var(--ink)] m-0">{person.fullName}</h2>
-                <p className="text-xs font-semibold text-[var(--forest)] mt-2.5 mb-0 leading-normal">
+                <p className="text-xs font-semibold text-[var(--green)] mt-2.5 mb-0 leading-normal">
                   {person.roleTitle}
                 </p>
               </div>
@@ -194,7 +195,7 @@ export default async function AlumniProfilePage({ params }: Props) {
               <dl className="flex flex-col gap-4 text-xs sm:text-sm m-0 pt-2 border-t border-[rgba(15,26,19,0.08)]">
                 <div className="flex flex-col gap-1 pb-3 border-b border-[rgba(15,26,19,0.08)]">
                   <dt className="text-[var(--muted)] font-medium flex items-center gap-1.5">
-                    <Building2 size={14} className="text-[var(--forest)]" />
+                    <Building2 size={14} className="text-[var(--green)]" />
                     <span>Department</span>
                   </dt>
                   <dd className="font-semibold text-[var(--ink)] m-0">
@@ -204,7 +205,7 @@ export default async function AlumniProfilePage({ params }: Props) {
 
                 <div className="flex flex-col gap-1 pb-3 border-b border-[rgba(15,26,19,0.08)]">
                   <dt className="text-[var(--muted)] font-medium flex items-center gap-1.5">
-                    <Calendar size={14} className="text-[var(--forest)]" />
+                    <Calendar size={14} className="text-[var(--green)]" />
                     <span>Graduating Session</span>
                   </dt>
                   <dd className="font-semibold text-[var(--ink)] m-0">
@@ -215,7 +216,7 @@ export default async function AlumniProfilePage({ params }: Props) {
                 {(person.currentRole || person.currentCompany) && (
                   <div className="flex flex-col gap-1 pb-3 border-b border-[rgba(15,26,19,0.08)]">
                     <dt className="text-[var(--muted)] font-medium flex items-center gap-1.5">
-                      <Briefcase size={14} className="text-[var(--forest)]" />
+                      <Briefcase size={14} className="text-[var(--green)]" />
                       <span>Current Position</span>
                     </dt>
                     <dd className="font-semibold text-[var(--ink)] m-0">
@@ -274,81 +275,32 @@ export default async function AlumniProfilePage({ params }: Props) {
 
               {/* Other Members from the Same Cohort */}
               {otherCohortMembers.length > 0 && (
-                <div className="pt-8 border-t border-[rgba(15,26,19,0.12)] flex flex-col gap-6">
+                <div className="pt-8 flex flex-col gap-6">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
                     <h3 className="serif text-xl sm:text-2xl text-[var(--ink)] m-0">
                       Classmates from {session?.name ?? person.sessionSlug}
                     </h3>
                     <Link
                       href={`/yearbook/session/${session?.slug ?? person.sessionSlug}`}
-                      className="text-link text-xs font-semibold text-[var(--forest)] hover:text-[var(--green)] transition-colors self-start sm:self-auto shrink-0 whitespace-nowrap"
+                      className="text-link text-xs font-semibold text-[var(--green)] hover:text-[var(--green)] transition-colors self-start sm:self-auto shrink-0 whitespace-nowrap"
                     >
                       <span>View entire class</span>
                       <ArrowRight size={13} />
                     </Link>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {otherCohortMembers.map((mate) => {
-                      const mateInitials = getInitials(mate.fullName);
+                      const mateDept = mate.departmentSlug
+                        ? departments.find((d) => d.slug === mate.departmentSlug)?.name ?? null
+                        : null;
                       return (
-                        <div
+                        <AlumniCard
                           key={mate.slug}
-                          className="group relative tile rounded-xl border border-[var(--rule)] overflow-hidden shadow-xs hover:shadow-md hover:border-[var(--green)] transition-all duration-300 flex flex-col justify-between"
-                        >
-                          <div>
-                            {/* Portrait / Monogram Top Half */}
-                            <div className="relative aspect-square bg-[var(--forest)] overflow-hidden">
-                              {mate.photoUrl ? (
-                                <Image
-                                  src={mate.photoUrl}
-                                  alt={mate.fullName}
-                                  fill
-                                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                  sizes="(max-width: 640px) 100vw, 240px"
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center relative select-none">
-                                  <svg
-                                    viewBox="0 0 200 200"
-                                    className="absolute inset-0 w-full h-full opacity-20 pointer-events-none"
-                                    preserveAspectRatio="xMidYMid slice"
-                                    aria-hidden="true"
-                                  >
-                                    <circle cx="100" cy="100" r="70" stroke="rgba(216,180,92,0.6)" fill="none" />
-                                    <circle cx="100" cy="100" r="92" stroke="rgba(255,255,255,0.2)" strokeDasharray="3 6" fill="none" />
-                                    <circle cx="100" cy="30" r="4" fill="#D8B45C" />
-                                  </svg>
-                                  <span className="serif text-4xl text-[var(--gold)] font-normal tracking-wide">
-                                    {mateInitials}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Info Block */}
-                            <div className="p-4 flex flex-col gap-1">
-                              <h4 className="serif text-lg text-[var(--ink)] group-hover:text-[var(--green)] transition-colors m-0 line-clamp-1">
-                                <Link
-                                  href={`/yearbook/${mate.slug}`}
-                                  className="before:absolute before:inset-0 before:z-10 no-underline text-inherit hover:text-[var(--green)]"
-                                >
-                                  {mate.fullName}
-                                </Link>
-                              </h4>
-                              <p className="text-xs font-semibold text-[var(--muted)] m-0 line-clamp-1">
-                                {mate.roleTitle}
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* Social Icons Bar (Positioned above the full-card click layer) */}
-                          {mate.socials && mate.socials.length > 0 && (
-                            <div className="p-4 pt-0 relative z-20">
-                              <SocialIconList socials={mate.socials} size="sm" />
-                            </div>
-                          )}
-                        </div>
+                          alum={mate}
+                          deptName={mateDept}
+                          sessionName={session?.name ?? mate.sessionSlug}
+                        />
                       );
                     })}
                   </div>

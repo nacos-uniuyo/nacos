@@ -16,7 +16,7 @@ export function StaffCard({ person, index, priority, departmentName }: Props) {
   const displayDepartment = departmentName ? `Department of ${departmentName}` : "Faculty of Computing";
 
   return (
-    <article className="group/staff relative flex flex-col tile rounded-2xl border border-[var(--rule)] overflow-hidden shadow-xs hover:shadow-md transition-all duration-300">
+    <article className="group/staff relative flex flex-col bg-[var(--sand)] rounded-2xl border border-[var(--rule)] overflow-hidden shadow-xs hover:shadow-md transition-all duration-300">
       <div className="relative aspect-[4/3] w-full bg-[var(--forest)] overflow-hidden">
         {person.photoUrl ? (
           <Image

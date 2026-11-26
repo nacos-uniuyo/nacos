@@ -20,9 +20,10 @@ export const metadata: Metadata = {
 
 export default async function ExecutivesPage() {
   const caller = appRouter.createCaller({ session: null });
-  const [sessions, allRoster] = await Promise.all([
+  const [sessions, allRoster, departments] = await Promise.all([
     caller.session.list(),
     caller.roster.list(),
+    caller.department.list(),
   ]);
 
   // Order sessions starting with current session first, then descending
@@ -71,9 +72,9 @@ export default async function ExecutivesPage() {
         </div>
       </section>
 
-      <section className="bg-[var(--sand)] py-[var(--section-y)]" aria-label="Executive leadership by session">
+      <section className="py-[var(--section-y)]" aria-label="Executive leadership by session">
         <div className="wrap">
-          <ExecutivesInfiniteList initialSessionsData={sessionsData} />
+          <ExecutivesInfiniteList initialSessionsData={sessionsData} departments={departments} />
         </div>
       </section>
 

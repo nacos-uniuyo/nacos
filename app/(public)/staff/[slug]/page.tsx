@@ -115,7 +115,7 @@ export default async function StaffProfilePage({ params }: Props) {
         <div className="wrap">
           <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-12 sm:gap-16 items-start">
             {/* Sidebar with portrait and official details */}
-            <aside className="group lg:sticky lg:top-28 flex flex-col gap-6 rounded-[26px] tile p-3.5 shadow-[0_2px_10px_rgba(6,42,20,0.06)] transition-[box-shadow] duration-500">
+            <aside className="group lg:sticky lg:top-28 flex flex-col gap-6 rounded-[26px] bg-[var(--sand)] border border-[var(--rule)] p-3.5 shadow-[0_2px_10px_rgba(6,42,20,0.06)] transition-[box-shadow] duration-500">
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[18px] bg-[var(--forest)]">
                 {person.photoUrl ? (
                   <Image
@@ -184,7 +184,7 @@ export default async function StaffProfilePage({ params }: Props) {
               )}
 
               {person.researchAreas && person.researchAreas.length > 0 && (
-                <section className="flex flex-col gap-4 pt-4 border-t border-[rgba(15,26,19,0.08)]">
+                <section className="flex flex-col gap-4 pt-4">
                   <div className="flex items-center gap-2">
                     <BookOpen size={18} className="text-primary" />
                     <h2 className="serif text-2xl text-[var(--ink)] m-0">Focus &amp; Specialization Areas</h2>
@@ -203,7 +203,7 @@ export default async function StaffProfilePage({ params }: Props) {
               )}
 
               {colleagues.length > 0 && (
-                <section className="flex flex-col gap-6 pt-6 border-t border-[rgba(15,26,19,0.08)]">
+                <section className="flex flex-col gap-6 pt-6">
                   <h2 className="serif text-2xl text-[var(--ink)] m-0">Other Faculty Staff</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                     {colleagues.map((colleague, index) => {

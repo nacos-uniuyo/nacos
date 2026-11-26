@@ -7,15 +7,19 @@ import { useTheme } from "next-themes";
 import { useSyncExternalStore } from "react";
 import {
   IconArrowLeft,
+  IconBell,
   IconBookmark,
   IconBriefcase,
+  IconFilePlus,
   IconFolder,
+  IconFolderCheck,
   IconLayoutDashboard,
   IconLogout,
   IconMoon,
   IconShield,
   IconSun,
   IconUser,
+  IconUsers,
 } from "@tabler/icons-react";
 import nacosLogoImg from "@/assets/images/nacos-logo.png";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -72,8 +76,14 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
 
   const isCoordinator = user.role === "department_editor" || user.role === "admin";
 
-  const accountLinks = isCoordinator
-    ? [{ title: "Coordinator console", url: "/admin/departments", icon: IconShield, exact: false }]
+  const adminLinks = isCoordinator
+    ? [
+        { title: "Department Overview", url: "/dashboard/departments", icon: IconShield, exact: true },
+        { title: "Project Queue", url: "/dashboard/departments/projects", icon: IconFolderCheck, exact: false },
+        { title: "Student Roster", url: "/dashboard/departments/roster", icon: IconUsers, exact: false },
+        { title: "Notices", url: "/dashboard/departments/notices", icon: IconBell, exact: true },
+        { title: "Publish Notice", url: "/dashboard/departments/notices/new", icon: IconFilePlus, exact: false },
+      ]
     : [];
 
   const isActive = (url: string, exact: boolean) =>
@@ -85,7 +95,7 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
   }
 
   const renderLinks = (links: typeof mainLinks) => (
-    <SidebarMenu className="gap-1.5">
+    <SidebarMenu className="gap-1">
       {links.map((item) => {
         const active = isActive(item.url, item.exact);
         return (
@@ -93,12 +103,12 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
             {active ? (
               <span
                 aria-hidden="true"
-                className="absolute -left-2 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-md bg-sidebar-primary z-10"
+                className="absolute -left-2 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-md bg-sidebar-primary z-10"
               />
             ) : null}
             <SidebarMenuButton
               asChild
-              size="lg"
+              size="default"
               isActive={active}
               tooltip={item.title}
               onClick={() => {
@@ -151,9 +161,12 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
           <SidebarGroupContent>{renderLinks(mainLinks)}</SidebarGroupContent>
         </SidebarGroup>
 
-        {accountLinks.length > 0 ? (
-          <SidebarGroup className="mt-auto">
-            <SidebarGroupContent>{renderLinks(accountLinks)}</SidebarGroupContent>
+        {adminLinks.length > 0 ? (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-[10px] font-medium tracking-wider uppercase">
+              Coordinator
+            </SidebarGroupLabel>
+            <SidebarGroupContent>{renderLinks(adminLinks)}</SidebarGroupContent>
           </SidebarGroup>
         ) : null}
       </SidebarContent>

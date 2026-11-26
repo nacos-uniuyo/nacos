@@ -10,6 +10,7 @@ type Props = {
   alum: PersonSummary;
   deptName: string | null;
   sessionName: string;
+  surfaceClassName?: string;
 };
 
 export function getAlumniInitials(name: string): string {
@@ -19,11 +20,16 @@ export function getAlumniInitials(name: string): string {
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
 
-export function AlumniCard({ alum, deptName, sessionName }: Props) {
+export function AlumniCard({
+  alum,
+  deptName,
+  sessionName,
+  surfaceClassName = "bg-[var(--sand)] border border-[var(--rule)]",
+}: Props) {
   const initials = getAlumniInitials(alum.fullName);
 
   return (
-    <article className="group relative flex h-full w-full flex-col rounded-[26px] tile p-3.5 shadow-[0_2px_10px_rgba(6,42,20,0.06)] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.2,0.7,0.1,1)]">
+    <article className={`group relative flex h-full w-full flex-col rounded-[26px] ${surfaceClassName} p-3.5 shadow-[0_2px_10px_rgba(6,42,20,0.06)] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.2,0.7,0.1,1)]`}>
         {/* Card Media Header */}
         <div className="relative w-full aspect-[4/3.4] overflow-hidden rounded-[18px] bg-[var(--forest)]">
           {alum.photoUrl ? (
