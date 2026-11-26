@@ -18,6 +18,10 @@ const SEGMENT_LABELS: Record<string, string> = {
   saved: "Saved",
   submit: "Submit",
   profile: "Profile",
+  departments: "Coordinator",
+  roster: "Student Roster",
+  notices: "Notices",
+  new: "Publish Notice",
 };
 
 export function DashboardBreadcrumbs() {

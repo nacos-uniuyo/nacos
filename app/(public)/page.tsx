@@ -1,12 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import uniuyoLogo from "@/assets/images/uniuyo-circle.png";
 import { ExecCard } from "@/components/ExecCard";
 import { DeanWelcome } from "@/components/home/DeanWelcome";
 import { OpenTracker } from "@/components/home/OpenTracker";
 import { PriorityTile } from "@/components/home/PriorityTile";
 import { ArrowRight } from "@/components/icons";
-import { CornerOrbit, HeroOrbits } from "@/components/Orbits";
+import { IndustryTrace } from "@/components/IndustryTrace";
+import { CornerOrbit } from "@/components/Orbits";
 import { StatCounter } from "@/components/StatCounter";
 import { Button } from "@/components/ui/button";
 import { featuredEvent as ev, formatEventDate, formatEventTime } from "@/lib/events";
@@ -57,19 +57,19 @@ export default async function Home() {
         aria-labelledby="hero-title"
       >
         <div className="grid-bg drift" aria-hidden="true" />
-        <HeroOrbits logoImage={uniuyoLogo} />
+        <IndustryTrace />
         <div
           className="absolute inset-x-0 bottom-0 h-[260px] bg-gradient-to-t from-[var(--forest)] to-transparent pointer-events-none"
           aria-hidden="true"
         />
 
         <div className="wrap relative flex flex-col gap-7">
-          <h1 id="hero-title" className="serif m-0 max-w-[65%] max-md:max-w-none text-[clamp(52px,7.2vw,104px)] leading-[0.95] tracking-[-0.02em]">
+          <h1 id="hero-title" className="serif m-0 max-w-[65%] max-md:max-w-none text-[clamp(42.6px,5.9vw,85.3px)] leading-[0.95] tracking-[-0.02em]">
             <span className="line">
               <span className="rise d2">Building Capacity</span>
             </span>
             <span className="line">
-              <span className="rise d3 it gold">Fostering Innovation</span>
+              <span className="rise d3 gold">Fostering Innovation</span>
             </span>
           </h1>
           <p className="fade d4 m-0 max-w-[560px] text-[clamp(17px,1.8vw,20px)] leading-[1.55] text-[var(--mint-2)]">
@@ -109,10 +109,10 @@ export default async function Home() {
             Our purpose
           </h2>
           <div className="md:col-span-9 flex flex-col gap-9">
-            <p className="statement serif reveal m-0 text-[clamp(36px,5vw,64px)] leading-[1.08] tracking-[-0.01em]">
+            <p className="statement serif reveal m-0 text-[clamp(29.5px,4.1vw,52.5px)] leading-[1.08] tracking-[-0.01em]">
               <span className="statement-line">We want to be known not just for studying</span>{" "}
               <span className="statement-line">
-                Computing, but for <span className="it accent nowrap">what we build with it.</span>
+                Computing, but for <span className="accent nowrap">what we build with it.</span>
               </span>
             </p>
             <p className="lead reveal max-w-[640px] text-[clamp(17px,1.6vw,19px)]">
@@ -143,7 +143,7 @@ export default async function Home() {
               <Link
                 key={dept.slug}
                 href={`/departments/${dept.slug}`}
-                className={`group flex flex-col justify-between gap-5.5 rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--card-surface)] p-7 text-[var(--ink)] no-underline transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(15,26,19,0.08)] ${
+                className={`group flex flex-col justify-between gap-5.5 rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--sand)] p-7 text-[var(--ink)] no-underline transition-all duration-200 hover:border-[var(--green)] ${
                   index >= 3 ? "md:col-span-3" : "md:col-span-2"
                 }`}
               >
@@ -247,8 +247,8 @@ export default async function Home() {
         <div className="wrap grid grid-cols-1 lg:grid-cols-12 gap-x-6 gap-y-14 items-center">
           <div className="lg:col-span-5 flex flex-col gap-6">
             <span className="eyebrow caps accent">Open-Track</span>
-            <h2 id="ot-title" className="serif reveal m-0 text-[clamp(48px,6vw,76px)] leading-none tracking-[-0.02em]">
-              Promises, <span className="it">tracked in public.</span>
+            <h2 id="ot-title" className="serif reveal m-0 text-[clamp(39.4px,4.9vw,62.3px)] leading-none tracking-[-0.02em]">
+              Promises, <span className="accent">tracked in public.</span>
             </h2>
             <p className="lead reveal">
               You should not have to wait until the end of a tenure to know what your executives have done. See every
@@ -313,7 +313,7 @@ export default async function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
             <Link
               id="media"
-              className="lg:col-span-6 group flex flex-col bg-[var(--forest)] rounded-[var(--radius)] overflow-hidden text-white no-underline transition-all duration-450 hover:-translate-y-1.5 hover:shadow-[0_24px_50px_rgba(6,42,20,0.14)]"
+              className="lg:col-span-6 group flex flex-col bg-[var(--forest)] rounded-[var(--radius)] overflow-hidden text-white no-underline transition-all duration-450 hover:-translate-y-1.5"
               href={`/events/${ev.slug}`}
             >
               <div className="relative aspect-[3/2] bg-[var(--forest-2)] overflow-hidden">
@@ -340,7 +340,7 @@ export default async function Home() {
 
             <div className="lg:col-span-6 grid grid-rows-1 sm:grid-rows-2 gap-5">
               <Link
-                className="group flex flex-col sm:flex-row gap-6 bg-[var(--card-surface)] rounded-[var(--radius)] p-7.5 text-[var(--ink)] no-underline transition-all duration-450 hover:-translate-y-1.5 hover:shadow-[0_24px_50px_rgba(6,42,20,0.14)]"
+                className="group flex flex-col sm:flex-row gap-6 bg-[var(--sand)] border border-[var(--rule)] rounded-[var(--radius)] p-7.5 text-[var(--ink)] no-underline transition-all duration-450 hover:-translate-y-1.5"
                 href={`/events/${ev.slug}/programme`}
               >
                 <span className="w-full sm:w-40 shrink-0 rounded-xl bg-[var(--forest)] text-[var(--gold)] flex flex-col justify-between p-4 min-h-[100px] overflow-hidden" aria-hidden="true">
@@ -355,10 +355,10 @@ export default async function Home() {
               </Link>
 
               <Link
-                className="group flex flex-col sm:flex-row gap-6 bg-[var(--card-surface)] rounded-[var(--radius)] p-7.5 text-[var(--ink)] no-underline transition-all duration-450 hover:-translate-y-1.5 hover:shadow-[0_24px_50px_rgba(6,42,20,0.14)]"
+                className="group flex flex-col sm:flex-row gap-6 bg-[var(--sand)] border border-[var(--rule)] rounded-[var(--radius)] p-7.5 text-[var(--ink)] no-underline transition-all duration-450 hover:-translate-y-1.5"
                 href="/executives"
               >
-                <span className="w-full sm:w-40 shrink-0 rounded-xl bg-[var(--sand)] text-[var(--green)] flex flex-col justify-between p-4 min-h-[100px] overflow-hidden" aria-hidden="true">
+                <span className="w-full sm:w-40 shrink-0 rounded-xl bg-[var(--card-surface)] text-[var(--green)] flex flex-col justify-between p-4 min-h-[100px] overflow-hidden" aria-hidden="true">
                   <span className="serif text-[54px] leading-[0.9]">12</span>
                   <span className="caps text-[10px]">Officers</span>
                 </span>
@@ -393,8 +393,8 @@ export default async function Home() {
                 <span className="size-2 rounded-full bg-[#D8B45C] animate-pulse" aria-hidden="true" />
                 In development
               </span>
-              <h2 id="portal-title" className="serif m-0 text-[clamp(44px,5.6vw,72px)] leading-none tracking-[-0.02em]">
-                One account. <span className="it">Everything NACOS.</span>
+              <h2 id="portal-title" className="serif m-0 text-[clamp(36.1px,4.6vw,59px)] leading-none tracking-[-0.02em]">
+                One account. <span className="gold">Everything NACOS.</span>
               </h2>
               <p className="m-0 text-lg leading-relaxed text-[var(--mint-3)]">
                 Every NACOSite at UNIUYO will sign in to reach Open-Track, Guide-U, event registration, and

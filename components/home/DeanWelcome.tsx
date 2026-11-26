@@ -1,5 +1,5 @@
 import Image from "next/image";
-import deanPlaceholder from "@/assets/images/dean-placeholder.webp";
+import deanPhoto from "@/assets/images/dean.webp";
 import type { DeansMessageSummary } from "@/server/contracts";
 
 type DeanWelcomeProps = {
@@ -12,7 +12,7 @@ export function DeanWelcome({ message }: DeanWelcomeProps) {
       <div className="wrap grid grid-cols-1 md:grid-cols-12 gap-x-6 gap-y-9 items-center">
         <div className="md:col-span-3 flex flex-col items-center gap-4">
           <Image
-            src={deanPlaceholder}
+            src={deanPhoto}
             alt={`${message.authorName}, ${message.authorTitle}`}
             width={220}
             height={220}
@@ -21,7 +21,7 @@ export function DeanWelcome({ message }: DeanWelcomeProps) {
         </div>
 
         <div className="md:col-span-9 flex flex-col gap-4">
-          <h2 id="dean-title" className="serif m-0 text-[clamp(32px,3.5vw,44px)] text-[var(--ink)] leading-[1.1] tracking-[-0.01em]">
+          <h2 id="dean-title" className="serif m-0 text-[clamp(26.2px,2.9vw,36.1px)] text-[var(--ink)] leading-[1.1] tracking-[-0.01em]">
             {message.heading}
           </h2>
           <blockquote className="serif m-0 pl-5 border-l-2 border-[var(--gold)] text-[clamp(18px,1.8vw,22px)] leading-relaxed text-[var(--ink)]">

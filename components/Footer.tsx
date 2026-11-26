@@ -8,7 +8,7 @@ const computingDepartments = [
   { slug: "computer-science", name: "Computer Science" },
   { slug: "cybersecurity", name: "Cybersecurity" },
   { slug: "information-systems", name: "Information Systems" },
-  { slug: "data-analytics", name: "Data Analytics" },
+  { slug: "data-analytics", name: "Data Science" },
   { slug: "software-engineering", name: "Software Engineering" },
 ] as const;
 
@@ -34,10 +34,10 @@ export function Footer() {
                 className="size-15 rounded-full ring-2 ring-white/90 bg-white object-contain p-1"
               />
             </div>
-            <p className="serif m-0 text-[clamp(34px,3.4vw,44px)] leading-[1.05] text-white">
+            <p className="serif m-0 text-[clamp(27.9px,2.8vw,36.1px)] leading-[1.05] text-white">
               Building Capacity.
               <br />
-              <span className="it gold">Fostering Innovation.</span>
+              <span className="gold">Fostering Innovation.</span>
             </p>
             <p className="m-0 text-sm leading-relaxed max-w-[420px] text-[var(--mint)]">
               {site.legalName}. University of Uyo, Akwa Ibom State, Nigeria.

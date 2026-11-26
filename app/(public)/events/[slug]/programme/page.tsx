@@ -53,12 +53,12 @@ export default async function ProgrammePage({ params }: Props) {
             ]}
           />
           <span className="eyebrow on-dark caps fade d1">{e.kicker}</span>
-          <h1 id="prog-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
+          <h1 id="prog-title" className="serif m-0 text-[clamp(42.6px,6.6vw,91.8px)] leading-[0.95] tracking-[-0.02em]">
             <span className="line">
               <span className="rise d1">Programme</span>
             </span>
             <span className="line">
-              <span className="rise d2 it gold">of Events</span>
+              <span className="rise d2 gold">of Events</span>
             </span>
           </h1>
           <p className="fade d3 m-0 max-w-[620px] text-[clamp(17px,1.7vw,19px)] leading-relaxed text-[var(--mint-2)]">
@@ -75,7 +75,7 @@ export default async function ProgrammePage({ params }: Props) {
           <div className="lg:sticky lg:top-[120px] flex flex-col gap-5.5">
             <span className="eyebrow caps accent">Order of the ceremony</span>
             <h2 id="order-title" className="h2 serif">
-              Arrive by <span className="it accent">noon.</span>
+              Arrive by <span className="accent">noon.</span>
             </h2>
             <p className="lead">
               Dignitaries are seated from {startOf(e, /Dignitaries/)} and the new executives process in at{" "}

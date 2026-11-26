@@ -73,12 +73,12 @@ export default async function EventPage({ params }: Props) {
               ]}
             />
             <span className="eyebrow on-dark caps fade d1">{e.kicker}</span>
-            <h1 id="event-title" className="serif m-0 text-[clamp(56px,8.6vw,124px)] leading-[0.92] tracking-[-0.02em]">
+            <h1 id="event-title" className="serif m-0 text-[clamp(45.9px,7.1vw,101.7px)] leading-[0.92] tracking-[-0.02em]">
               <span className="line">
                 <span className="rise d1">Inauguration</span>
               </span>
               <span className="line">
-                <span className="rise d2 it gold">Ceremony</span>
+                <span className="rise d2 gold">Ceremony</span>
               </span>
               <span className="sr-only"> of the 4th Executive Council, NACOS UNIUYO</span>
             </h1>
@@ -152,21 +152,21 @@ export default async function EventPage({ params }: Props) {
           <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 m-0">
             <div className="reveal flex flex-col-reverse justify-end gap-3 border-t border-[rgba(15,26,19,0.16)] pt-6">
               <dt className="text-[15px] text-[var(--muted)] leading-normal">October 2026, Friday</dt>
-              <dd className="serif m-0 text-[clamp(44px,5vw,68px)] leading-none">09</dd>
+              <dd className="serif m-0 text-[clamp(36.1px,4.1vw,55.8px)] leading-none">09</dd>
             </div>
             <div className="reveal flex flex-col-reverse justify-end gap-3 border-t border-[rgba(15,26,19,0.16)] pt-6">
               <dt className="text-[15px] text-[var(--muted)] leading-normal">Noon, West Africa Time. We start on time.</dt>
-              <dd className="serif m-0 text-[clamp(44px,5vw,68px)] leading-none">
+              <dd className="serif m-0 text-[clamp(36.1px,4.1vw,55.8px)] leading-none">
                 12:00<small className="text-[0.42em] ml-1.5 text-[var(--muted)]">PM</small>
               </dd>
             </div>
             <div className="reveal flex flex-col-reverse justify-end gap-3 border-t border-[rgba(15,26,19,0.16)] pt-6">
               <dt className="text-[15px] text-[var(--muted)] leading-normal">Officers taking the oath of office</dt>
-              <dd className="serif m-0 text-[clamp(44px,5vw,68px)] leading-none">{executives.length}</dd>
+              <dd className="serif m-0 text-[clamp(36.1px,4.1vw,55.8px)] leading-none">{executives.length}</dd>
             </div>
             <div className="reveal flex flex-col-reverse justify-end gap-3 border-t border-[rgba(15,26,19,0.16)] pt-6">
               <dt className="text-[15px] text-[var(--muted)] leading-normal">Executive council in the chapter&rsquo;s history</dt>
-              <dd className="serif m-0 text-[clamp(44px,5vw,68px)] leading-none">
+              <dd className="serif m-0 text-[clamp(36.1px,4.1vw,55.8px)] leading-none">
                 4<small className="text-[0.42em] ml-1.5 text-[var(--muted)]">th</small>
               </dd>
             </div>
@@ -180,7 +180,7 @@ export default async function EventPage({ params }: Props) {
             <div>
               <span className="eyebrow caps">The incoming council</span>
               <h2 id="council-title" className="h2 serif reveal-x">
-                Faces of <span className="it accent">The Revolution</span>
+                Faces of <span className="accent">The Revolution</span>
               </h2>
             </div>
             <p className="lead" style={{ maxWidth: 440 }}>
@@ -202,7 +202,7 @@ export default async function EventPage({ params }: Props) {
           <div className="lg:sticky lg:top-[120px] flex flex-col gap-5.5">
             <span className="eyebrow on-dark caps">Order of events</span>
             <h2 id="prog-title" className="h2 serif text-white">
-              The big <span className="it gold">moments</span>
+              The big <span className="gold">moments</span>
             </h2>
             <p className="m-0 text-[var(--mint-2)] leading-relaxed text-[17px]">
               Guests arrive from 12:00 PM. The processional of the new executives follows at {startOf(e, /Processional/)}.
@@ -216,16 +216,16 @@ export default async function EventPage({ params }: Props) {
               </Button>
             </div>
           </div>
-          <Timeline items={highlights} />
+          <Timeline items={highlights} onDark />
         </div>
       </section>
 
       <section id="venue" className="py-[var(--section-y)]" aria-labelledby="venue-title">
         <div className="wrap">
-          <div className="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] bg-[var(--card-surface)] rounded-3xl overflow-hidden shadow-[0_30px_70px_rgba(6,42,20,0.1)]">
+          <div className="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] bg-[var(--sand)] border border-[var(--rule)] rounded-3xl overflow-hidden shadow-[0_30px_70px_rgba(6,42,20,0.1)]">
             <div className="p-[clamp(32px,5vw,64px)] flex flex-col gap-5.5">
               <span className="eyebrow caps accent">Venue</span>
-              <h2 id="venue-title" className="serif m-0 text-[clamp(44px,5.4vw,72px)] leading-none tracking-[-0.02em]">
+              <h2 id="venue-title" className="serif m-0 text-[clamp(36.1px,4.4vw,59px)] leading-none tracking-[-0.02em]">
                 {e.venue.name}
               </h2>
               <address className="not-italic text-[17px] leading-relaxed text-[var(--muted)]">

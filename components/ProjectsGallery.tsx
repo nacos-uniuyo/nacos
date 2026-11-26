@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
+import { ProjectCard } from "@/components/ProjectCard";
 import { useSearchParams } from "next/navigation";
 import { projectCategories, type ProjectCategory } from "@/lib/enums";
 import { trpc } from "@/lib/trpc/client";
@@ -55,19 +55,23 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
 
   return (
     <div className="flex flex-col gap-12">
-      {/* Centered Segmented Pill Bar */}
+      {/* Centered Responsive Pill Bar */}
       <div className="flex justify-center w-full">
         <div
           role="tablist"
           aria-label="Filter projects by category"
-          className="segmented-filter-bar"
+          className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 w-full max-w-4xl"
         >
           <button
             type="button"
             role="tab"
             aria-selected={selectedCategory === "all"}
             onClick={() => setSelectedCategory("all")}
-            className={`segmented-filter-btn ${selectedCategory === "all" ? "active" : ""}`}
+            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all cursor-pointer border ${
+              selectedCategory === "all"
+                ? "bg-[var(--forest)] text-white border-[var(--forest)] shadow-sm dark:bg-[var(--mint)] dark:text-[#062a14] dark:border-[var(--mint)]"
+                : "bg-[var(--sand)] text-[var(--muted)] border-[var(--rule)] hover:text-[var(--ink)] hover:border-[var(--ink)]/30"
+            }`}
           >
             All Projects
           </button>
@@ -80,7 +84,11 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setSelectedCategory(cat)}
-                className={`segmented-filter-btn ${isActive ? "active" : ""}`}
+                className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all cursor-pointer border ${
+                  isActive
+                    ? "bg-[var(--forest)] text-white border-[var(--forest)] shadow-sm dark:bg-[var(--mint)] dark:text-[#062a14] dark:border-[var(--mint)]"
+                    : "bg-[var(--sand)] text-[var(--muted)] border-[var(--rule)] hover:text-[var(--ink)] hover:border-[var(--ink)]/30"
+                }`}
               >
                 {PROJECT_CATEGORY_LABELS[cat]}
               </button>
@@ -92,69 +100,18 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
       {/* 3-Column Clean Enclosed Card Grid */}
       {fetchedProjects.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 w-full text-left">
-          {fetchedProjects.map((project, idx) => {
-            const dept = departmentMap.get(project.departmentSlug);
-            const initials = (project.teamDisplayName ?? "NACOS")
-              .split(" ")
-              .filter(Boolean)
-              .slice(0, 2)
-              .map((w) => w[0]?.toUpperCase())
-              .join("");
-
-            return (
-              <Link
-                key={project.slug}
-                href={`/projects/${project.slug}`}
-                className="group flex flex-col no-underline text-inherit bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
-              >
-                {/* Visual Cover Container */}
-                <div className="w-full aspect-[16/10] bg-[var(--forest)] overflow-hidden relative flex flex-col justify-between p-6">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="caps text-[10px] font-semibold tracking-wider text-[var(--gold)]">
-                      {PROJECT_CATEGORY_LABELS[project.category] ?? project.category}
-                    </span>
-                    {project.courseCode ? (
-                      <span className="caps text-[10px] text-[var(--mint-2)]">
-                        {project.courseCode}
-                      </span>
-                    ) : null}
-                  </div>
-
-                  <div>
-                    <span className="serif text-4xl sm:text-5xl text-[var(--mint)] leading-none block">
-                      {project.courseCode ?? `0${idx + 1}`}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Card Content Area */}
-                <div className="p-6 flex flex-col gap-3 flex-1 justify-between">
-                  <div className="flex flex-col gap-1.5">
-                    <h3 className="serif text-2xl text-[var(--ink)] group-hover:text-[var(--forest)] transition-colors m-0 leading-snug">
-                      {project.title}
-                    </h3>
-                    <p className="text-sm text-[var(--muted)] leading-relaxed m-0 line-clamp-3">
-                      {project.tagline}
-                    </p>
-                  </div>
-
-                  <div className="pt-4 border-t border-[rgba(15,26,19,0.08)] flex items-center justify-between text-xs text-[var(--muted)]">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-[var(--forest)] text-[var(--mint)] text-[10px] font-semibold flex items-center justify-center shrink-0">
-                        {initials || "N"}
-                      </div>
-                      <span className="font-medium text-[var(--ink)] line-clamp-1">
-                        {project.teamDisplayName ?? initials}
-                      </span>
-                    </div>
-                    <span className="text-xs text-[var(--muted)] whitespace-nowrap">
-                      2024/2025
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
+          {fetchedProjects.map((project, idx) => (
+            <ProjectCard
+              key={project.slug}
+              slug={project.slug}
+              title={project.title}
+              tagline={project.tagline}
+              categoryLabel={PROJECT_CATEGORY_LABELS[project.category] ?? project.category}
+              courseCode={project.courseCode}
+              teamDisplayName={project.teamDisplayName}
+              index={idx}
+            />
+          ))}
         </div>
       ) : (
         <div className="w-full py-16 text-center text-[var(--muted)]">

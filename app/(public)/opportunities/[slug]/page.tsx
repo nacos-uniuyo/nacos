@@ -174,7 +174,7 @@ export default async function OpportunityDetailPage({ params }: Props) {
 
           <h1
             id="opportunity-detail-title"
-            className="serif text-white max-w-[62%] max-lg:max-w-none text-[clamp(44px,6vw,92px)] leading-[0.98]"
+            className="serif text-white max-w-[62%] max-lg:max-w-none text-[clamp(36.1px,4.9vw,75.4px)] leading-[0.98]"
           >
             {opportunity.title}
           </h1>
@@ -191,7 +191,7 @@ export default async function OpportunityDetailPage({ params }: Props) {
               <RichTextRenderer doc={articleDoc} />
             </article>
 
-            <aside className="sticky top-28 flex flex-col gap-6 p-6 sm:p-8 bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] shadow-sm">
+            <aside className="sticky top-28 flex flex-col gap-6 p-6 sm:p-8 bg-[var(--sand)] rounded-xl border border-[var(--rule)] shadow-sm">
               <h2 className="serif text-xl text-[var(--ink)] m-0">Opportunity Summary</h2>
 
               <dl className="flex flex-col gap-4 text-xs sm:text-sm m-0">
@@ -245,7 +245,7 @@ export default async function OpportunityDetailPage({ params }: Props) {
                     </a>
                   </Button>
                 ) : (
-                  <div className="p-4 rounded-xl bg-[var(--sand)] text-xs text-[var(--ink)] leading-relaxed">
+                  <div className="p-4 rounded-xl bg-[var(--paper)] border border-[var(--rule)] text-xs text-[var(--ink)] leading-relaxed">
                     Applications for this faculty opportunity are submitted directly through the administrative instructions described on this page.
                   </div>
                 )}

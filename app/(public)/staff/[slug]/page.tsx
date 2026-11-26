@@ -101,7 +101,7 @@ export default async function StaffProfilePage({ params }: Props) {
 
           <h1
             id="staff-profile-title"
-            className="serif text-white max-w-[70%] max-lg:max-w-none text-[clamp(40px,5vw,80px)] leading-[1.02]"
+            className="serif text-white max-w-[70%] max-lg:max-w-none text-[clamp(32.8px,4.1vw,65.6px)] leading-[1.02]"
           >
             {person.fullName}
           </h1>
@@ -115,8 +115,8 @@ export default async function StaffProfilePage({ params }: Props) {
         <div className="wrap">
           <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-12 sm:gap-16 items-start">
             {/* Sidebar with portrait and official details */}
-            <aside className="lg:sticky lg:top-28 flex flex-col gap-6 p-6 sm:p-8 bg-[var(--card-surface)] rounded-2xl border border-[var(--rule)] shadow-sm">
-              <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-[var(--forest)]">
+            <aside className="group lg:sticky lg:top-28 flex flex-col gap-6 rounded-[26px] bg-[var(--sand)] border border-[var(--rule)] p-3.5 shadow-[0_2px_10px_rgba(6,42,20,0.06)] transition-[box-shadow] duration-500">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[18px] bg-[var(--forest)]">
                 {person.photoUrl ? (
                   <Image
                     src={person.photoUrl}
@@ -124,7 +124,7 @@ export default async function StaffProfilePage({ params }: Props) {
                     fill
                     priority
                     sizes="(max-width: 1024px) 100vw, 340px"
-                    className="object-cover"
+                    className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.7,0.1,1)] motion-safe:group-hover:scale-[1.06]"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-4xl serif text-[var(--gold)]">
@@ -133,7 +133,7 @@ export default async function StaffProfilePage({ params }: Props) {
                 )}
               </div>
 
-              <div className="flex flex-col gap-4 text-sm text-[var(--ink)]">
+              <div className="flex flex-col gap-4 px-2.5 pb-3 text-sm text-[var(--ink)]">
                 {person.email && (
                   <div className="flex items-start gap-3">
                     <Mail size={16} className="text-[var(--gold-dark,rgb(161,114,24))] shrink-0 mt-0.5" />
@@ -171,7 +171,7 @@ export default async function StaffProfilePage({ params }: Props) {
             {/* Content column */}
             <div className="flex flex-col gap-10">
               {person.quote && (
-                <blockquote className="serif text-xl sm:text-2xl text-[var(--ink)] italic border-l-2 border-[var(--gold)] pl-6 py-2 m-0 bg-[var(--sand)] rounded-r-xl">
+                <blockquote className="serif text-xl sm:text-2xl text-[var(--ink)] border-l-2 border-[var(--gold)] pl-6 py-2 m-0 bg-[var(--sand)] rounded-r-xl">
                   &ldquo;{person.quote}&rdquo;
                 </blockquote>
               )}
@@ -184,7 +184,7 @@ export default async function StaffProfilePage({ params }: Props) {
               )}
 
               {person.researchAreas && person.researchAreas.length > 0 && (
-                <section className="flex flex-col gap-4 pt-4 border-t border-[rgba(15,26,19,0.08)]">
+                <section className="flex flex-col gap-4 pt-4">
                   <div className="flex items-center gap-2">
                     <BookOpen size={18} className="text-primary" />
                     <h2 className="serif text-2xl text-[var(--ink)] m-0">Focus &amp; Specialization Areas</h2>
@@ -203,7 +203,7 @@ export default async function StaffProfilePage({ params }: Props) {
               )}
 
               {colleagues.length > 0 && (
-                <section className="flex flex-col gap-6 pt-6 border-t border-[rgba(15,26,19,0.08)]">
+                <section className="flex flex-col gap-6 pt-6">
                   <h2 className="serif text-2xl text-[var(--ink)] m-0">Other Faculty Staff</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                     {colleagues.map((colleague, index) => {

@@ -57,8 +57,8 @@ export default async function YearbookPage() {
         <div className="wrap relative flex flex-col gap-6 w-full">
           <Breadcrumbs items={[{ name: "NACOS UNIUYO", path: "/" }, { name: "Yearbook & Alumni" }]} />
 
-          <h1 id="yearbook-hero-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
-            Living <span className="it gold">Digital Yearbook</span>
+          <h1 id="yearbook-hero-title" className="serif m-0 text-[clamp(42.6px,6.6vw,91.8px)] leading-[0.95] tracking-[-0.02em]">
+            Living <span className="gold">Digital Yearbook</span>
           </h1>
           <p className="m-0 max-w-[620px] text-[clamp(17px,1.7vw,19px)] leading-relaxed text-[var(--mint-2)]">
             Permanent institutional record and directory of graduating computing cohorts, departmental

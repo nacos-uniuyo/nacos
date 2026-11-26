@@ -7,6 +7,7 @@ import { useRouter } from "nextjs-toploader/app";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import nacosLogoImg from "@/assets/images/nacos-logo.png";
+import uniuyoLogo from "@/assets/images/uniuyo-circle.png";
 import {
   ChevronDown,
   Code2,
@@ -44,7 +45,7 @@ const departmentItems = [
   },
   {
     slug: "data-analytics",
-    name: "Data Analytics",
+    name: "Data Science",
     shortName: "DAN",
     summary: "Statistical intelligence, machine learning, and decision-science pipelines.",
     icon: Database,
@@ -172,7 +173,24 @@ export function Header() {
     >
       <div className="wrap h-20 flex items-center justify-between gap-6">
         <Link href="/" className="flex items-center gap-3.5 no-underline" aria-label="NACOS UNIUYO home">
-          <Image src={nacosLogoImg} alt="" width={52} height={52} priority className="size-[52px] rounded-full ring-2 ring-white/90" />
+          <div className="flex items-center -space-x-2.5 shrink-0">
+            <Image
+              src={uniuyoLogo}
+              alt="University of Uyo logo"
+              width={44}
+              height={44}
+              priority
+              className="size-11 rounded-full ring-2 ring-white/90 bg-white object-contain p-0.5"
+            />
+            <Image
+              src={nacosLogoImg}
+              alt="NACOS UNIUYO logo"
+              width={44}
+              height={44}
+              priority
+              className="size-11 rounded-full ring-2 ring-white/90 bg-white object-contain p-0.5"
+            />
+          </div>
           <span className="flex flex-col gap-0.5">
             <span className="caps text-white text-[15px] tracking-[0.18em]">NACOS</span>
             <span className="text-[var(--mint)] text-xs tracking-[0.04em]">University of Uyo</span>

@@ -103,7 +103,7 @@ export const OPPORTUNITY_ARTICLES: Record<string, RichTextDoc> = {
         content: [
           {
             type: "text",
-            text: "Applicants must be enrolled full-time in any department under the Faculty of Computing (Computer Science, Cybersecurity, Information Systems, Software Engineering, or Data Analytics) at the University of Uyo. Candidates should be in their 300 level or 400 level of study, maintain a minimum cumulative grade point average of 3.5, and submit an endorsed research concept proposal co-signed by an academic supervisor.",
+            text: "Applicants must be enrolled full-time in any department under the Faculty of Computing (Computer Science, Cybersecurity, Information Systems, Software Engineering, or Data Science) at the University of Uyo. Candidates should be in their 300 level or 400 level of study, maintain a minimum cumulative grade point average of 3.5, and submit an endorsed research concept proposal co-signed by an academic supervisor.",
           },
         ],
       },

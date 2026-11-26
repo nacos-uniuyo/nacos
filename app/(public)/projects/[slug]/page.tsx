@@ -14,6 +14,7 @@ import { ArrowRight, ArrowUpRight, GithubIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { HeroOrbits } from "@/components/Orbits";
+import { ProjectCard } from "@/components/ProjectCard";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
 import type { ProjectCategory } from "@/lib/enums";
 import { breadcrumbSchema, projectSchema } from "@/lib/schema";
@@ -127,11 +128,11 @@ export default async function ProjectDetailPage({ params }: Props) {
   return (
     <>
       {/* 1. Hero Header */}
-      <section className="page-hero" aria-labelledby="project-detail-title">
+      <section className="relative flex min-h-[min(780px,calc(100svh-80px))] items-center overflow-hidden bg-[var(--deep)] py-[clamp(64px,8vw,100px)] text-white" aria-labelledby="project-detail-title">
         <div className="grid-bg drift" aria-hidden="true" />
         <HeroOrbits label={`{ ${project.courseCode ?? "PROJECT"} }`} />
 
-        <div className="wrap">
+        <div className="wrap relative flex w-full flex-col gap-6">
           <Breadcrumbs
             items={[
               { name: "NACOS UNIUYO", path: "/" },
@@ -257,7 +258,7 @@ export default async function ProjectDetailPage({ params }: Props) {
               </div>
 
               {/* Natural Editorial Article Body */}
-              <div className="bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] p-6 sm:p-12 md:p-14 shadow-sm">
+              <div className="bg-[var(--sand)] rounded-xl border border-[var(--rule)] p-6 sm:p-12 md:p-14 shadow-sm">
                 <RichTextRenderer
                   doc={articleDoc}
                   className="project-prose"
@@ -267,7 +268,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 
             {/* Right 4-Column Sticky Specifications Panel */}
             <aside className="lg:col-span-4 flex flex-col gap-4 lg:sticky lg:top-24" aria-label="Project Specifications">
-              <div className="bg-[var(--card-surface)] border border-[var(--rule)] rounded-xl p-6 shadow-sm flex flex-col gap-5">
+              <div className="bg-[var(--sand)] border border-[var(--rule)] rounded-xl p-6 shadow-sm flex flex-col gap-5">
                 <div className="border-b border-[rgba(15,26,19,0.08)] pb-3">
                   <span className="caps eyebrow accent">Attribution</span>
                   <h3 className="serif text-2xl text-[var(--ink)] m-0 mt-0.5">Specifications</h3>
@@ -276,7 +277,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                 <div className="flex flex-col gap-4">
                   {/* Department */}
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--forest)] shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-[var(--paper)] border border-[var(--rule)] flex items-center justify-center text-[var(--green)] shrink-0">
                       <GraduationCap size={16} />
                     </div>
                     <div className="flex flex-col gap-0.5">
@@ -293,7 +294,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 
                   {/* Category */}
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--forest)] shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-[var(--paper)] border border-[var(--rule)] flex items-center justify-center text-[var(--green)] shrink-0">
                       <Layers size={16} />
                     </div>
                     <div className="flex flex-col gap-0.5">
@@ -304,7 +305,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 
                   {/* Course Code */}
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--forest)] shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-[var(--paper)] border border-[var(--rule)] flex items-center justify-center text-[var(--green)] shrink-0">
                       <BookOpen size={16} />
                     </div>
                     <div className="flex flex-col gap-0.5">
@@ -317,7 +318,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 
                   {/* Contributors */}
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--forest)] shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-[var(--paper)] border border-[var(--rule)] flex items-center justify-center text-[var(--green)] shrink-0">
                       <Users size={16} />
                     </div>
                     <div className="flex flex-col gap-0.5">
@@ -330,7 +331,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 
                   {/* Session */}
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-[var(--paper)] border border-[rgba(15,26,19,0.08)] flex items-center justify-center text-[var(--forest)] shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-[var(--paper)] border border-[var(--rule)] flex items-center justify-center text-[var(--green)] shrink-0">
                       <Calendar size={16} />
                     </div>
                     <div className="flex flex-col gap-0.5">
@@ -413,66 +414,18 @@ export default async function ProjectDetailPage({ params }: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 w-full text-left">
                 {relatedProjects.map((rel, idx) => {
                   const relDept = departments.find((d) => d.slug === rel.departmentSlug);
-                  const relInitials = (rel.teamDisplayName ?? "NACOS")
-                    .split(" ")
-                    .filter(Boolean)
-                    .slice(0, 2)
-                    .map((w) => w[0]?.toUpperCase())
-                    .join("");
-
                   return (
-                    <Link
+                    <ProjectCard
                       key={rel.slug}
-                      href={`/projects/${rel.slug}`}
-                      className="group flex flex-col no-underline text-inherit bg-[var(--card-surface)] rounded-xl border border-[var(--rule)] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
-                    >
-                      <div className="w-full aspect-[16/10] bg-[var(--forest)] overflow-hidden relative flex flex-col justify-between p-6">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="caps text-[10px] font-semibold tracking-wider text-[var(--gold)]">
-                            {PROJECT_CATEGORY_LABELS[rel.category] ?? rel.category}
-                          </span>
-                          {rel.courseCode ? (
-                            <span className="caps text-[10px] text-[var(--mint-2)]">
-                              {rel.courseCode}
-                            </span>
-                          ) : null}
-                        </div>
-
-                        <div>
-                          <span className="serif text-4xl sm:text-5xl text-[var(--mint)] leading-none block">
-                            {rel.courseCode ?? `0${idx + 1}`}
-                          </span>
-                          <span className="caps text-[10px] text-[var(--mint-2)] mt-1.5 block">
-                            Department of {relDept ? relDept.name : rel.departmentSlug}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col flex-1 justify-between p-6 gap-4">
-                        <div className="flex flex-col gap-2">
-                          <h3 className="serif text-xl sm:text-2xl text-[var(--ink)] group-hover:text-[var(--green)] transition-colors line-clamp-2 leading-snug m-0">
-                            {rel.title}
-                          </h3>
-                          <p className="text-sm text-[var(--muted)] line-clamp-2 leading-relaxed m-0">
-                            {rel.tagline}
-                          </p>
-                        </div>
-
-                        <div className="flex items-center justify-between pt-3.5 border-t border-[rgba(15,26,19,0.08)]">
-                          <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-full bg-[var(--forest)] text-[var(--mint)] text-[10px] font-semibold flex items-center justify-center shrink-0">
-                              {relInitials || "N"}
-                            </div>
-                            <span className="text-xs font-medium text-[var(--ink)] line-clamp-1">
-                              {rel.teamDisplayName ?? "NACOS Team"}
-                            </span>
-                          </div>
-                          <span className="text-xs text-[var(--muted)] whitespace-nowrap">
-                            2024/2025
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
+                      slug={rel.slug}
+                      title={rel.title}
+                      tagline={rel.tagline}
+                      categoryLabel={PROJECT_CATEGORY_LABELS[rel.category] ?? rel.category}
+                      courseCode={rel.courseCode}
+                      teamDisplayName={rel.teamDisplayName ?? "NACOS Team"}
+                      coverSubtitle={`Department of ${relDept ? relDept.name : rel.departmentSlug}`}
+                      index={idx}
+                    />
                   );
                 })}
               </div>

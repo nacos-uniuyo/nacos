@@ -181,7 +181,7 @@ function renderNode(node: RichTextNode, index: number, path = "rt"): ReactNode {
       return (
         <blockquote
           key={key}
-          className="border-l-2 border-[var(--gold)] pl-4 sm:pl-6 py-2 my-6 italic text-[clamp(18px,2vw,24px)] leading-relaxed text-[var(--ink)] opacity-95 w-full max-w-none"
+          className="border-l-2 border-[var(--gold)] pl-4 sm:pl-6 py-2 my-6 text-[clamp(18px,2vw,24px)] leading-relaxed text-[var(--ink)] opacity-95 w-full max-w-none"
         >
           {node.content.map((child, i) => renderNode(child, i, key))}
         </blockquote>

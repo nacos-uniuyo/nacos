@@ -65,7 +65,7 @@ export function PriorityTile({
         {number}
       </span>
       <div className={cn("relative flex flex-col gap-3", wide && "max-w-[520px]")}>
-        <h3 className={cn("serif m-0 leading-tight", tall ? "text-[clamp(36px,4vw,48px)]" : "text-[clamp(30px,3vw,36px)]")}>
+        <h3 className={cn("serif m-0 leading-tight", tall ? "text-[clamp(29.5px,3.3vw,39.4px)]" : "text-[clamp(30px,3vw,36px)]")}>
           {title}
         </h3>
         <p className={cn("m-0 text-[15px] leading-relaxed", descriptionStyles[variant])}>

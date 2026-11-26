@@ -39,12 +39,12 @@ export default async function StaffPage() {
         <div className="wrap relative flex flex-col gap-6 w-full">
           <Breadcrumbs items={[{ name: "NACOS UNIUYO", path: "/" }, { name: "Staff" }]} />
           <span className="eyebrow on-dark caps fade d1">Faculty Directory</span>
-          <h1 id="staff-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
+          <h1 id="staff-title" className="serif m-0 text-[clamp(42.6px,6.6vw,91.8px)] leading-[0.95] tracking-[-0.02em]">
             <span className="line">
               <span className="rise d1">Academic &amp; Administrative</span>
             </span>
             <span className="line">
-              <span className="rise d2 it gold">Staff</span>
+              <span className="rise d2 gold">Staff</span>
             </span>
           </h1>
           <p className="fade d3 m-0 max-w-[640px] text-[clamp(17px,1.7vw,19px)] leading-relaxed text-[var(--mint-2)]">

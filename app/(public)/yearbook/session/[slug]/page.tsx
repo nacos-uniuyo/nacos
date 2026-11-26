@@ -77,11 +77,11 @@ export default async function SessionCohortPage({ params }: Props) {
 
   return (
     <>
-      <section className="page-hero" aria-labelledby="cohort-hero-title">
+      <section className="relative flex min-h-[min(780px,calc(100svh-80px))] items-center overflow-hidden bg-[var(--deep)] py-[clamp(64px,8vw,100px)] text-white" aria-labelledby="cohort-hero-title">
         <div className="grid-bg drift" aria-hidden="true" />
         <HeroOrbits label={`{ ${session.name.replace(" Academic Session", "").toUpperCase()} }`} />
 
-        <div className="wrap">
+        <div className="wrap relative flex w-full flex-col gap-6">
           <Breadcrumbs
             items={[
               { name: "NACOS UNIUYO", path: "/" },
@@ -107,7 +107,7 @@ export default async function SessionCohortPage({ params }: Props) {
 
           <h1
             id="cohort-hero-title"
-            className="serif text-white max-w-[65%] max-lg:max-w-none text-[clamp(44px,6.5vw,96px)] leading-[0.96]"
+            className="serif text-white max-w-[65%] max-lg:max-w-none text-[clamp(36.1px,5.3vw,78.7px)] leading-[0.96]"
           >
             {session.name}
           </h1>

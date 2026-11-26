@@ -185,7 +185,7 @@ export function YearbookGallery({ initialAlumni, departments, sessions }: Props)
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full text-left">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full text-left">
             {filteredAlumni.map((alum) => (
               <AlumniCard
                 key={alum.slug}
@@ -204,7 +204,7 @@ export function YearbookGallery({ initialAlumni, departments, sessions }: Props)
               <div key={session.slug} className="flex flex-col gap-4">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <span className="inline-flex items-center justify-center size-8 rounded-full bg-[var(--paper)] text-[var(--forest)] border border-[rgba(15,26,19,0.08)]">
+                    <span className="inline-flex items-center justify-center size-8 rounded-full bg-[var(--paper)] text-[var(--green)] border border-[var(--rule)]">
                       <GraduationCap size={16} />
                     </span>
                     <div>
@@ -239,7 +239,7 @@ export function YearbookGallery({ initialAlumni, departments, sessions }: Props)
                     direction={reverse ? "right" : "left"}
                   >
                     {members.map((alum) => (
-                      <div key={alum.slug} className="flex w-[240px] sm:w-[260px] shrink-0">
+                      <div key={alum.slug} className="flex w-[320px] sm:w-[350px] shrink-0">
                         <AlumniCard
                           alum={alum}
                           deptName={alum.departmentSlug ? deptMap.get(alum.departmentSlug) ?? null : null}

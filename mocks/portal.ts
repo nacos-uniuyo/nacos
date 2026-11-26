@@ -36,7 +36,7 @@ import graduateTraineeImg from "@/assets/images/opportunities/graduate-trainee.j
 import hackathonSponsorshipImg from "@/assets/images/opportunities/hackathon-sponsorship.jpg";
 import researchGrantImg from "@/assets/images/opportunities/research-grant.jpg";
 import siwesSoftwareInternImg from "@/assets/images/opportunities/siwes-software-intern.jpg";
-import deanPlaceholderImg from "@/assets/images/dean-placeholder.webp";
+import deanPhoto from "@/assets/images/dean.webp";
 import hodPlaceholderImg from "@/assets/images/hod-placeholder.webp";
 
 /**
@@ -73,7 +73,7 @@ export const departments: DepartmentSummary[] = [
   },
   {
     slug: "data-analytics",
-    name: "Data Analytics",
+    name: "Data Science",
     shortName: "DAN",
     summary:
       "Statistics, machine learning and the pipeline engineering that turns raw records into decisions people can defend.",
@@ -604,19 +604,19 @@ export const roster: PersonSummary[] = [
     portfolioUrl: "https://example.com/bassey",
   },
   {
-    slug: "prof-a-m-ime",
-    fullName: "Prof. A. M. Ime",
+    slug: "uduak-a-umoh",
+    fullName: "Prof. Uduak A. Umoh",
     roleTitle: "Dean, Faculty of Computing",
     tier: "staff",
     sessionSlug: "2024-2025",
     departmentSlug: null,
-    photoUrl: deanPlaceholderImg.src,
+    photoUrl: deanPhoto.src,
     isFeaturedHomepage: false,
     quote: "Fostering academic excellence, empirical scientific research, and cross-disciplinary computing leadership across the University of Uyo.",
     email: "dean.computing@uniuyo.edu.ng",
     officeLocation: "Faculty Secretariat, New Engineering & Sciences Complex, Main Campus",
-    bio: "Professor A. M. Ime is a Professor of Computer Science and serves as the Dean of the Faculty of Computing, University of Uyo. His academic career spans over two decades in distributed systems architectures, fault-tolerant networks, and higher education administrative leadership. Under his administration, the Faculty of Computing expanded into five autonomous degree-awarding departments, establishing unified student engineering laboratories and modern curriculum benchmarks aligned with international standards.",
-    researchAreas: ["Distributed Systems", "Fault-Tolerant Computing", "Network Architecture", "Higher Education Computing Pedagogy"],
+    bio: "Professor Uduak A. Umoh is a Professor in the Department of Computer Science and serves as Dean of the Faculty of Computing, University of Uyo. She holds a PhD in Computer Science, specialising in soft computing in artificial intelligence, from the University of Port Harcourt, a master's degree in database management systems from the same institution, and a bachelor's degree in Computer Science from the University of Uyo. Alongside her work as a researcher and lecturer, she is an Adjunct Professor at Akwa Ibom State University and Obong University, supervises research at PhD, MSc, PGD and BSc level, and serves as an internal and external examiner.",
+    researchAreas: ["Soft Computing", "Artificial Intelligence", "Database Management Systems"],
     socials: [
       { platform: "linkedin", url: "https://linkedin.com" },
       { platform: "website", url: "https://uniuyo.edu.ng/faculty/computing" },
@@ -692,7 +692,7 @@ export const roster: PersonSummary[] = [
   {
     slug: "dr-m-b-okon",
     fullName: "Dr. M. B. Okon",
-    roleTitle: "Head of Department, Data Analytics",
+    roleTitle: "Head of Department, Data Science",
     tier: "staff",
     sessionSlug: "2024-2025",
     departmentSlug: "data-analytics",
@@ -701,7 +701,7 @@ export const roster: PersonSummary[] = [
     quote: "Empowering computational inquiry through probabilistic modeling, reproducible statistics, and big data systems.",
     email: "m.b.okon@uniuyo.edu.ng",
     officeLocation: "Data Sciences Innovation Hub, Room 08",
-    bio: "Dr. M. B. Okon leads the Department of Data Analytics, specializing in predictive modeling, statistical learning methodologies, and spatio-temporal data mining. She advises research cohorts on reproducible scientific pipelines and automated pattern analysis in regional environmental datasets.",
+    bio: "Dr. M. B. Okon leads the Department of Data Science, specializing in predictive modeling, statistical learning methodologies, and spatio-temporal data mining. She advises research cohorts on reproducible scientific pipelines and automated pattern analysis in regional environmental datasets.",
     researchAreas: ["Statistical Learning", "Predictive Analytics", "Big Data Architectures"],
     socials: [
       { platform: "linkedin", url: "https://linkedin.com" },
@@ -928,7 +928,7 @@ export const posts: PostSummary[] = [
 
 export const goodwill: GoodwillSummary[] = [
   {
-    authorName: "Prof. A. M. Ime",
+    authorName: "Prof. Uduak A. Umoh",
     authorTitle: "Dean, Faculty of Computing",
     message:
       "The faculty exists for the students, and a chapter that documents its own work in public is one that can be held to a standard.",
@@ -944,6 +944,6 @@ export const goodwill: GoodwillSummary[] = [
 export const deansMessage = {
   heading: "Welcome to the Faculty of Computing",
   body: "On behalf of the faculty and leadership of the University of Uyo, I welcome both returning students and fresh minds stepping into the world of computing. Our commitment is to foster genuine technical capacity, ethical leadership, and impactful innovation. Engage deeply with your studies, collaborate across departments, and build tools that solve tangible problems for our society.",
-  authorName: "Prof. A. M. Ime",
+  authorName: "Prof. Uduak A. Umoh",
   authorTitle: "Dean, Faculty of Computing",
 };

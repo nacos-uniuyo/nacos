@@ -35,12 +35,12 @@ export default function EventsPage() {
         <HeroOrbits label="{ EVENTS }" className="hero-orbits fade" />
         <div className="wrap relative flex flex-col gap-6 w-full">
           <Breadcrumbs items={[{ name: "NACOS UNIUYO", path: "/" }, { name: "Events" }]} />
-          <h1 id="events-title" className="serif m-0 text-[clamp(52px,8vw,112px)] leading-[0.95] tracking-[-0.02em]">
+          <h1 id="events-title" className="serif m-0 text-[clamp(42.6px,6.6vw,91.8px)] leading-[0.95] tracking-[-0.02em]">
             <span className="line">
               <span className="rise d1">What&rsquo;s on at</span>
             </span>
             <span className="line">
-              <span className="rise d2 it gold">NACOS UNIUYO</span>
+              <span className="rise d2 gold">NACOS UNIUYO</span>
             </span>
           </h1>
           <p className="fade d3 m-0 max-w-[620px] text-[clamp(17px,1.7vw,19px)] leading-relaxed text-[var(--mint-2)]">{description}</p>
@@ -53,7 +53,7 @@ export default function EventsPage() {
             {events.map((e) => (
               <li key={e.slug} className="reveal">
                 <Link
-                  className="group grid grid-cols-1 md:grid-cols-[140px_minmax(0,1fr)_minmax(0,420px)] gap-6 md:gap-10 items-center bg-[var(--card-surface)] rounded-xl p-7 text-[var(--ink)] no-underline transition-all duration-450 hover:-translate-y-1.5 hover:shadow-[0_24px_50px_rgba(6,42,20,0.14)]"
+                  className="group grid grid-cols-1 md:grid-cols-[140px_minmax(0,1fr)_minmax(0,420px)] gap-6 md:gap-10 items-center tile rounded-xl p-7 text-[var(--ink)] no-underline transition-all duration-450 hover:-translate-y-1.5"
                   href={`/events/${e.slug}`}
                 >
                   <span className="flex flex-row md:flex-col items-baseline md:items-start gap-3 md:gap-1.5 pl-1 md:pl-3">
@@ -64,7 +64,7 @@ export default function EventsPage() {
                     <span className="caps text-[11px] text-[var(--green)]">
                       {formatEventTime(e.start)} · {e.venue.name}, {e.venue.area}
                     </span>
-                    <h2 className="serif m-0 font-normal text-[clamp(30px,3.4vw,44px)] leading-[1.05] text-[var(--ink)]">
+                    <h2 className="serif m-0 font-normal text-[clamp(24.6px,2.8vw,36.1px)] leading-[1.05] text-[var(--ink)]">
                       {e.title}
                     </h2>
                     <p className="m-0 text-[var(--muted)] leading-relaxed">{e.summary}</p>
