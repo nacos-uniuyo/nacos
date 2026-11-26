@@ -126,28 +126,63 @@
   --sidebar-ring: oklch(0.6363 0.1968 145.5728);
 }
 
-/* Dashboard text: pure black in light mode and pure white in dark mode.
-   Text on green surfaces keeps its readable colour, and links and errors keep theirs. */
+/* Dashboard surfaces and typography: balanced contrast with true muted hierarchy
+   in both light and dark modes, keeping NACOS botanical green and gold tokens. */
 :root:has([data-dashboard]) {
-  --ink: #000000;
-  --muted: #000000;
-  --foreground: oklch(0 0 0);
-  --card-foreground: oklch(0 0 0);
-  --popover-foreground: oklch(0 0 0);
-  --muted-foreground: oklch(0 0 0);
-  --accent-foreground: oklch(0 0 0);
+  --ink: #0f1a13;
+  --muted: #5c6d62;
+  --background: oklch(0.978 0.004 155);
+  --foreground: oklch(0.205 0.021 156);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.205 0.021 156);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.205 0.021 156);
+  --muted-surface: oklch(0.943 0.009 151);
+  --muted-foreground: oklch(0.47 0.022 157);
+  --accent: oklch(0.955 0.016 158);
+  --accent-foreground: oklch(0.253 0.058 153);
+  --border: oklch(0.915 0.01 155);
+  --sidebar: #062a14;
+  --sidebar-foreground: #f4f7f5;
+  --sidebar-primary: #009424;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #0e3d21;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #124224;
 }
 
 .dark:has([data-dashboard]) {
-  --ink: #ffffff;
-  --muted: #ffffff;
-  --foreground: oklch(1 0 0);
-  --card-foreground: oklch(1 0 0);
-  --popover-foreground: oklch(1 0 0);
-  --muted-foreground: oklch(1 0 0);
-  --accent-foreground: oklch(1 0 0);
-  --secondary-foreground: oklch(1 0 0);
-  --sidebar-foreground: oklch(1 0 0);
+  --ink: #f2f5f3;
+  --muted: #8fa396;
+  --background: oklch(0.148 0.008 160);
+  --foreground: oklch(0.95 0.008 155);
+  --card: oklch(0.192 0.011 158);
+  --card-foreground: oklch(0.95 0.008 155);
+  --popover: oklch(0.215 0.011 158);
+  --popover-foreground: oklch(0.95 0.008 155);
+  --muted-surface: oklch(0.225 0.012 156);
+  --muted-foreground: oklch(0.69 0.022 157);
+  --accent: oklch(0.27 0.032 155);
+  --accent-foreground: oklch(0.95 0.008 155);
+  --secondary-foreground: oklch(0.95 0.008 155);
+  --border: oklch(0.285 0.016 156);
+  --sidebar: #0c1710;
+  --sidebar-foreground: #e9efe9;
+  --sidebar-primary: #00a832;
+  --sidebar-primary-foreground: #07120b;
+  --sidebar-accent: #163321;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #192b1f;
+}
+
+:root:has([data-dashboard]) body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+[data-dashboard] [data-slot="input"],
+[data-dashboard] [data-slot="textarea"] {
+  border-radius: 0.75rem;
 }
 
 @theme inline {

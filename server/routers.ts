@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { leadContributor, richTextDoc } from "@/db/json";
 import {
   department,
+  facultyStaff,
   opportunity,
   opportunityBookmark,
   person,
@@ -12,6 +13,7 @@ import {
   schoolSession,
   user,
 } from "@/db/schema";
+import { richTextDocToText } from "@/lib/richtext";
 import { generateUniqueSlug } from "@/lib/slug";
 import {
   deansMessage,
@@ -265,10 +267,56 @@ const userRouter = router({
 /* -------------------------------------------------------------------------- */
 
 const departmentRouter = router({
-  list: publicProcedure.query(() => z.array(departmentSummary).parse(departments)),
+  list: publicProcedure.query(async () => {
+    const rows = await db
+      .select({
+        slug: department.slug,
+        name: department.name,
+        shortName: department.shortName,
+        descriptionJson: department.descriptionJson,
+        hodName: facultyStaff.fullName,
+        sortOrder: department.sortOrder,
+      })
+      .from(department)
+      .leftJoin(facultyStaff, eq(department.hodStaffId, facultyStaff.id))
+      .orderBy(department.sortOrder);
+
+    return z.array(departmentSummary).parse(
+      rows.map((row) => ({
+        slug: row.slug,
+        name: row.name,
+        shortName: row.shortName,
+        summary: row.descriptionJson ? richTextDocToText(row.descriptionJson) : row.name,
+        hodName: row.hodName ?? null,
+      })),
+    );
+  }),
   bySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
-    .query(({ input }) => bySlug(departments, input.slug, departmentSummary)),
+    .query(async ({ input }) => {
+      const [row] = await db
+        .select({
+          slug: department.slug,
+          name: department.name,
+          shortName: department.shortName,
+          descriptionJson: department.descriptionJson,
+          hodName: facultyStaff.fullName,
+        })
+        .from(department)
+        .leftJoin(facultyStaff, eq(department.hodStaffId, facultyStaff.id))
+        .where(eq(department.slug, input.slug))
+        .limit(1);
+
+      if (!row) return null;
+
+      return departmentSummary.parse({
+        slug: row.slug,
+        name: row.name,
+        shortName: row.shortName,
+        summary: row.descriptionJson ? richTextDocToText(row.descriptionJson) : row.name,
+        hodName: row.hodName ?? null,
+      });
+    }),
 });
 
 /* -------------------------------------------------------------------------- */
@@ -276,13 +324,48 @@ const departmentRouter = router({
 /* -------------------------------------------------------------------------- */
 
 const sessionRouter = router({
-  list: publicProcedure.query(() => z.array(schoolSessionSummary).parse(schoolSessions)),
+  list: publicProcedure.query(async () => {
+    const rows = await db
+      .select({
+        slug: schoolSession.slug,
+        name: schoolSession.name,
+        theme: schoolSession.theme,
+        isCurrent: schoolSession.isCurrent,
+      })
+      .from(schoolSession)
+      .orderBy(desc(schoolSession.isCurrent), desc(schoolSession.createdAt));
+
+    return z.array(schoolSessionSummary).parse(rows);
+  }),
   bySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
-    .query(({ input }) => bySlug(schoolSessions, input.slug, schoolSessionSummary)),
-  current: publicProcedure.query(() => {
-    const found = schoolSessions.find((s) => s.isCurrent);
-    return found ? schoolSessionSummary.parse(found) : null;
+    .query(async ({ input }) => {
+      const [row] = await db
+        .select({
+          slug: schoolSession.slug,
+          name: schoolSession.name,
+          theme: schoolSession.theme,
+          isCurrent: schoolSession.isCurrent,
+        })
+        .from(schoolSession)
+        .where(eq(schoolSession.slug, input.slug))
+        .limit(1);
+
+      return row ? schoolSessionSummary.parse(row) : null;
+    }),
+  current: publicProcedure.query(async () => {
+    const [row] = await db
+      .select({
+        slug: schoolSession.slug,
+        name: schoolSession.name,
+        theme: schoolSession.theme,
+        isCurrent: schoolSession.isCurrent,
+      })
+      .from(schoolSession)
+      .where(eq(schoolSession.isCurrent, true))
+      .limit(1);
+
+    return row ? schoolSessionSummary.parse(row) : null;
   }),
 });
 
@@ -332,18 +415,79 @@ const projectRouter = router({
         })
         .optional(),
     )
-    .query(({ input }) => {
-      const filtered = projects.filter((p) => {
-        if (input?.departmentSlug && p.departmentSlug !== input.departmentSlug) return false;
-        if (input?.category && p.category !== input.category) return false;
-        return true;
-      });
-      return z.array(projectSummary).parse(filtered);
+    .query(async ({ input }) => {
+      const conditions = [eq(project.status, "approved")];
+      if (input?.departmentSlug) {
+        conditions.push(eq(department.slug, input.departmentSlug));
+      }
+      if (input?.category) {
+        conditions.push(eq(project.category, input.category));
+      }
+
+      const rows = await db
+        .select({
+          slug: project.slug,
+          title: project.title,
+          tagline: project.tagline,
+          category: project.category,
+          departmentSlug: department.slug,
+          courseCode: project.courseCode,
+          teamDisplayName: project.teamDisplayName,
+          repoUrl: project.repoUrl,
+          demoUrl: project.demoUrl,
+          featured: project.featured,
+          bannerUrl: project.bannerUrl,
+          createdAt: project.createdAt,
+        })
+        .from(project)
+        .innerJoin(department, eq(project.departmentId, department.id))
+        .where(and(...conditions))
+        .orderBy(desc(project.featured), desc(project.createdAt));
+
+      return z.array(projectSummary).parse(
+        rows.map((row) => ({
+          ...row,
+          createdAt: row.createdAt.toISOString(),
+        })),
+      );
     }),
 
   bySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
-    .query(({ input }) => bySlug(projects, input.slug, projectSummary)),
+    .query(async ({ input }) => {
+      const [row] = await db
+        .select({
+          slug: project.slug,
+          title: project.title,
+          tagline: project.tagline,
+          category: project.category,
+          departmentSlug: department.slug,
+          courseCode: project.courseCode,
+          teamDisplayName: project.teamDisplayName,
+          repoUrl: project.repoUrl,
+          demoUrl: project.demoUrl,
+          featured: project.featured,
+          bannerUrl: project.bannerUrl,
+          descriptionJson: project.descriptionJson,
+          galleryUrls: project.galleryUrls,
+          leadContributors: project.leadContributors,
+          sessionSlug: schoolSession.slug,
+          createdAt: project.createdAt,
+          status: project.status,
+        })
+        .from(project)
+        .innerJoin(department, eq(project.departmentId, department.id))
+        .leftJoin(schoolSession, eq(project.sessionId, schoolSession.id))
+        .where(eq(project.slug, input.slug))
+        .limit(1);
+
+      if (!row || row.status !== "approved") return null;
+
+      return projectSummary.parse({
+        ...row,
+        createdAt: row.createdAt.toISOString(),
+      });
+    }),
 
   /** Scoped to the editor's own department; admins pass. */
   review: departmentEditorProcedure
@@ -354,13 +498,32 @@ const projectRouter = router({
         rejectionReason: z.string().min(1).optional(),
       }),
     )
-    .mutation(({ ctx, input }) => {
-      const found = projects.find((p) => p.slug === input.slug);
+    .mutation(async ({ ctx, input }) => {
+      const [found] = await db
+        .select({
+          id: project.id,
+          slug: project.slug,
+          departmentSlug: department.slug,
+        })
+        .from(project)
+        .innerJoin(department, eq(project.departmentId, department.id))
+        .where(eq(project.slug, input.slug))
+        .limit(1);
+
       if (!found) throw new TRPCError({ code: "NOT_FOUND", message: "No such project." });
       assertDepartmentScope(ctx.session, found.departmentSlug);
       if (input.status === "rejected" && !input.rejectionReason) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "A rejection needs a reason." });
       }
+
+      await db
+        .update(project)
+        .set({
+          status: input.status,
+          rejectionReason: input.status === "rejected" ? input.rejectionReason ?? null : null,
+        })
+        .where(eq(project.id, found.id));
+
       return { slug: found.slug, status: input.status };
     }),
 
@@ -465,6 +628,45 @@ const projectRouter = router({
         .orderBy(desc(project.createdAt));
 
       return rows;
+    }),
+
+  /** Phase 4: Retrieve one owned project proposal for editing */
+  getMySubmission: protectedProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const [row] = await db
+        .select({
+          id: project.id,
+          slug: project.slug,
+          title: project.title,
+          tagline: project.tagline,
+          descriptionJson: project.descriptionJson,
+          departmentId: project.departmentId,
+          departmentSlug: department.slug,
+          sessionId: project.sessionId,
+          sessionSlug: schoolSession.slug,
+          category: project.category,
+          courseCode: project.courseCode,
+          teamDisplayName: project.teamDisplayName,
+          leadContributors: project.leadContributors,
+          status: project.status,
+          rejectionReason: project.rejectionReason,
+          bannerUrl: project.bannerUrl,
+          bannerPublicId: project.bannerPublicId,
+          repoUrl: project.repoUrl,
+          demoUrl: project.demoUrl,
+        })
+        .from(project)
+        .leftJoin(department, eq(project.departmentId, department.id))
+        .leftJoin(schoolSession, eq(project.sessionId, schoolSession.id))
+        .where(and(eq(project.id, input.id), eq(project.authorUserId, ctx.session.userId)))
+        .limit(1);
+
+      if (!row) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Project proposal not found." });
+      }
+
+      return row;
     }),
 
   /** Phase 4: Update an owned project proposal */
@@ -573,13 +775,48 @@ const opportunityRouter = router({
         })
         .optional(),
     )
-    .query(({ input }) => {
-      const filtered = opportunities.filter((o) => {
-        if (input?.type && o.type !== input.type) return false;
-        if (input?.departmentSlug && o.departmentSlug !== input.departmentSlug) return false;
-        return true;
-      });
-      return z.array(opportunitySummary).parse(filtered);
+    .query(async ({ input }) => {
+      const conditions = [eq(opportunity.status, "approved")];
+      if (input?.type) conditions.push(eq(opportunity.type, input.type));
+      if (input?.departmentSlug) conditions.push(eq(department.slug, input.departmentSlug));
+
+      const rows = await db
+        .select({
+          slug: opportunity.slug,
+          title: opportunity.title,
+          orgName: opportunity.orgName,
+          type: opportunity.type,
+          departmentSlug: department.slug,
+          location: opportunity.location,
+          deadline: opportunity.deadline,
+          applyUrl: opportunity.applyUrl,
+          hasInternalDetails: opportunity.hasInternalDetails,
+          orgUrl: opportunity.orgUrl,
+          orgLogoUrl: opportunity.orgLogoUrl,
+          descriptionJson: opportunity.descriptionJson,
+        })
+        .from(opportunity)
+        .leftJoin(department, eq(opportunity.departmentId, department.id))
+        .where(and(...conditions))
+        .orderBy(desc(opportunity.deadline), desc(opportunity.createdAt));
+
+      return z.array(opportunitySummary).parse(
+        rows.map((row) => ({
+          slug: row.slug,
+          title: row.title,
+          orgName: row.orgName,
+          type: row.type,
+          departmentSlug: row.departmentSlug ?? null,
+          location: row.location,
+          deadline: row.deadline ? row.deadline.toISOString() : null,
+          applyUrl: row.applyUrl ?? null,
+          hasInternalDetails: row.hasInternalDetails,
+          imageUrl: row.orgLogoUrl ?? null,
+          orgLogoUrl: row.orgLogoUrl ?? null,
+          orgUrl: row.orgUrl ?? null,
+          descriptionJson: row.descriptionJson,
+        })),
+      );
     }),
 
   /** Phase 4: Submit an opportunity listing */
@@ -596,7 +833,8 @@ const opportunityRouter = router({
         type: opportunityType,
         location: z.string().trim().min(2).max(128),
         descriptionJson: richTextDoc,
-        applyUrl: z.string().url("A valid application URL is required"),
+        applyUrl: z.string().url("A valid application URL is required").nullable().optional(),
+        hasInternalDetails: z.boolean().default(false),
         deadline: z.string().datetime().nullable().optional(),
         saveAsDraft: z.boolean().default(false),
       }),
@@ -622,7 +860,8 @@ const opportunityRouter = router({
           type: input.type,
           location: input.location,
           descriptionJson: input.descriptionJson,
-          applyUrl: input.applyUrl,
+          applyUrl: input.applyUrl || null,
+          hasInternalDetails: input.hasInternalDetails,
           deadline: input.deadline ? new Date(input.deadline) : null,
           status,
           submittedByUserId: ctx.session.userId,
@@ -750,7 +989,46 @@ const opportunityRouter = router({
 
   bySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
-    .query(({ input }) => bySlug(opportunities, input.slug, opportunitySummary)),
+    .query(async ({ input }) => {
+      const [row] = await db
+        .select({
+          slug: opportunity.slug,
+          title: opportunity.title,
+          orgName: opportunity.orgName,
+          type: opportunity.type,
+          departmentSlug: department.slug,
+          location: opportunity.location,
+          deadline: opportunity.deadline,
+          applyUrl: opportunity.applyUrl,
+          hasInternalDetails: opportunity.hasInternalDetails,
+          orgUrl: opportunity.orgUrl,
+          orgLogoUrl: opportunity.orgLogoUrl,
+          descriptionJson: opportunity.descriptionJson,
+          status: opportunity.status,
+        })
+        .from(opportunity)
+        .leftJoin(department, eq(opportunity.departmentId, department.id))
+        .where(eq(opportunity.slug, input.slug))
+        .limit(1);
+
+      if (!row || row.status !== "approved") return null;
+
+      return opportunitySummary.parse({
+        slug: row.slug,
+        title: row.title,
+        orgName: row.orgName,
+        type: row.type,
+        departmentSlug: row.departmentSlug ?? null,
+        location: row.location,
+        deadline: row.deadline ? row.deadline.toISOString() : null,
+        applyUrl: row.applyUrl ?? null,
+        hasInternalDetails: row.hasInternalDetails,
+        imageUrl: row.orgLogoUrl ?? null,
+        orgLogoUrl: row.orgLogoUrl ?? null,
+        orgUrl: row.orgUrl ?? null,
+        descriptionJson: row.descriptionJson,
+      });
+    }),
 });
 
 /* -------------------------------------------------------------------------- */

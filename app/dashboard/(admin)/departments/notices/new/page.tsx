@@ -9,7 +9,9 @@ import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { textToRichTextDoc } from "@/lib/richtext";
 import { trpc } from "@/lib/trpc/client";
@@ -27,6 +29,7 @@ export default function NewNoticePage() {
   const createMutation = trpc.coordinator.createNotice.useMutation({
     onSuccess: async () => {
       await utils.coordinator.listNotices.invalidate();
+      await utils.coordinator.getDepartmentOverview.invalidate();
       toast.success(published ? "Notice published." : "Notice saved as draft.");
       router.push("/dashboard/departments/notices");
     },
@@ -58,39 +61,37 @@ export default function NewNoticePage() {
   }
 
   return (
-    <div className="max-w-2xl space-y-6">
-      <div>
-        <Button variant="ghost" size="sm" className="-ml-2 gap-1.5 text-muted-foreground" asChild>
-          <Link href="/dashboard/departments/notices">
-            <ArrowLeft className="size-3.5" />
-            Back to notices
-          </Link>
-        </Button>
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <Link
+          href="/dashboard/departments/notices"
+          className="inline-flex w-fit items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="size-3.5" />
+          Notices
+        </Link>
+
+        <DashboardHeader title="Publish Notice" />
       </div>
 
-      <DashboardHeader
-        title="Publish Department Notice"
-        description="Announcements are visible to all students in your academic department."
-      />
-
-      {errorMsg && (
-        <Alert variant="destructive">
+      {errorMsg ? (
+        <Alert variant="destructive" className="rounded-2xl">
           <AlertCircle />
-          <AlertTitle>Could not publish notice</AlertTitle>
+          <AlertTitle>Could not save notice</AlertTitle>
           <AlertDescription>{errorMsg}</AlertDescription>
         </Alert>
-      )}
+      ) : null}
 
-      <Card>
+      <Card className="rounded-2xl shadow-2xs">
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-1.5">
-              <label htmlFor="title" className="block text-sm font-medium text-foreground">
-                Notice Title <span className="text-destructive">*</span>
-              </label>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="title" className="text-xs">
+                Title
+              </Label>
               <Input
                 id="title"
-                placeholder="e.g., CSC 411 Continuous Assessment Rescheduled"
+                placeholder="e.g. CSC 411 Continuous Assessment Rescheduled"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
@@ -98,76 +99,66 @@ export default function NewNoticePage() {
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label htmlFor="content" className="block text-sm font-medium text-foreground">
-                Content <span className="text-destructive">*</span>
-              </label>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="content" className="text-xs">
+                Content
+              </Label>
               <Textarea
                 id="content"
-                placeholder="Write your announcement details, instructions, or deadlines here…"
+                placeholder="Write announcement details and deadlines..."
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                rows={8}
+                rows={7}
                 required
               />
-              <p className="text-xs text-muted-foreground">
-                Paragraphs and line breaks will be preserved.
-              </p>
             </div>
 
-            <div className="space-y-3 rounded-lg border bg-muted/30 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Options
-              </p>
-
-              <label className="flex cursor-pointer items-center gap-2.5">
-                <input
-                  type="checkbox"
+            <div className="flex flex-wrap gap-5 rounded-xl border bg-muted/35 p-4">
+              <label className="flex cursor-pointer items-center gap-2.5 text-xs font-medium text-foreground">
+                <Checkbox
                   checked={isPinned}
-                  onChange={(e) => setIsPinned(e.target.checked)}
-                  className="size-4 rounded border-border accent-primary"
+                  onCheckedChange={(checked) => setIsPinned(Boolean(checked))}
                 />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Pin to top</p>
-                  <p className="text-xs text-muted-foreground">
-                    Displays this notice prominently at the top of the department board.
-                  </p>
-                </div>
+                <span>Pin to top</span>
               </label>
 
-              <label className="flex cursor-pointer items-center gap-2.5">
-                <input
-                  type="checkbox"
+              <label className="flex cursor-pointer items-center gap-2.5 text-xs font-medium text-foreground">
+                <Checkbox
                   checked={published}
-                  onChange={(e) => setPublished(e.target.checked)}
-                  className="size-4 rounded border-border accent-primary"
+                  onCheckedChange={(checked) => setPublished(Boolean(checked))}
                 />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Publish immediately</p>
-                  <p className="text-xs text-muted-foreground">
-                    Make visible right away. Uncheck to save as draft.
-                  </p>
-                </div>
+                <span>Publish immediately</span>
               </label>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <Button type="button" variant="ghost" asChild disabled={createMutation.isPending}>
+            <div className="flex items-center justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                asChild
+                disabled={createMutation.isPending}
+                className="h-9 rounded-xl px-4 text-xs"
+              >
                 <Link href="/dashboard/departments/notices">Cancel</Link>
               </Button>
 
-              <Button type="submit" className="gap-2" disabled={createMutation.isPending}>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={createMutation.isPending}
+                className="h-9 rounded-xl px-4 text-xs"
+              >
                 {createMutation.isPending ? (
-                  <>
-                    <Loader2 className="size-4 animate-spin" />
-                    Publishing…
-                  </>
+                  <Loader2 className="size-3.5 animate-spin" />
                 ) : (
-                  <>
-                    <Send className="size-4" />
-                    {published ? "Publish Notice" : "Save Draft"}
-                  </>
+                  <Send className="size-3.5" />
                 )}
+                {createMutation.isPending
+                  ? "Saving..."
+                  : published
+                    ? "Publish Notice"
+                    : "Save Draft"}
               </Button>
             </div>
           </form>

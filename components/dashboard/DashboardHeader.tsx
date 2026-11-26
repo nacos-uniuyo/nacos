@@ -1,19 +1,25 @@
 interface DashboardHeaderProps {
   title: string;
   description?: string;
+  badge?: React.ReactNode;
   action?: React.ReactNode;
 }
 
-export function DashboardHeader({ title, description, action }: DashboardHeaderProps) {
+export function DashboardHeader({ title, description, badge, action }: DashboardHeaderProps) {
   return (
-    <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0">
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-[29px] sm:leading-[33px]">{title}</h1>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+            {title}
+          </h1>
+          {badge}
+        </div>
         {description ? (
-          <p className="mt-1.5 max-w-2xl text-xs text-muted-foreground sm:text-sm">{description}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">{description}</p>
         ) : null}
       </div>
-      {action ? <div className="shrink-0">{action}</div> : null}
+      {action ? <div className="flex shrink-0 flex-wrap items-center gap-2">{action}</div> : null}
     </div>
   );
 }

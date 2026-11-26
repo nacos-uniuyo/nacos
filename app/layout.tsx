@@ -79,9 +79,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </a>
         <Providers>
           {children}
-          <JsonLd data={[organizationSchema(), websiteSchema()]} />
           <Analytics />
         </Providers>
+        <JsonLd data={[organizationSchema(), websiteSchema()]} />
       </body>
     </html>
   );
