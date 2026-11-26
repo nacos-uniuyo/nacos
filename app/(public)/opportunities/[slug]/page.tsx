@@ -112,6 +112,7 @@ export default async function OpportunityDetailPage({ params }: Props) {
   const Icon = TYPE_ICONS[opportunity.type] ?? Briefcase;
 
   const articleDoc =
+    opportunity.descriptionJson ??
     OPPORTUNITY_ARTICLES[opportunity.slug] ??
     `Detailed information and submission guidelines for ${opportunity.title}.\n\nProvided by ${
       opportunity.orgName

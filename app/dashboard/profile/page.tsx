@@ -1,22 +1,16 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Building2, GraduationCap, ShieldCheck } from "lucide-react";
+import { Building2, GraduationCap, Loader2, ShieldCheck } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { ErrorState } from "@/components/dashboard/DashboardStates";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -47,12 +41,6 @@ const profileSchema = z.object({
   regNumber: z.string().trim().max(32, "Registration number must not exceed 32 characters."),
 });
 
-const header = {
-  breadcrumbs: [{ label: "Profile" }],
-  title: "My Profile",
-  description: "Manage your name, department and UNIUYO registration number.",
-};
-
 export default function ProfilePage() {
   const utils = trpc.useUtils();
   const { data: profile, isLoading, error } = trpc.user.getProfile.useQuery();
@@ -72,7 +60,7 @@ export default function ProfilePage() {
 
   const updateMutation = trpc.user.updateProfile.useMutation({
     onSuccess: () => {
-      toast.success("Your profile has been saved.");
+      toast.success("Profile saved.");
       utils.user.getProfile.invalidate();
       utils.user.getDashboardStats.invalidate();
     },
@@ -81,15 +69,11 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <DashboardHeader {...header} />
-        <div className="mx-auto max-w-2xl space-y-4" aria-busy="true" aria-label="Loading">
-          <div className="flex flex-wrap gap-2">
-            <Skeleton className="h-6 w-24 rounded-full" />
-            <Skeleton className="h-6 w-32 rounded-full" />
-            <Skeleton className="h-6 w-28 rounded-full" />
-          </div>
-          <Skeleton className="h-96 rounded-xl" />
+      <div className="flex flex-col gap-6">
+        <DashboardHeader title="Account" />
+        <div className="mx-auto flex w-full max-w-3xl flex-col gap-5" aria-busy="true" aria-label="Loading">
+          <Skeleton className="h-28 w-full rounded-2xl" />
+          <Skeleton className="h-72 w-full rounded-2xl" />
         </div>
       </div>
     );
@@ -97,39 +81,62 @@ export default function ProfilePage() {
 
   if (error || !profile) {
     return (
-      <div className="space-y-6">
-        <DashboardHeader {...header} />
+      <div className="flex flex-col gap-6">
+        <DashboardHeader title="Account" />
         <ErrorState title="Could not load your profile" message="Refresh the page or sign in again." />
       </div>
     );
   }
 
   const departmentLocked = profile.role !== "user";
+  const initials =
+    profile.name
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() ?? "")
+      .join("") || "U";
 
   return (
-    <div className="space-y-6">
-      <DashboardHeader {...header} />
+    <div className="flex flex-col gap-6">
+      <DashboardHeader title="Account" />
 
-      <div className="mx-auto max-w-2xl space-y-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="outline" className="gap-1.5 py-1">
-            <ShieldCheck className="size-3.5 text-muted-foreground" />
-            {roleLabels[profile.role]}
-          </Badge>
-          <Badge variant="secondary" className="gap-1.5 py-1">
-            <Building2 className="size-3.5 text-muted-foreground" />
-            {profile.departmentName ?? "No department"}
-          </Badge>
-          <Badge variant="secondary" className="gap-1.5 py-1 font-mono">
-            <GraduationCap className="size-3.5 text-muted-foreground" />
-            {profile.regNumber || "No reg. number"}
-          </Badge>
-          {profile.claimedPerson ? (
-            <Badge variant="outline" className="py-1">
-              Yearbook: {profile.claimedPerson.fullName}
-            </Badge>
-          ) : null}
-        </div>
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
+        <Card className="rounded-2xl py-5 shadow-2xs">
+          <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              <Avatar className="size-14">
+                {profile.image ? <AvatarImage src={profile.image} alt={profile.name} /> : null}
+                <AvatarFallback className="bg-primary/12 text-base font-semibold text-primary">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0">
+                <h2 className="truncate text-base font-semibold text-foreground">{profile.name}</h2>
+                <p className="truncate text-xs text-muted-foreground">{profile.email}</p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="outline" className="gap-1.5 rounded-full py-1 text-[11px]">
+                <ShieldCheck className="size-3 text-primary" />
+                {roleLabels[profile.role]}
+              </Badge>
+              <Badge variant="secondary" className="gap-1.5 rounded-full py-1 text-[11px]">
+                <Building2 className="size-3" />
+                {profile.departmentName ?? "No dept"}
+              </Badge>
+              <Badge variant="secondary" className="gap-1.5 rounded-full py-1 font-mono text-[11px]">
+                <GraduationCap className="size-3" />
+                {profile.regNumber || "No reg."}
+              </Badge>
+              {profile.claimedPerson ? (
+                <Badge variant="outline" className="rounded-full py-1 text-[11px]">
+                  Yearbook: {profile.claimedPerson.fullName}
+                </Badge>
+              ) : null}
+            </div>
+          </CardContent>
+        </Card>
 
         <Form {...form}>
           <form
@@ -141,60 +148,20 @@ export default function ProfilePage() {
               }),
             )}
           >
-            <Card>
+            <Card className="rounded-2xl shadow-2xs">
               <CardHeader>
-                <CardTitle>Student information</CardTitle>
-                <CardDescription>
-                  Accurate details keep your coursework and SIWES records matched to you.
-                </CardDescription>
+                <CardTitle className="text-sm font-semibold">Student Record</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-5">
+              <CardContent className="grid gap-4 sm:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Full name</FormLabel>
+                      <FormLabel className="text-xs">Full name</FormLabel>
                       <FormControl>
                         <Input placeholder="e.g. John Doe" {...field} />
                       </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email address</Label>
-                  <Input id="email" value={profile.email} disabled readOnly />
-                  <p className="text-sm text-muted-foreground">Your email comes from your Google account.</p>
-                </div>
-
-                <FormField
-                  control={form.control}
-                  name="department"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Department</FormLabel>
-                      <Select value={field.value} onValueChange={field.onChange} disabled={departmentLocked}>
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select your department" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value={NO_DEPARTMENT}>No department</SelectItem>
-                          {departments?.map((dept) => (
-                            <SelectItem key={dept.slug} value={dept.slug}>
-                              {dept.name} ({dept.shortName})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        {departmentLocked
-                          ? "Your department is assigned by a faculty administrator."
-                          : "This department reviews your coursework proposals."}
-                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -205,7 +172,7 @@ export default function ProfilePage() {
                   name="regNumber"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>UNIUYO registration number</FormLabel>
+                      <FormLabel className="text-xs">Registration number</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="e.g. 22/SC/CO/1199"
@@ -218,10 +185,58 @@ export default function ProfilePage() {
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="department"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">Department</FormLabel>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        disabled={departmentLocked}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="h-9 w-full rounded-xl">
+                            <SelectValue placeholder="Select department" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value={NO_DEPARTMENT}>No department</SelectItem>
+                          {departments?.map((dept) => (
+                            <SelectItem key={dept.slug} value={dept.slug}>
+                              {dept.name} ({dept.shortName})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {departmentLocked ? (
+                        <FormDescription className="text-[11px]">
+                          Assigned by faculty admin.
+                        </FormDescription>
+                      ) : null}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="email" className="text-xs">
+                    Google email
+                  </Label>
+                  <Input id="email" value={profile.email} disabled readOnly />
+                </div>
               </CardContent>
               <CardFooter className="justify-end">
-                <Button type="submit" disabled={updateMutation.isPending}>
-                  {updateMutation.isPending ? "Saving…" : "Save changes"}
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={updateMutation.isPending}
+                  className="h-9 rounded-xl px-5 text-xs"
+                >
+                  {updateMutation.isPending ? <Loader2 className="size-3.5 animate-spin" /> : null}
+                  {updateMutation.isPending ? "Saving..." : "Save changes"}
                 </Button>
               </CardFooter>
             </Card>

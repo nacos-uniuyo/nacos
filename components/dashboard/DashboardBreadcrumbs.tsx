@@ -17,11 +17,11 @@ const SEGMENT_LABELS: Record<string, string> = {
   opportunities: "Opportunities",
   saved: "Saved",
   submit: "Submit",
-  profile: "Profile",
+  profile: "Account",
   departments: "Coordinator",
-  roster: "Student Roster",
+  roster: "Roster",
   notices: "Notices",
-  new: "Publish Notice",
+  new: "New Notice",
 };
 
 export function DashboardBreadcrumbs() {

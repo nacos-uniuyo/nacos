@@ -1,83 +1,128 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { ChevronRight, Clock, FolderOpen, Search } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useMemo, useState } from "react";
+import { Check, ChevronRight, FolderOpen, Loader2, Search, X } from "lucide-react";
+import { toast } from "sonner";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { EmptyState, ErrorState, ListSkeleton } from "@/components/dashboard/DashboardStates";
+import { PillTabs } from "@/components/dashboard/PillTabs";
+import { ReasonDialog } from "@/components/dashboard/ReasonDialog";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { formatDate } from "@/lib/format";
 import { trpc } from "@/lib/trpc/client";
-import { cn } from "@/lib/utils";
 
 type ProjectStatus = "draft" | "submitted" | "approved" | "rejected";
+type FilterKey = ProjectStatus | "all";
 
-const STATUS_TABS: { label: string; value: ProjectStatus | "all" }[] = [
-  { label: "All", value: "all" },
-  { label: "Pending Review", value: "submitted" },
-  { label: "Approved", value: "approved" },
-  { label: "Changes Requested", value: "rejected" },
-  { label: "Draft", value: "draft" },
-];
+interface RejectTarget {
+  id: string;
+  title: string;
+}
 
-export default function CoordinatorProjectsPage() {
-  const [statusFilter, setStatusFilter] = useState<ProjectStatus | "all">("all");
+function CoordinatorProjectsContent() {
+  const searchParams = useSearchParams();
+  const initialStatus = searchParams.get("status");
+  const validInitial: FilterKey =
+    initialStatus === "submitted" ||
+    initialStatus === "approved" ||
+    initialStatus === "rejected" ||
+    initialStatus === "draft"
+      ? initialStatus
+      : "all";
+
+  const [statusFilter, setStatusFilter] = useState<FilterKey>(validInitial);
   const [searchInput, setSearchInput] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const debounceRef = useState<ReturnType<typeof setTimeout> | null>(null);
+  const [approvingId, setApprovingId] = useState<string | null>(null);
+  const [rejectTarget, setRejectTarget] = useState<RejectTarget | null>(null);
 
-  function handleSearchChange(value: string) {
-    setSearchInput(value);
-    if (debounceRef[0]) clearTimeout(debounceRef[0]);
-    const id = setTimeout(() => setDebouncedSearch(value), 350);
-    debounceRef[1](id);
-  }
+  const utils = trpc.useUtils();
+  const { data, isLoading, error } = trpc.coordinator.listProjects.useQuery({});
 
-  const { data, isLoading, error } = trpc.coordinator.listProjects.useQuery({
-    status: statusFilter === "all" ? undefined : statusFilter,
-    search: debouncedSearch.trim() || undefined,
+  const reviewMutation = trpc.coordinator.reviewProject.useMutation({
+    onSuccess: async (updated) => {
+      await utils.coordinator.listProjects.invalidate();
+      await utils.coordinator.getDepartmentOverview.invalidate();
+      toast.success(
+        updated.status === "approved"
+          ? `"${updated.title}" approved.`
+          : `Feedback sent for "${updated.title}".`,
+      );
+      setRejectTarget(null);
+    },
+    onError: (err) => toast.error(err.message),
+    onSettled: () => setApprovingId(null),
   });
 
-  const projects = data?.projects ?? [];
+  const allProjects = useMemo(() => data?.projects ?? [], [data]);
+
+  const counts = useMemo(
+    () => ({
+      all: allProjects.length,
+      submitted: allProjects.filter((p) => p.status === "submitted").length,
+      approved: allProjects.filter((p) => p.status === "approved").length,
+      rejected: allProjects.filter((p) => p.status === "rejected").length,
+      draft: allProjects.filter((p) => p.status === "draft").length,
+    }),
+    [allProjects],
+  );
+
+  const projects = useMemo(() => {
+    const q = searchInput.trim().toLowerCase();
+    return allProjects.filter((proj) => {
+      if (statusFilter !== "all" && proj.status !== statusFilter) return false;
+      if (!q) return true;
+      return (
+        proj.title.toLowerCase().includes(q) ||
+        (proj.tagline?.toLowerCase().includes(q) ?? false) ||
+        (proj.courseCode?.toLowerCase().includes(q) ?? false) ||
+        (proj.teamDisplayName?.toLowerCase().includes(q) ?? false) ||
+        (proj.author?.name.toLowerCase().includes(q) ?? false)
+      );
+    });
+  }, [allProjects, statusFilter, searchInput]);
+
+  const tabs = [
+    { value: "all", label: "All", count: counts.all },
+    { value: "submitted", label: "Pending", count: counts.submitted },
+    { value: "approved", label: "Approved", count: counts.approved },
+    { value: "rejected", label: "Changes", count: counts.rejected },
+    { value: "draft", label: "Drafts", count: counts.draft },
+  ] as const;
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-6">
       <DashboardHeader
-        title="Project Review Queue"
-        description="Review and moderate project proposals submitted by students in your department."
+        title="Review Queue"
+        badge={
+          data?.department.shortName ? (
+            <Badge variant="outline" className="rounded-full text-[11px] font-semibold">
+              {data.department.shortName}
+            </Badge>
+          ) : null
+        }
       />
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap gap-1.5">
-          {STATUS_TABS.map((tab) => {
-            const active = statusFilter === tab.value;
-            return (
-              <button
-                key={tab.value}
-                type="button"
-                onClick={() => setStatusFilter(tab.value)}
-                className={cn(
-                  "rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors cursor-pointer",
-                  active
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-card text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <PillTabs
+          label="Filter proposals by status"
+          value={statusFilter}
+          onValueChange={setStatusFilter}
+          tabs={tabs}
+        />
 
-        <div className="relative w-full sm:max-w-xs">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <div className="relative w-full sm:w-72">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search title, team, course code…"
+            placeholder="Search title, student, course..."
             value={searchInput}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="pl-9"
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="h-9 rounded-xl bg-card pl-9 text-xs"
           />
         </div>
       </div>
@@ -90,64 +135,130 @@ export default function CoordinatorProjectsPage() {
         <EmptyState
           icon={<FolderOpen className="size-5" />}
           title="No proposals found"
-          description={
-            debouncedSearch
-              ? "Try adjusting your search terms."
-              : statusFilter !== "all"
-                ? `No ${statusFilter} proposals in this department.`
-                : "No project proposals have been submitted yet."
-          }
         />
       ) : (
-        <div className="space-y-3">
-          <p className="text-xs text-muted-foreground">
-            {projects.length} proposal{projects.length !== 1 ? "s" : ""} found
-          </p>
-          <Card className="divide-y overflow-hidden py-0">
-            {projects.map((proj) => (
-              <Link
+        <Card className="divide-y overflow-hidden rounded-2xl py-0 shadow-2xs">
+          {projects.map((proj) => {
+            const isApproving = approvingId === proj.id && reviewMutation.isPending;
+            return (
+              <div
                 key={proj.id}
-                href={`/dashboard/departments/projects/${proj.slug}`}
-                className="group flex items-start justify-between gap-4 p-5 transition-colors hover:bg-muted/50"
+                className="flex flex-col justify-between gap-4 p-4 transition-colors hover:bg-muted/35 sm:flex-row sm:items-center sm:px-5"
               >
-                <div className="min-w-0 flex-1 space-y-1.5">
+                <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge status={proj.status as ProjectStatus} />
-                    {proj.status === "submitted" && (
-                      <Badge variant="outline" className="gap-1 border-amber-500/40 text-amber-600 dark:text-amber-400">
-                        <Clock className="size-3" />
-                        Needs Review
-                      </Badge>
-                    )}
-                  </div>
-                  <h3 className="font-semibold text-foreground transition-colors group-hover:text-primary line-clamp-1">
-                    {proj.title}
-                  </h3>
-                  {proj.tagline && (
-                    <p className="text-sm text-muted-foreground line-clamp-1">{proj.tagline}</p>
-                  )}
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                    {proj.author?.name && (
-                      <span className="font-medium text-foreground">{proj.author.name}</span>
-                    )}
-                    {proj.author?.regNumber && <span>{proj.author.regNumber}</span>}
-                    {proj.courseCode && (
-                      <Badge variant="secondary" className="font-mono text-[0.7rem]">
+                    {proj.courseCode ? (
+                      <Badge variant="secondary" className="rounded-full font-mono text-[11px]">
                         {proj.courseCode}
                       </Badge>
-                    )}
-                    {proj.session?.name && <span>{proj.session.name}</span>}
-                    {proj.teamDisplayName && (
-                      <span className="font-medium text-primary">{proj.teamDisplayName}</span>
-                    )}
+                    ) : null}
+                    {proj.teamDisplayName ? (
+                      <Badge variant="outline" className="rounded-full text-[11px]">
+                        {proj.teamDisplayName}
+                      </Badge>
+                    ) : null}
+                  </div>
+
+                  <Link
+                    href={`/dashboard/departments/projects/${proj.slug}`}
+                    className="mt-1.5 block truncate text-sm font-semibold text-foreground no-underline hover:text-primary"
+                    onMouseEnter={() => void utils.coordinator.getProject.prefetch({ slug: proj.slug })}
+                    onFocus={() => void utils.coordinator.getProject.prefetch({ slug: proj.slug })}
+                  >
+                    {proj.title}
+                  </Link>
+
+                  <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-xs text-muted-foreground">
+                    <span>{proj.author?.name ?? "Student"}</span>
+                    {proj.author?.regNumber ? (
+                      <span className="font-mono text-[11px]">{proj.author.regNumber}</span>
+                    ) : null}
+                    <span>·</span>
+                    <span>{formatDate(proj.createdAt)}</span>
                   </div>
                 </div>
-                <ChevronRight className="mt-1 size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
-              </Link>
-            ))}
-          </Card>
-        </div>
+
+                <div className="flex shrink-0 items-center gap-2">
+                  {proj.status === "submitted" ? (
+                    <>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        disabled={isApproving}
+                        onClick={() => setRejectTarget({ id: proj.id, title: proj.title })}
+                        className="h-8 rounded-xl border-rose-500/30 bg-rose-500/8 px-3 text-xs text-rose-600 hover:bg-rose-500/15 hover:text-rose-700 dark:text-rose-400"
+                      >
+                        <X className="size-3.5" />
+                        Reject
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        disabled={isApproving}
+                        onClick={() => {
+                          setApprovingId(proj.id);
+                          reviewMutation.mutate({ id: proj.id, status: "approved" });
+                        }}
+                        className="h-8 rounded-xl px-3.5 text-xs"
+                      >
+                        {isApproving ? (
+                          <Loader2 className="size-3.5 animate-spin" />
+                        ) : (
+                          <Check className="size-3.5" />
+                        )}
+                        Approve
+                      </Button>
+                    </>
+                  ) : null}
+
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="sm"
+                    className="h-8 rounded-xl px-3 text-xs"
+                  >
+                    <Link
+                      href={`/dashboard/departments/projects/${proj.slug}`}
+                      onMouseEnter={() => void utils.coordinator.getProject.prefetch({ slug: proj.slug })}
+                      onFocus={() => void utils.coordinator.getProject.prefetch({ slug: proj.slug })}
+                    >
+                      Inspect
+                      <ChevronRight className="size-3.5" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+        </Card>
       )}
+
+      <ReasonDialog
+        open={rejectTarget !== null}
+        onOpenChange={(open) => !open && setRejectTarget(null)}
+        title="Request Changes"
+        subject={rejectTarget?.title}
+        buttonLabel="Send Feedback"
+        isPending={reviewMutation.isPending}
+        onConfirm={(reason) => {
+          if (!rejectTarget) return;
+          reviewMutation.mutate({
+            id: rejectTarget.id,
+            status: "rejected",
+            rejectionReason: reason,
+          });
+        }}
+      />
     </div>
+  );
+}
+
+export default function CoordinatorProjectsPage() {
+  return (
+    <Suspense fallback={<ListSkeleton count={4} />}>
+      <CoordinatorProjectsContent />
+    </Suspense>
   );
 }

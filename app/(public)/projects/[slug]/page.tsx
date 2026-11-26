@@ -116,6 +116,7 @@ export default async function ProjectDetailPage({ params }: Props) {
     .slice(0, 3);
 
   const articleDoc =
+    project.descriptionJson ??
     PROJECT_ARTICLES[project.slug] ??
     `${project.tagline}\n\nDeveloped within the Department of ${
       dept ? dept.name : project.departmentSlug

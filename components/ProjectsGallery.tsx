@@ -109,6 +109,7 @@ export function ProjectsGallery({ initialProjects, departments }: ProjectsGaller
               categoryLabel={PROJECT_CATEGORY_LABELS[project.category] ?? project.category}
               courseCode={project.courseCode}
               teamDisplayName={project.teamDisplayName}
+              bannerUrl={project.bannerUrl}
               index={idx}
             />
           ))}

@@ -1,22 +1,29 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+"use client";
 
-export default async function DashboardAdminLayout({
+import { useRouter } from "nextjs-toploader/app";
+import { useEffect } from "react";
+import { isSignedOut, useDashboardSession } from "@/lib/auth-client";
+
+export default function DashboardAdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const { session, isCoordinator, isPending, error } = useDashboardSession();
+  const router = useRouter();
 
-  if (!session) {
-    redirect("/login");
-  }
-
-  const role = session.user.role ?? "user";
-  if (role !== "department_editor" && role !== "admin") {
-    redirect("/dashboard");
-  }
+  useEffect(() => {
+    if (isPending) return;
+    if (!session) {
+      if (isSignedOut(error)) {
+        router.replace("/login");
+      }
+      return;
+    }
+    if (!isCoordinator) {
+      router.replace("/dashboard");
+    }
+  }, [session, isCoordinator, isPending, error, router]);
 
   return children;
 }

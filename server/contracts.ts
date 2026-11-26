@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { richTextDoc } from "@/db/json";
 import {
   opportunityStatuses,
   opportunityTypes,
@@ -80,6 +81,14 @@ export const projectSummary = z.object({
   repoUrl: z.string().nullable(),
   demoUrl: z.string().nullable(),
   featured: z.boolean(),
+  bannerUrl: z.string().nullable().optional(),
+  descriptionJson: richTextDoc.optional(),
+  galleryUrls: z.array(z.string()).optional(),
+  leadContributors: z
+    .array(z.object({ name: z.string(), role: z.string().optional() }))
+    .optional(),
+  sessionSlug: z.string().nullable().optional(),
+  createdAt: z.string().nullable().optional(),
 });
 
 export const opportunitySummary = z.object({
@@ -94,6 +103,9 @@ export const opportunitySummary = z.object({
   hasInternalDetails: z.boolean().default(false),
   imageUrl: z.string().nullable().optional(),
   excerpt: z.string().nullable().optional(),
+  descriptionJson: richTextDoc.optional(),
+  orgUrl: z.string().nullable().optional(),
+  orgLogoUrl: z.string().nullable().optional(),
 });
 
 export const eventSummary = z.object({

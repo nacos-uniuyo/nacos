@@ -2,10 +2,8 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useRouter } from "nextjs-toploader/app";
 import { useState } from "react";
 import {
-  AlertCircle,
   ArrowLeft,
   CheckCircle2,
   ExternalLink,
@@ -17,70 +15,42 @@ import {
 import { toast } from "sonner";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { ErrorState, ListSkeleton } from "@/components/dashboard/DashboardStates";
+import { ReasonDialog } from "@/components/dashboard/ReasonDialog";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import type { OpportunityStatus } from "@/lib/enums";
+import { projectCategoryLabels } from "@/lib/format";
 import { richTextDocToText } from "@/lib/richtext";
 import { trpc } from "@/lib/trpc/client";
 
 export default function CoordinatorProjectDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const slug = typeof params.slug === "string" ? params.slug : (params.slug?.[0] ?? "");
-
   const utils = trpc.useUtils();
   const { data: proj, isLoading, error } = trpc.coordinator.getProject.useQuery({ slug });
 
-  const [action, setAction] = useState<"approve" | "reject" | null>(null);
-  const [rejectionReason, setRejectionReason] = useState("");
-  const [confirmState, setConfirmState] = useState<"idle" | "confirming" | "done">("idle");
-  const [feedbackMsg, setFeedbackMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [confirmApprove, setConfirmApprove] = useState(false);
+  const [rejectOpen, setRejectOpen] = useState(false);
 
   const reviewMutation = trpc.coordinator.reviewProject.useMutation({
-    onSuccess: async () => {
+    onSuccess: async (updated) => {
       await utils.coordinator.listProjects.invalidate();
       await utils.coordinator.getProject.invalidate({ slug });
-      const text =
-        action === "approve"
-          ? "Project approved successfully."
-          : "Feedback sent. Project returned for revision.";
-      setFeedbackMsg({ ok: true, text });
-      toast.success(text);
-      setConfirmState("done");
-      setAction(null);
+      await utils.coordinator.getDepartmentOverview.invalidate();
+      toast.success(
+        updated.status === "approved"
+          ? "Project approved."
+          : "Feedback sent to student.",
+      );
+      setConfirmApprove(false);
+      setRejectOpen(false);
     },
-    onError: (err: { message: string }) => {
-      setFeedbackMsg({ ok: false, text: err.message });
-      toast.error(err.message);
-      setConfirmState("idle");
-    },
+    onError: (err) => toast.error(err.message),
   });
-
-  function startAction(a: "approve" | "reject") {
-    setAction(a);
-    setRejectionReason("");
-    setFeedbackMsg(null);
-    setConfirmState("confirming");
-  }
-
-  function cancelAction() {
-    setAction(null);
-    setConfirmState("idle");
-    setFeedbackMsg(null);
-  }
-
-  function submitReview() {
-    if (!proj) return;
-    if (action === "reject" && !rejectionReason.trim()) return;
-    reviewMutation.mutate({
-      id: proj.id,
-      status: action === "approve" ? "approved" : "rejected",
-      rejectionReason: action === "reject" ? rejectionReason.trim() : undefined,
-    });
-  }
 
   if (isLoading) {
     return <ListSkeleton count={3} />;
@@ -88,10 +58,13 @@ export default function CoordinatorProjectDetailPage() {
 
   if (error) {
     return (
-      <div className="space-y-4">
+      <div className="flex flex-col gap-4">
         <ErrorState title="Could not load proposal" message={error.message} />
-        <Button variant="outline" size="sm" asChild>
-          <Link href="/dashboard/departments/projects">← Back to queue</Link>
+        <Button variant="outline" size="sm" asChild className="w-fit rounded-xl text-xs">
+          <Link href="/dashboard/departments/projects">
+            <ArrowLeft className="size-3.5" />
+            Review Queue
+          </Link>
         </Button>
       </div>
     );
@@ -103,37 +76,47 @@ export default function CoordinatorProjectDetailPage() {
     ? richTextDocToText(proj.descriptionJson as Parameters<typeof richTextDocToText>[0])
     : "";
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <Button variant="ghost" size="sm" className="-ml-2 gap-1.5 text-muted-foreground" asChild>
-          <Link href="/dashboard/departments/projects">
-            <ArrowLeft className="size-3.5" />
-            Review queue
-          </Link>
-        </Button>
-      </div>
+  const categoryLabel =
+    projectCategoryLabels[proj.category as keyof typeof projectCategoryLabels] ?? proj.category;
 
-      <div className="space-y-2">
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <Link
+          href="/dashboard/departments/projects"
+          className="inline-flex w-fit items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="size-3.5" />
+          Review Queue
+        </Link>
+
         <div className="flex flex-wrap items-center gap-2">
-          <StatusBadge status={proj.status as "draft" | "submitted" | "approved" | "rejected"} />
-          {proj.category && (
-            <Badge variant="secondary" className="capitalize">
-              {proj.category.replace(/_/g, " ")}
-            </Badge>
-          )}
+          <StatusBadge status={proj.status as OpportunityStatus} />
+          <Badge variant="secondary" className="rounded-full text-[11px]">
+            {categoryLabel}
+          </Badge>
         </div>
+
         <DashboardHeader title={proj.title} description={proj.tagline ?? undefined} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="space-y-6 lg:col-span-2">
-          {descriptionText && (
-            <Card>
+        <div className="flex flex-col gap-5 lg:col-span-2">
+          {proj.bannerUrl ? (
+            <Card className="overflow-hidden rounded-2xl py-0 shadow-2xs">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={proj.bannerUrl}
+                alt={`${proj.title} cover`}
+                className="max-h-72 w-full object-cover"
+              />
+            </Card>
+          ) : null}
+
+          {descriptionText ? (
+            <Card className="rounded-2xl shadow-2xs">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                  Description
-                </CardTitle>
+                <CardTitle className="text-sm font-semibold">Overview</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">
@@ -141,282 +124,223 @@ export default function CoordinatorProjectDetailPage() {
                 </p>
               </CardContent>
             </Card>
-          )}
+          ) : null}
 
-          <Card>
+          <Card className="rounded-2xl shadow-2xs">
             <CardHeader>
-              <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                Project Details
-              </CardTitle>
+              <CardTitle className="text-sm font-semibold">Metadata</CardTitle>
             </CardHeader>
             <CardContent>
-              <dl className="grid grid-cols-1 gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
-                {proj.courseCode && (
-                  <>
-                    <dt className="text-muted-foreground">Course Code</dt>
-                    <dd className="font-mono font-medium text-foreground">{proj.courseCode}</dd>
-                  </>
-                )}
-                {proj.cohortGroupNumber && (
-                  <>
-                    <dt className="text-muted-foreground">Cohort Group</dt>
-                    <dd className="font-medium text-foreground">Group {proj.cohortGroupNumber}</dd>
-                  </>
-                )}
-                {proj.teamDisplayName && (
-                  <>
-                    <dt className="text-muted-foreground">Team Name</dt>
-                    <dd className="font-medium text-foreground">{proj.teamDisplayName}</dd>
-                  </>
-                )}
-                {proj.session?.name && (
-                  <>
-                    <dt className="text-muted-foreground">Academic Session</dt>
-                    <dd className="font-medium text-foreground">{proj.session.name}</dd>
-                  </>
-                )}
-                {proj.repoUrl && (
-                  <>
-                    <dt className="text-muted-foreground">Repository</dt>
-                    <dd>
+              <dl className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
+                {proj.courseCode ? (
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Course</dt>
+                    <dd className="mt-0.5 font-mono font-medium">{proj.courseCode}</dd>
+                  </div>
+                ) : null}
+                {proj.cohortGroupNumber ? (
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Cohort</dt>
+                    <dd className="mt-0.5 font-medium">Group {proj.cohortGroupNumber}</dd>
+                  </div>
+                ) : null}
+                {proj.teamDisplayName ? (
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Team</dt>
+                    <dd className="mt-0.5 font-medium">{proj.teamDisplayName}</dd>
+                  </div>
+                ) : null}
+                {proj.session?.name ? (
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Session</dt>
+                    <dd className="mt-0.5 font-medium">{proj.session.name}</dd>
+                  </div>
+                ) : null}
+                {proj.repoUrl ? (
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Repository</dt>
+                    <dd className="mt-0.5">
                       <a
                         href={proj.repoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
+                        className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
                       >
-                        View Repo <ExternalLink className="size-3" />
+                        Open Repo <ExternalLink className="size-3" />
                       </a>
                     </dd>
-                  </>
-                )}
-                {proj.demoUrl && (
-                  <>
-                    <dt className="text-muted-foreground">Live Demo</dt>
-                    <dd>
+                  </div>
+                ) : null}
+                {proj.demoUrl ? (
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Live Demo</dt>
+                    <dd className="mt-0.5">
                       <a
                         href={proj.demoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
+                        className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
                       >
-                        View Demo <ExternalLink className="size-3" />
+                        Open Demo <ExternalLink className="size-3" />
                       </a>
                     </dd>
-                  </>
-                )}
+                  </div>
+                ) : null}
               </dl>
             </CardContent>
           </Card>
 
-          {proj.bannerUrl && (
-            <Card className="overflow-hidden py-0">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={proj.bannerUrl}
-                alt={`${proj.title} banner`}
-                className="max-h-56 w-full object-cover"
-              />
-            </Card>
-          )}
-
-          {proj.leadContributors &&
-            Array.isArray(proj.leadContributors) &&
-            proj.leadContributors.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                    Lead Contributors
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2.5">
-                    {(proj.leadContributors as { name: string; regNumber?: string; role?: string }[]).map(
-                      (c, i) => (
-                        <li key={i} className="flex items-center gap-3 text-sm">
-                          <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-[0.65rem] font-bold text-muted-foreground">
+          {Array.isArray(proj.leadContributors) && proj.leadContributors.length > 0 ? (
+            <Card className="rounded-2xl shadow-2xs">
+              <CardHeader>
+                <CardTitle className="text-sm font-semibold">Team</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="flex flex-wrap gap-2.5">
+                  {(proj.leadContributors as { name: string; regNumber?: string; role?: string }[]).map(
+                    (c, i) => (
+                      <li
+                        key={i}
+                        className="flex items-center gap-2 rounded-xl border bg-background px-3 py-2 text-xs"
+                      >
+                        <Avatar className="size-6">
+                          <AvatarFallback className="bg-primary/10 text-[10px] font-semibold text-primary">
                             {c.name.charAt(0).toUpperCase()}
-                          </div>
-                          <span className="font-medium text-foreground">{c.name}</span>
-                          {c.regNumber && <span className="text-muted-foreground">{c.regNumber}</span>}
-                          {c.role && <Badge variant="secondary">{c.role}</Badge>}
-                        </li>
-                      ),
-                    )}
-                  </ul>
-                </CardContent>
-              </Card>
-            )}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="font-medium text-foreground">{c.name}</span>
+                        {c.role ? (
+                          <span className="text-muted-foreground">· {c.role}</span>
+                        ) : null}
+                      </li>
+                    ),
+                  )}
+                </ul>
+              </CardContent>
+            </Card>
+          ) : null}
 
-          {proj.status === "rejected" && proj.rejectionReason && (
-            <Alert variant="destructive">
+          {proj.status === "rejected" && proj.rejectionReason ? (
+            <Alert variant="destructive" className="rounded-2xl">
               <XCircle />
-              <AlertTitle>Coordinator Feedback</AlertTitle>
+              <AlertTitle>Feedback Sent</AlertTitle>
               <AlertDescription className="whitespace-pre-line">
                 {proj.rejectionReason}
               </AlertDescription>
             </Alert>
-          )}
+          ) : null}
         </div>
 
-        <div className="space-y-6">
-          <Card>
+        <div className="flex flex-col gap-5 lg:sticky lg:top-24 lg:self-start">
+          <Card className="rounded-2xl shadow-2xs">
             <CardHeader>
-              <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                Submitted By
-              </CardTitle>
+              <CardTitle className="text-sm font-semibold">Submitted By</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <User className="size-5" />
-                </div>
-                <div className="min-w-0">
-                  <p className="truncate font-semibold text-foreground">
-                    {proj.author?.name ?? "Unknown"}
-                  </p>
-                  {proj.author?.regNumber && (
-                    <p className="font-mono text-xs text-muted-foreground">{proj.author.regNumber}</p>
-                  )}
-                  {proj.author?.email && (
-                    <p className="truncate text-xs text-muted-foreground">{proj.author.email}</p>
-                  )}
-                </div>
+            <CardContent className="flex items-center gap-3">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <User className="size-5" />
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-foreground">
+                  {proj.author?.name ?? "Unknown"}
+                </p>
+                {proj.author?.regNumber ? (
+                  <p className="font-mono text-xs text-muted-foreground">{proj.author.regNumber}</p>
+                ) : null}
+                {proj.author?.email ? (
+                  <p className="truncate text-xs text-muted-foreground">{proj.author.email}</p>
+                ) : null}
               </div>
             </CardContent>
           </Card>
 
-          {feedbackMsg && (
-            <Alert variant={feedbackMsg.ok ? "default" : "destructive"}>
-              {feedbackMsg.ok ? <CheckCircle2 /> : <AlertCircle />}
-              <AlertTitle>{feedbackMsg.ok ? "Review saved" : "Review failed"}</AlertTitle>
-              <AlertDescription>
-                <p>{feedbackMsg.text}</p>
-                {feedbackMsg.ok && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="mt-2 w-full"
-                    onClick={() => router.push("/dashboard/departments/projects")}
-                  >
-                    Back to queue
-                  </Button>
-                )}
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {proj.status === "submitted" && confirmState !== "done" && (
-            <Card>
+          {proj.status === "submitted" ? (
+            <Card className="rounded-2xl shadow-2xs">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                  Review Decision
-                </CardTitle>
+                <CardTitle className="text-sm font-semibold">Decision</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {confirmState === "idle" && (
-                  <div className="space-y-2">
-                    <Button className="w-full gap-2" onClick={() => startAction("approve")}>
-                      <CheckCircle2 className="size-4" />
-                      Approve Project
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="w-full gap-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                      onClick={() => startAction("reject")}
-                    >
-                      <MessageSquare className="size-4" />
-                      Request Changes
-                    </Button>
-                  </div>
-                )}
-
-                {confirmState === "confirming" && action === "approve" && (
-                  <div className="space-y-3">
-                    <p className="text-sm text-foreground">
-                      Approve <strong>{proj.title}</strong>? This will mark the project as publicly
-                      approved.
+              <CardContent className="flex flex-col gap-2.5">
+                {confirmApprove ? (
+                  <div className="flex flex-col gap-3 rounded-xl border bg-muted/40 p-3.5">
+                    <p className="text-xs text-foreground">
+                      Publish <strong>{proj.title}</strong> to the showcase?
                     </p>
                     <div className="flex gap-2">
                       <Button
-                        className="flex-1"
+                        size="sm"
+                        className="h-8 flex-1 rounded-xl text-xs"
                         disabled={reviewMutation.isPending}
-                        onClick={submitReview}
+                        onClick={() =>
+                          reviewMutation.mutate({ id: proj.id, status: "approved" })
+                        }
                       >
                         {reviewMutation.isPending ? (
-                          <Loader2 className="size-4 animate-spin" />
+                          <Loader2 className="size-3.5 animate-spin" />
                         ) : (
-                          "Confirm Approval"
+                          "Confirm"
                         )}
                       </Button>
                       <Button
+                        size="sm"
                         variant="outline"
-                        onClick={cancelAction}
                         disabled={reviewMutation.isPending}
+                        onClick={() => setConfirmApprove(false)}
+                        className="h-8 rounded-xl text-xs"
                       >
                         Cancel
                       </Button>
                     </div>
                   </div>
-                )}
-
-                {confirmState === "confirming" && action === "reject" && (
-                  <div className="space-y-3">
-                    <div>
-                      <label className="mb-1.5 block text-sm font-medium text-foreground">
-                        Feedback for student <span className="text-destructive">*</span>
-                      </label>
-                      <Textarea
-                        placeholder="Explain what needs to be improved or corrected…"
-                        value={rejectionReason}
-                        onChange={(e) => setRejectionReason(e.target.value)}
-                        rows={4}
-                        className="text-sm"
-                      />
-                      {rejectionReason.trim().length > 0 && rejectionReason.trim().length < 5 && (
-                        <p className="mt-1 text-xs text-destructive">
-                          Feedback must be at least 5 characters.
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="destructive"
-                        className="flex-1"
-                        disabled={reviewMutation.isPending || rejectionReason.trim().length < 5}
-                        onClick={submitReview}
-                      >
-                        {reviewMutation.isPending ? (
-                          <Loader2 className="size-4 animate-spin" />
-                        ) : (
-                          "Send Feedback"
-                        )}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={cancelAction}
-                        disabled={reviewMutation.isPending}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </div>
+                ) : (
+                  <>
+                    <Button
+                      size="sm"
+                      className="h-9 w-full rounded-xl text-xs"
+                      onClick={() => setConfirmApprove(true)}
+                    >
+                      <CheckCircle2 className="size-3.5" />
+                      Approve Project
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-9 w-full rounded-xl border-rose-500/30 text-xs text-rose-600 hover:bg-rose-500/10 hover:text-rose-700 dark:text-rose-400"
+                      onClick={() => setRejectOpen(true)}
+                    >
+                      <MessageSquare className="size-3.5" />
+                      Request Changes
+                    </Button>
+                  </>
                 )}
               </CardContent>
             </Card>
-          )}
-
-          {proj.status === "approved" && (
-            <Alert>
+          ) : proj.status === "approved" ? (
+            <Alert className="rounded-2xl">
               <CheckCircle2 />
-              <AlertTitle>Project Approved</AlertTitle>
-              <AlertDescription>
-                This project has been approved and is publicly visible.
+              <AlertTitle>Approved</AlertTitle>
+              <AlertDescription className="text-xs">
+                Live on the department showcase.
               </AlertDescription>
             </Alert>
-          )}
+          ) : null}
         </div>
       </div>
+
+      <ReasonDialog
+        open={rejectOpen}
+        onOpenChange={setRejectOpen}
+        title="Request Changes"
+        subject={proj.title}
+        buttonLabel="Send Feedback"
+        isPending={reviewMutation.isPending}
+        onConfirm={(reason) =>
+          reviewMutation.mutate({
+            id: proj.id,
+            status: "rejected",
+            rejectionReason: reason,
+          })
+        }
+      />
     </div>
   );
 }

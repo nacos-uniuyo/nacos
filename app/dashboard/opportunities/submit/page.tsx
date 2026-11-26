@@ -1,20 +1,15 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useRouter } from "nextjs-toploader/app";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -43,12 +38,15 @@ const opportunitySchema = z.object({
   orgUrl: z
     .string()
     .trim()
-    .refine((value) => !value || z.httpUrl().safeParse(value).success, "Enter a full URL starting with https://."),
+    .refine(
+      (value) => !value || z.httpUrl().safeParse(value).success,
+      "Enter a full URL starting with https://.",
+    ),
   type: z.enum(opportunityTypes),
-  location: z.string().trim().min(2, "Enter a location, such as Uyo or Remote.").max(128),
+  location: z.string().trim().min(2, "Enter a location.").max(128),
   applyUrl: z.string().trim().pipe(z.httpUrl("Enter a full URL starting with https://.")),
   deadline: z.string(),
-  description: z.string().trim().min(1, "Add the details and eligibility criteria."),
+  description: z.string().trim().min(1, "Add eligibility and role details."),
 });
 
 type OpportunityValues = z.output<typeof opportunitySchema>;
@@ -75,7 +73,7 @@ export default function SubmitOpportunityPage() {
     onSuccess: (res) => {
       utils.opportunity.mySubmissions.invalidate();
       utils.user.getDashboardStats.invalidate();
-      toast.success(`"${res.title}" has been saved.`);
+      toast.success(`"${res.title}" saved.`);
       router.push("/dashboard/opportunities");
     },
     onError: (err) => toast.error(err.message),
@@ -98,26 +96,34 @@ export default function SubmitOpportunityPage() {
   const isSubmitting = submitMutation.isPending;
 
   return (
-    <div className="space-y-6">
-      <DashboardHeader
-        title="Post an Opportunity"
-        description="Share SIWES placements, internships, scholarships and junior roles."
-      />
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <Link
+          href="/dashboard/opportunities"
+          className="inline-flex w-fit items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="size-3.5" />
+          Opportunities
+        </Link>
+        <DashboardHeader title="Post Opportunity" />
+      </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit((values) => submit(values, false))} className="mx-auto max-w-3xl">
-          <Card>
+        <form
+          onSubmit={form.handleSubmit((values) => submit(values, false))}
+          className="mx-auto w-full max-w-3xl"
+        >
+          <Card className="rounded-2xl shadow-2xs">
             <CardHeader>
-              <CardTitle>Opportunity details</CardTitle>
-              <CardDescription>Give students what they need to prepare and apply.</CardDescription>
+              <CardTitle className="text-sm font-semibold">Opportunity Details</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-5">
+            <CardContent className="flex flex-col gap-4">
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel className="text-xs">Title</FormLabel>
                     <FormControl>
                       <Input placeholder="e.g. 2026 SIWES Internship Placement" maxLength={255} {...field} />
                     </FormControl>
@@ -125,13 +131,13 @@ export default function SubmitOpportunityPage() {
                   </FormItem>
                 )}
               />
-              <div className="grid items-start gap-5 sm:grid-cols-2">
+              <div className="grid items-start gap-4 sm:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="orgName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Organization</FormLabel>
+                      <FormLabel className="text-xs">Organization</FormLabel>
                       <FormControl>
                         <Input placeholder="e.g. Acme Technologies" maxLength={128} {...field} />
                       </FormControl>
@@ -144,7 +150,7 @@ export default function SubmitOpportunityPage() {
                   name="orgUrl"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Website (optional)</FormLabel>
+                      <FormLabel className="text-xs">Website (optional)</FormLabel>
                       <FormControl>
                         <Input placeholder="https://company.com" {...field} />
                       </FormControl>
@@ -157,10 +163,10 @@ export default function SubmitOpportunityPage() {
                   name="type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Type</FormLabel>
+                      <FormLabel className="text-xs">Type</FormLabel>
                       <Select value={field.value} onValueChange={field.onChange}>
                         <FormControl>
-                          <SelectTrigger className="w-full">
+                          <SelectTrigger className="h-9 w-full rounded-xl">
                             <SelectValue />
                           </SelectTrigger>
                         </FormControl>
@@ -181,7 +187,7 @@ export default function SubmitOpportunityPage() {
                   name="location"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Location</FormLabel>
+                      <FormLabel className="text-xs">Location</FormLabel>
                       <FormControl>
                         <Input placeholder="e.g. Uyo, or Remote" maxLength={128} {...field} />
                       </FormControl>
@@ -194,9 +200,9 @@ export default function SubmitOpportunityPage() {
                   name="applyUrl"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Application link</FormLabel>
+                      <FormLabel className="text-xs">Application link</FormLabel>
                       <FormControl>
-                        <Input type="url" placeholder="https://apply.company.com/…" {...field} />
+                        <Input type="url" placeholder="https://apply.company.com/..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -207,7 +213,7 @@ export default function SubmitOpportunityPage() {
                   name="deadline"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Deadline (optional)</FormLabel>
+                      <FormLabel className="text-xs">Deadline (optional)</FormLabel>
                       <FormControl>
                         <Input type="date" {...field} />
                       </FormControl>
@@ -221,11 +227,11 @@ export default function SubmitOpportunityPage() {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description and requirements</FormLabel>
+                    <FormLabel className="text-xs">Details & Eligibility</FormLabel>
                     <FormControl>
                       <Textarea
                         rows={5}
-                        placeholder="Outline duties, eligibility, SIWES duration and any stipend."
+                        placeholder="Role overview, eligibility, duration, and stipend..."
                         {...field}
                       />
                     </FormControl>
@@ -238,14 +244,21 @@ export default function SubmitOpportunityPage() {
               <Button
                 type="button"
                 variant="outline"
+                size="sm"
                 disabled={isSubmitting}
-                className="w-full sm:w-auto"
+                className="h-9 w-full rounded-xl px-4 text-xs sm:w-auto"
                 onClick={form.handleSubmit((values) => submit(values, true))}
               >
-                Save as draft
+                Save Draft
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
-                {isSubmitting ? "Submitting…" : "Submit for review"}
+              <Button
+                type="submit"
+                size="sm"
+                disabled={isSubmitting}
+                className="h-9 w-full rounded-xl px-4 text-xs sm:w-auto"
+              >
+                {isSubmitting ? <Loader2 className="size-3.5 animate-spin" /> : null}
+                {isSubmitting ? "Submitting..." : "Submit for Review"}
               </Button>
             </CardFooter>
           </Card>

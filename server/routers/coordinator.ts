@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { and, count, desc, eq, ilike, or } from "drizzle-orm";
+import { and, count, desc, eq, ilike, isNotNull, isNull, ne, or } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { richTextDoc } from "@/db/json";
@@ -10,6 +10,7 @@ import {
   schoolSession,
   user,
 } from "@/db/schema";
+import { roleNames } from "@/lib/enums";
 import { generateUniqueSlug } from "@/lib/slug";
 import type { Session } from "../context";
 import {
@@ -73,6 +74,23 @@ async function resolveCoordinatorDepartment(
     throw new TRPCError({
       code: "NOT_FOUND",
       message: "Assigned department record not found.",
+    });
+  }
+
+  return dept;
+}
+
+async function resolveDepartmentBySlug(slug: string) {
+  const [dept] = await db
+    .select()
+    .from(department)
+    .where(eq(department.slug, slug))
+    .limit(1);
+
+  if (!dept) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Department not found.",
     });
   }
 
@@ -161,13 +179,16 @@ export const coordinatorRouter = router({
     }),
 
   /**
-   * Returns departmental student roster with search and pagination.
+   * Returns roster members with overlapping server-side filters (all, assigned,
+   * coordinators, unassigned) and an optional department filter for admins.
    */
   getRoster: departmentEditorProcedure
     .input(
       z
         .object({
           departmentSlug: z.string().optional(),
+          departmentFilter: z.string().optional(),
+          filter: z.enum(["all", "assigned", "coordinators", "unassigned"]).default("all"),
           search: z.string().optional(),
           page: z.number().int().min(1).default(1),
           limit: z.number().int().min(1).max(100).default(50),
@@ -175,16 +196,49 @@ export const coordinatorRouter = router({
         .optional(),
     )
     .query(async ({ ctx, input }) => {
-      const dept = await resolveCoordinatorDepartment(
-        ctx.session,
-        input?.departmentSlug,
-      );
-
+      const isAdmin = ctx.session.role === "admin";
+      const filter = input?.filter ?? "all";
       const page = input?.page ?? 1;
       const limit = input?.limit ?? 50;
       const offset = (page - 1) * limit;
 
-      const conditions = [eq(user.departmentId, dept.id)];
+      const requestedDepartment = isAdmin ? input?.departmentFilter : undefined;
+
+      const dept = requestedDepartment
+        ? await resolveDepartmentBySlug(requestedDepartment)
+        : await resolveCoordinatorDepartment(ctx.session, input?.departmentSlug);
+      const filterDepartmentId = requestedDepartment ? dept.id : null;
+
+      // Admins see all platform users, or one department when filtered;
+      // coordinators see their department + unassigned users.
+      const baseScope = isAdmin
+        ? filterDepartmentId
+          ? eq(user.departmentId, filterDepartmentId)
+          : undefined
+        : or(eq(user.departmentId, dept.id), isNull(user.departmentId));
+
+      const assignedCond = filterDepartmentId
+        ? eq(user.departmentId, filterDepartmentId)
+        : isAdmin
+          ? isNotNull(user.departmentId)
+          : eq(user.departmentId, dept.id);
+      const coordinatorsCond = baseScope
+        ? and(baseScope, ne(user.role, "user"))
+        : ne(user.role, "user");
+      const unassignedCond = filterDepartmentId
+        ? and(eq(user.departmentId, filterDepartmentId), isNull(user.departmentId))
+        : isNull(user.departmentId);
+
+      const filterCond =
+        filter === "assigned"
+          ? assignedCond
+          : filter === "coordinators"
+            ? coordinatorsCond
+            : filter === "unassigned"
+              ? unassignedCond
+              : baseScope;
+
+      const conditions = filterCond ? [filterCond] : [];
 
       if (input?.search && input.search.trim()) {
         const term = `%${input.search.trim()}%`;
@@ -197,27 +251,43 @@ export const coordinatorRouter = router({
         );
       }
 
-      const [totalRow] = await db
-        .select({ count: count() })
-        .from(user)
-        .where(and(...conditions));
+      const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+      const [
+        [totalRow],
+        [allRow],
+        [assignedRow],
+        [coordinatorsRow],
+        [unassignedRow],
+        rows,
+      ] = await Promise.all([
+        db.select({ count: count() }).from(user).where(whereClause),
+        db.select({ count: count() }).from(user).where(baseScope),
+        db.select({ count: count() }).from(user).where(assignedCond),
+        db.select({ count: count() }).from(user).where(coordinatorsCond),
+        db.select({ count: count() }).from(user).where(unassignedCond),
+        db
+          .select({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            regNumber: user.regNumber,
+            role: user.role,
+            departmentId: user.departmentId,
+            departmentSlug: department.slug,
+            departmentName: department.name,
+            departmentShortName: department.shortName,
+            createdAt: user.createdAt,
+          })
+          .from(user)
+          .leftJoin(department, eq(user.departmentId, department.id))
+          .where(whereClause)
+          .orderBy(desc(user.createdAt))
+          .limit(limit)
+          .offset(offset),
+      ]);
 
       const total = Number(totalRow?.count ?? 0);
-
-      const rows = await db
-        .select({
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          regNumber: user.regNumber,
-          role: user.role,
-          createdAt: user.createdAt,
-        })
-        .from(user)
-        .where(and(...conditions))
-        .orderBy(desc(user.createdAt))
-        .limit(limit)
-        .offset(offset);
 
       return {
         department: {
@@ -227,9 +297,115 @@ export const coordinatorRouter = router({
         },
         students: rows,
         total,
+        counts: {
+          all: Number(allRow?.count ?? 0),
+          assigned: Number(assignedRow?.count ?? 0),
+          coordinators: Number(coordinatorsRow?.count ?? 0),
+          unassigned: Number(unassignedRow?.count ?? 0),
+        },
         page,
         totalPages: Math.ceil(total / limit) || 1,
       };
+    }),
+
+  /**
+   * Allows admins (and coordinators within their scope) to fill in or update member details.
+   */
+  updateMember: departmentEditorProcedure
+    .input(
+      z.object({
+        userId: z.string().uuid(),
+        name: z.string().trim().min(2, "Name must be at least 2 characters.").max(128),
+        regNumber: z.string().trim().max(32).nullable().optional(),
+        departmentSlug: z.string().nullable().optional(),
+        role: z.enum(roleNames).optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [target] = await db
+        .select({
+          id: user.id,
+          departmentId: user.departmentId,
+        })
+        .from(user)
+        .where(eq(user.id, input.userId))
+        .limit(1);
+
+      if (!target) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
+      }
+
+      const isAdmin = ctx.session.role === "admin";
+      if (!isAdmin && target.departmentId && target.departmentId !== ctx.session.departmentId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You can only edit members in your assigned department or unassigned users.",
+        });
+      }
+
+      let resolvedDeptId: string | null | undefined = undefined;
+      if (input.departmentSlug !== undefined) {
+        if (input.departmentSlug === null) {
+          if (!isAdmin) {
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message: "Only administrators can unassign a user's department.",
+            });
+          }
+          resolvedDeptId = null;
+        } else {
+          const [dept] = await db
+            .select({ id: department.id })
+            .from(department)
+            .where(eq(department.slug, input.departmentSlug))
+            .limit(1);
+          if (!dept) {
+            throw new TRPCError({ code: "BAD_REQUEST", message: "Selected department not found." });
+          }
+          if (!isAdmin && dept.id !== ctx.session.departmentId) {
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message: "You can only assign users to your own department.",
+            });
+          }
+          resolvedDeptId = dept.id;
+        }
+      }
+
+      const updateValues: {
+        name: string;
+        regNumber?: string | null;
+        departmentId?: string | null;
+        role?: (typeof roleNames)[number];
+      } = {
+        name: input.name,
+      };
+
+      if (input.regNumber !== undefined) {
+        updateValues.regNumber = input.regNumber ? input.regNumber.toUpperCase() : null;
+      }
+
+      if (resolvedDeptId !== undefined) {
+        updateValues.departmentId = resolvedDeptId;
+      }
+
+      if (input.role !== undefined && isAdmin) {
+        updateValues.role = input.role;
+      }
+
+      const [updated] = await db
+        .update(user)
+        .set(updateValues)
+        .where(eq(user.id, input.userId))
+        .returning({
+          id: user.id,
+          name: user.name,
+          regNumber: user.regNumber,
+          departmentId: user.departmentId,
+          role: user.role,
+        });
+
+      return updated;
     }),
 
   /**

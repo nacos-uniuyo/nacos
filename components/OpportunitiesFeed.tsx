@@ -137,17 +137,14 @@ export function OpportunitiesFeed({ initialOpportunities, departments }: Props) 
           </div>
 
           {/* Department Scope Selector with Radix/Base-UI Select */}
-          <div className="w-full sm:w-auto flex items-center gap-3 justify-end">
-            <span className="text-xs text-[var(--muted)] font-medium whitespace-nowrap">
-              Filter by Scope:
-            </span>
+          <div className="w-full sm:w-auto flex items-center justify-end">
             <div className="w-[220px]">
               <Select value={selectedDept} onValueChange={setSelectedDept}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="All Scopes" />
+                  <SelectValue placeholder="All departments" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Scopes</SelectItem>
+                  <SelectItem value="all">All departments</SelectItem>
                   <SelectItem value="faculty-wide">Faculty</SelectItem>
                   {departments.map((d) => (
                     <SelectItem key={d.slug} value={d.slug}>
