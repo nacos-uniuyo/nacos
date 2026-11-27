@@ -13,7 +13,9 @@ import {
   IconFolder,
   IconFolderCheck,
   IconLayoutDashboard,
+  IconMessage,
   IconMoon,
+  IconSettings,
   IconShield,
   IconSun,
   IconUser,
@@ -66,7 +68,7 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const isLight = mounted && resolvedTheme === "light";
   const isDark = mounted && resolvedTheme === "dark";
 
-  const { user, isCoordinator, isPending } = useDashboardSession();
+  const { user, isAdmin, isCoordinator, isPending } = useDashboardSession();
   const utils = trpc.useUtils();
   const { data: overview } = trpc.coordinator.getDepartmentOverview.useQuery(undefined, {
     enabled: isCoordinator,
@@ -146,6 +148,18 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
         },
         { title: "Roster", url: "/dashboard/departments/roster", icon: IconUsers, exact: false },
         { title: "Notices", url: "/dashboard/departments/notices", icon: IconBell, exact: false },
+      ]
+    : [];
+
+  const facultyAdminLinks: SidebarLinkItem[] = isAdmin
+    ? [
+        { title: "Control Center", url: "/dashboard/admin", icon: IconSettings, exact: true },
+        {
+          title: "Dean's message",
+          url: "/dashboard/admin/deans-message",
+          icon: IconMessage,
+          exact: false,
+        },
       ]
     : [];
 
@@ -260,6 +274,15 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
                   Coordinator
                 </SidebarGroupLabel>
                 <SidebarGroupContent>{renderLinks(adminLinks)}</SidebarGroupContent>
+              </SidebarGroup>
+            ) : null}
+
+            {facultyAdminLinks.length > 0 ? (
+              <SidebarGroup>
+                <SidebarGroupLabel className="px-3 text-[10px] font-semibold tracking-wider text-sidebar-foreground/50 uppercase">
+                  Faculty admin
+                </SidebarGroupLabel>
+                <SidebarGroupContent>{renderLinks(facultyAdminLinks)}</SidebarGroupContent>
               </SidebarGroup>
             ) : null}
           </>
