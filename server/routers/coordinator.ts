@@ -1,11 +1,13 @@
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq, ilike, isNotNull, isNull, ne, or } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db";
 import { richTextDoc } from "@/db/json";
 import {
   department,
   departmentNotice,
+  opportunity,
   project,
   schoolSession,
   user,
@@ -80,6 +82,22 @@ async function resolveCoordinatorDepartment(
   return dept;
 }
 
+/**
+ * Limits opportunity reads to what the session may review. Department editors see their own
+ * department's listings. Admins see every listing, including faculty-wide ones that have no
+ * department, so the condition is left out for them.
+ */
+function opportunityScope(session: Session) {
+  if (session.role === "admin") return undefined;
+  if (!session.departmentId) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Your coordinator account is not assigned to an academic department.",
+    });
+  }
+  return eq(opportunity.departmentId, session.departmentId);
+}
+
 async function resolveDepartmentBySlug(slug: string) {
   const [dept] = await db
     .select()
@@ -142,6 +160,14 @@ export const coordinatorRouter = router({
           and(eq(project.departmentId, dept.id), eq(project.status, "rejected")),
         );
 
+      // Opportunities waiting for review, scoped like the opportunity queue
+      const [pendingOpportunities] = await db
+        .select({ count: count() })
+        .from(opportunity)
+        .where(
+          and(opportunityScope(ctx.session), eq(opportunity.status, "submitted")),
+        );
+
       // Department Notices count
       const [totalNotices] = await db
         .select({ count: count() })
@@ -172,6 +198,7 @@ export const coordinatorRouter = router({
           pendingProjects: Number(pendingProjects?.count ?? 0),
           approvedProjects: Number(approvedProjects?.count ?? 0),
           rejectedProjects: Number(rejectedProjects?.count ?? 0),
+          pendingOpportunities: Number(pendingOpportunities?.count ?? 0),
           totalNotices: Number(totalNotices?.count ?? 0),
           publishedNotices: Number(publishedNotices?.count ?? 0),
         },
@@ -598,6 +625,184 @@ export const coordinatorRouter = router({
           status: project.status,
           title: project.title,
         });
+
+      return updated;
+    }),
+
+  /**
+   * Lists opportunity submissions the session may review, newest first.
+   */
+  listOpportunities: departmentEditorProcedure
+    .input(
+      z
+        .object({
+          status: z.enum(["draft", "submitted", "approved", "rejected"]).optional(),
+          search: z.string().optional(),
+        })
+        .optional(),
+    )
+    .query(async ({ ctx, input }) => {
+      const conditions = [opportunityScope(ctx.session)];
+
+      if (input?.status) {
+        conditions.push(eq(opportunity.status, input.status));
+      }
+
+      if (input?.search && input.search.trim()) {
+        const term = `%${input.search.trim()}%`;
+        conditions.push(or(ilike(opportunity.title, term), ilike(opportunity.orgName, term)));
+      }
+
+      const rows = await db
+        .select({
+          id: opportunity.id,
+          slug: opportunity.slug,
+          title: opportunity.title,
+          orgName: opportunity.orgName,
+          type: opportunity.type,
+          scopeType: opportunity.scopeType,
+          location: opportunity.location,
+          deadline: opportunity.deadline,
+          status: opportunity.status,
+          rejectionReason: opportunity.rejectionReason,
+          createdAt: opportunity.createdAt,
+          departmentShortName: department.shortName,
+          submitter: {
+            id: user.id,
+            name: user.name,
+            regNumber: user.regNumber,
+          },
+        })
+        .from(opportunity)
+        .leftJoin(department, eq(opportunity.departmentId, department.id))
+        .leftJoin(user, eq(opportunity.submittedByUserId, user.id))
+        .where(and(...conditions))
+        .orderBy(desc(opportunity.createdAt));
+
+      return { opportunities: rows };
+    }),
+
+  /**
+   * Retrieves full details for one opportunity submission with a scope check.
+   */
+  getOpportunity: departmentEditorProcedure
+    .input(z.object({ slug: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const [opp] = await db
+        .select({
+          id: opportunity.id,
+          slug: opportunity.slug,
+          title: opportunity.title,
+          orgName: opportunity.orgName,
+          orgUrl: opportunity.orgUrl,
+          orgLogoUrl: opportunity.orgLogoUrl,
+          scopeType: opportunity.scopeType,
+          type: opportunity.type,
+          location: opportunity.location,
+          descriptionJson: opportunity.descriptionJson,
+          applyUrl: opportunity.applyUrl,
+          hasInternalDetails: opportunity.hasInternalDetails,
+          deadline: opportunity.deadline,
+          status: opportunity.status,
+          rejectionReason: opportunity.rejectionReason,
+          createdAt: opportunity.createdAt,
+          departmentSlug: department.slug,
+          departmentName: department.name,
+          submitter: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            regNumber: user.regNumber,
+          },
+        })
+        .from(opportunity)
+        .leftJoin(department, eq(opportunity.departmentId, department.id))
+        .leftJoin(user, eq(opportunity.submittedByUserId, user.id))
+        .where(eq(opportunity.slug, input.slug))
+        .limit(1);
+
+      if (!opp) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Opportunity submission not found.",
+        });
+      }
+
+      // Faculty-wide listings have no department, so only admins pass this check for them.
+      assertDepartmentScope(ctx.session, opp.departmentSlug ?? "");
+
+      return opp;
+    }),
+
+  /**
+   * Reviews a submitted opportunity: approves it or rejects it with mandatory feedback,
+   * then refreshes the public pages that list it.
+   */
+  reviewOpportunity: departmentEditorProcedure
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        status: z.enum(["approved", "rejected"]),
+        rejectionReason: z
+          .string()
+          .trim()
+          .min(5, "Please provide detailed feedback for rejected opportunities or change requests.")
+          .optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [opp] = await db
+        .select({
+          id: opportunity.id,
+          status: opportunity.status,
+          departmentSlug: department.slug,
+        })
+        .from(opportunity)
+        .leftJoin(department, eq(opportunity.departmentId, department.id))
+        .where(eq(opportunity.id, input.id))
+        .limit(1);
+
+      if (!opp) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Opportunity submission not found.",
+        });
+      }
+
+      assertDepartmentScope(ctx.session, opp.departmentSlug ?? "");
+
+      if (opp.status !== "submitted") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only submitted opportunities can be reviewed.",
+        });
+      }
+
+      if (input.status === "rejected" && !input.rejectionReason) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "A rejection or change request requires detailed feedback.",
+        });
+      }
+
+      const [updated] = await db
+        .update(opportunity)
+        .set({
+          status: input.status,
+          rejectionReason: input.status === "rejected" ? input.rejectionReason : null,
+        })
+        .where(eq(opportunity.id, input.id))
+        .returning({
+          id: opportunity.id,
+          slug: opportunity.slug,
+          status: opportunity.status,
+          title: opportunity.title,
+        });
+
+      // The public listing, detail and department hub pages are prerendered, so refresh them.
+      revalidatePath("/opportunities");
+      if (updated) revalidatePath(`/opportunities/${updated.slug}`);
+      if (opp.departmentSlug) revalidatePath(`/departments/${opp.departmentSlug}`);
 
       return updated;
     }),

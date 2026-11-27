@@ -312,6 +312,17 @@ function NotificationsPopover({
       });
     }
 
+    const pendingOpportunities = overview?.stats.pendingOpportunities ?? 0;
+    if (isCoordinator && pendingOpportunities > 0) {
+      items.push({
+        id: "pending-opportunities",
+        title: `${pendingOpportunities} opportunit${pendingOpportunities === 1 ? "y" : "ies"} to review`,
+        meta: "Opportunity review",
+        href: "/dashboard/departments/opportunities?status=submitted",
+        tone: "amber",
+      });
+    }
+
     return items;
   }, [profile, projects, overview, isCoordinator]);
 
