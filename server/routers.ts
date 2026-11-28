@@ -1,14 +1,16 @@
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq, ilike, or } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db";
-import { leadContributor, richTextDoc } from "@/db/json";
+import { leadContributor, type PlatformSettingValue, richTextDoc } from "@/db/json";
 import {
   department,
   facultyStaff,
   opportunity,
   opportunityBookmark,
   person,
+  platformSetting,
   project,
   schoolSession,
   user,
@@ -16,7 +18,6 @@ import {
 import { richTextDocToText } from "@/lib/richtext";
 import { generateUniqueSlug } from "@/lib/slug";
 import {
-  deansMessage,
   departments,
   events,
   goodwill,
@@ -27,6 +28,8 @@ import {
   schoolSessions,
 } from "@/mocks/portal";
 import {
+  deansMessageInput,
+  deansMessageSummary,
   departmentSummary,
   eventSummary,
   goodwillSummary,
@@ -38,6 +41,7 @@ import {
   projectSummary,
   schoolSessionSummary,
 } from "./contracts";
+import { DEANS_MESSAGE_KEY, getDeansMessage } from "./queries/leadership";
 import { coordinatorRouter } from "./routers/coordinator";
 import {
   adminProcedure,
@@ -1059,22 +1063,25 @@ const goodwillRouter = router({
 });
 
 const settingRouter = router({
-  deansMessage: publicProcedure.query(() => deansMessage),
+  deansMessage: publicProcedure.query(() => getDeansMessage()),
 });
 
 const adminRouter = router({
-  updateDeansMessage: adminProcedure
-    .input(
-      z.object({
-        heading: z.string().min(1),
-        body: z.string().min(1),
-        authorName: z.string().min(1),
-        authorTitle: z.string().min(1),
-      }),
-    )
-    .mutation(() => {
-      return { ok: true as const };
-    }),
+  /** Saves the Dean's message and refreshes the prerendered homepage that shows it. */
+  updateDeansMessage: adminProcedure.input(deansMessageInput).mutation(async ({ input }) => {
+    const valueJson = { kind: "deans_message", ...input } satisfies PlatformSettingValue;
+
+    await db
+      .insert(platformSetting)
+      .values({ key: DEANS_MESSAGE_KEY, valueJson })
+      .onConflictDoUpdate({
+        target: platformSetting.key,
+        set: { valueJson, updatedAt: new Date() },
+      });
+
+    revalidatePath("/");
+    return deansMessageSummary.parse(input);
+  }),
 });
 
 /* -------------------------------------------------------------------------- */

@@ -238,3 +238,29 @@ export const deansMessageSummary = z.object({
 });
 
 export type DeansMessageSummary = z.infer<typeof deansMessageSummary>;
+
+/** What an admin may save as the Dean's message. The editor form and the mutation share it. */
+export const deansMessageInput = z.object({
+  heading: z
+    .string()
+    .trim()
+    .min(1, "Add a heading.")
+    .max(120, "Keep the heading under 120 characters."),
+  body: z
+    .string()
+    .trim()
+    .min(1, "Write the message.")
+    .max(4000, "Keep the message under 4000 characters."),
+  authorName: z
+    .string()
+    .trim()
+    .min(1, "Add the author's name.")
+    .max(128, "Keep the name under 128 characters."),
+  authorTitle: z
+    .string()
+    .trim()
+    .min(1, "Add the author's title.")
+    .max(128, "Keep the title under 128 characters."),
+});
+
+export type DeansMessageInput = z.infer<typeof deansMessageInput>;

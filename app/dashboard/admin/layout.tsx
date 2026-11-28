@@ -2,6 +2,7 @@
 
 import { useRouter } from "nextjs-toploader/app";
 import { useEffect } from "react";
+import { ErrorState, ListSkeleton } from "@/components/dashboard/DashboardStates";
 import { isSignedOut, useDashboardSession } from "@/lib/auth-client";
 
 /**
@@ -26,6 +27,15 @@ export default function FacultyAdminLayout({ children }: { children: React.React
     }
   }, [session, isAdmin, isCoordinator, isPending, error, router]);
 
+  if (isPending) return <ListSkeleton count={2} />;
+  if (!session && !isSignedOut(error)) {
+    return (
+      <ErrorState
+        title="Could not check your access"
+        message="The session could not be loaded. Refresh the page to try again."
+      />
+    );
+  }
   if (!isAdmin) return null;
   return children;
 }

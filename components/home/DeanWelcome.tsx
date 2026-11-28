@@ -1,5 +1,6 @@
 import Image from "next/image";
 import deanPhoto from "@/assets/images/dean.webp";
+import { RichTextRenderer } from "@/components/RichTextRenderer";
 import type { DeansMessageSummary } from "@/server/contracts";
 
 type DeanWelcomeProps = {
@@ -25,7 +26,7 @@ export function DeanWelcome({ message }: DeanWelcomeProps) {
             {message.heading}
           </h2>
           <blockquote className="serif m-0 pl-5 border-l-2 border-[var(--gold)] text-[clamp(18px,1.8vw,22px)] leading-relaxed text-[var(--ink)]">
-            <p className="m-0">{message.body}</p>
+            <RichTextRenderer doc={message.body} />
           </blockquote>
           <figcaption className="flex flex-col gap-1 mt-2">
             <strong className="text-base font-bold text-[var(--ink)]">{message.authorName}</strong>

@@ -12,7 +12,7 @@ export function toRichTextDoc(input: RichTextDoc | string | null | undefined): R
 
   if (typeof input === "string") {
     const paragraphs = input
-      .split(/\n{2,}/)
+      .split(/\n\s*\n/)
       .map((p) => p.trim())
       .filter(Boolean);
 

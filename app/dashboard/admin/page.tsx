@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, History, MessageSquareQuote, Quote, Users } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
@@ -11,7 +13,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { deansMessage } from "@/mocks/portal";
+import { Skeleton } from "@/components/ui/skeleton";
+import { trpc } from "@/lib/trpc/client";
 
 const upcomingTools = [
   {
@@ -32,6 +35,8 @@ const upcomingTools = [
 ];
 
 export default function ControlCenterPage() {
+  const { data: deansMessage, isLoading, error } = trpc.setting.deansMessage.useQuery();
+
   return (
     <div className="flex flex-col gap-6">
       <DashboardHeader
@@ -57,11 +62,29 @@ export default function ControlCenterPage() {
             </CardAction>
           </CardHeader>
           <CardContent className="flex flex-col gap-1.5">
-            <p className="text-sm font-medium text-foreground">{deansMessage.heading}</p>
-            <p className="line-clamp-2 text-sm text-muted-foreground">{deansMessage.body}</p>
-            <p className="text-xs text-muted-foreground">
-              {deansMessage.authorName}, {deansMessage.authorTitle}
-            </p>
+            {isLoading ? (
+              <div className="flex flex-col gap-2" aria-busy="true" aria-label="Loading">
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-3 w-40" />
+              </div>
+            ) : error ? (
+              <p className="text-sm text-destructive">{error.message}</p>
+            ) : deansMessage ? (
+              <>
+                <p className="text-sm font-medium text-foreground">{deansMessage.heading}</p>
+                <p className="line-clamp-2 text-sm text-muted-foreground">
+                  {deansMessage.body.split(/\n\s*\n/)[0]}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {deansMessage.authorName}, {deansMessage.authorTitle}
+                </p>
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                No message yet. The homepage hides this section until one is saved.
+              </p>
+            )}
           </CardContent>
         </Card>
 
