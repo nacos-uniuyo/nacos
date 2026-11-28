@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import {
   Bell,
+  Briefcase,
   Clock,
   FilePlus,
   FolderCheck,
@@ -84,6 +85,17 @@ export default function CoordinatorOverviewPage() {
         />
       ) : null}
 
+      {!isLoading && stats && stats.pendingOpportunities > 0 ? (
+        <AttentionBanner
+          icon={Briefcase}
+          tone="rose"
+          title={`${stats.pendingOpportunities} Pending Opportunit${stats.pendingOpportunities === 1 ? "y" : "ies"}`}
+          subtitle="Awaiting review before they appear on the opportunities board."
+          ctaLabel="Review Now"
+          ctaHref="/dashboard/departments/opportunities?status=submitted"
+        />
+      ) : null}
+
       <DashboardHeader
         title={department ? department.name : "Coordinator Console"}
         badge={
@@ -99,6 +111,12 @@ export default function CoordinatorOverviewPage() {
               <Link href="/dashboard/departments/notices/new">
                 <FilePlus className="size-3.5" />
                 Publish Notice
+              </Link>
+            </Button>
+            <Button asChild size="sm" variant="outline" className="h-9 rounded-xl px-3.5 text-xs">
+              <Link href="/dashboard/departments/opportunities">
+                <Briefcase className="size-3.5" />
+                Opportunities
               </Link>
             </Button>
             <Button asChild size="sm" className="h-9 rounded-xl px-4 text-xs">

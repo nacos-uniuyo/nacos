@@ -19,6 +19,7 @@ import { RichTextRenderer } from "@/components/RichTextRenderer";
 import type { OpportunityType } from "@/lib/enums";
 import { breadcrumbSchema, opportunitySchema } from "@/lib/schema";
 import { ogDefaults } from "@/lib/site";
+import { isHttpUrl } from "@/lib/utils";
 import { appRouter } from "@/server/routers";
 import { OPPORTUNITY_ARTICLES } from "./opportunity-articles";
 
@@ -132,9 +133,7 @@ export default async function OpportunityDetailPage({ params }: Props) {
     }
   }
 
-  const isExternalApply =
-    Boolean(opportunity.applyUrl) &&
-    (opportunity.applyUrl!.startsWith("http://") || opportunity.applyUrl!.startsWith("https://"));
+  const isExternalApply = isHttpUrl(opportunity.applyUrl);
 
   return (
     <>
@@ -234,7 +233,7 @@ export default async function OpportunityDetailPage({ params }: Props) {
               </dl>
 
               <div className="pt-2">
-                {opportunity.applyUrl ? (
+                {isHttpUrl(opportunity.applyUrl) ? (
                   <Button asChild variant="solid" className="w-full">
                     <a
                       href={opportunity.applyUrl}

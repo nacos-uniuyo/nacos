@@ -9,6 +9,7 @@ import {
   IconBell,
   IconBookmark,
   IconBriefcase,
+  IconBriefcase2,
   IconExternalLink,
   IconFolder,
   IconFolderCheck,
@@ -72,6 +73,7 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
     enabled: isCoordinator,
   });
   const pendingCount = overview?.stats.pendingProjects ?? 0;
+  const pendingOpportunities = overview?.stats.pendingOpportunities ?? 0;
 
   const prefetchRoute = useCallback(
     (url: string) => {
@@ -127,6 +129,10 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
         void utils.department.list.prefetch();
         return;
       }
+      if (url === "/dashboard/departments/opportunities") {
+        void utils.coordinator.listOpportunities.prefetch({});
+        return;
+      }
       if (url === "/dashboard/departments/notices") {
         void utils.coordinator.listNotices.prefetch();
       }
@@ -143,6 +149,13 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
           icon: IconFolderCheck,
           exact: false,
           badge: pendingCount > 0 ? pendingCount : undefined,
+        },
+        {
+          title: "Opportunities",
+          url: "/dashboard/departments/opportunities",
+          icon: IconBriefcase2,
+          exact: false,
+          badge: pendingOpportunities > 0 ? pendingOpportunities : undefined,
         },
         { title: "Roster", url: "/dashboard/departments/roster", icon: IconUsers, exact: false },
         { title: "Notices", url: "/dashboard/departments/notices", icon: IconBell, exact: false },
