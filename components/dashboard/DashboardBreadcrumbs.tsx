@@ -22,18 +22,22 @@ const SEGMENT_LABELS: Record<string, string> = {
   roster: "Roster",
   notices: "Notices",
   new: "New Notice",
+  admin: "Control Center",
+  "deans-message": "Dean's message",
 };
+
+const root = { href: "/dashboard", label: "Dashboard" };
 
 export function DashboardBreadcrumbs() {
   const pathname = usePathname();
-  const segments = pathname.replace(/^\/dashboard\/?/, "").split("/").filter(Boolean);
+  const segments = pathname.slice(root.href.length).split("/").filter(Boolean);
 
   if (segments.length === 0) {
     return (
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbPage>Dashboard</BreadcrumbPage>
+            <BreadcrumbPage>{root.label}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -45,11 +49,11 @@ export function DashboardBreadcrumbs() {
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href="/dashboard">Dashboard</Link>
+            <Link href={root.href}>{root.label}</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         {segments.map((segment, index) => {
-          const href = `/dashboard/${segments.slice(0, index + 1).join("/")}`;
+          const href = `${root.href}/${segments.slice(0, index + 1).join("/")}`;
           const label = SEGMENT_LABELS[segment] ?? segment;
           const isLast = index === segments.length - 1;
 

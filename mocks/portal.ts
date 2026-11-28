@@ -940,10 +940,3 @@ export const goodwill: GoodwillSummary[] = [
       "Every set leaves behind a record. This portal is how the record survives the handover from one administration to the next.",
   },
 ];
-
-export const deansMessage = {
-  heading: "Welcome to the Faculty of Computing",
-  body: "On behalf of the faculty and leadership of the University of Uyo, I welcome both returning students and fresh minds stepping into the world of computing. Our commitment is to foster genuine technical capacity, ethical leadership, and impactful innovation. Engage deeply with your studies, collaborate across departments, and build tools that solve tangible problems for our society.",
-  authorName: "Prof. Uduak A. Umoh",
-  authorTitle: "Dean, Faculty of Computing",
-};
