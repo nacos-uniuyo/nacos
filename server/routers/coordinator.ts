@@ -791,7 +791,8 @@ export const coordinatorRouter = router({
           status: input.status,
           rejectionReason: input.status === "rejected" ? input.rejectionReason : null,
         })
-        .where(eq(opportunity.id, input.id))
+        // Matching on status as well means two reviewers acting at once cannot both win.
+        .where(and(eq(opportunity.id, input.id), eq(opportunity.status, "submitted")))
         .returning({
           id: opportunity.id,
           slug: opportunity.slug,
@@ -799,10 +800,22 @@ export const coordinatorRouter = router({
           title: opportunity.title,
         });
 
+      if (!updated) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "This opportunity was reviewed by someone else. Refresh to see the decision.",
+        });
+      }
+
       // The public listing, detail and department hub pages are prerendered, so refresh them.
+      // A faculty-wide listing appears on every department hub, so all hubs are refreshed.
       revalidatePath("/opportunities");
-      if (updated) revalidatePath(`/opportunities/${updated.slug}`);
-      if (opp.departmentSlug) revalidatePath(`/departments/${opp.departmentSlug}`);
+      revalidatePath(`/opportunities/${updated.slug}`);
+      if (opp.departmentSlug) {
+        revalidatePath(`/departments/${opp.departmentSlug}`);
+      } else {
+        revalidatePath("/departments/[slug]", "page");
+      }
 
       return updated;
     }),

@@ -37,6 +37,12 @@ function CoordinatorOpportunitiesContent() {
       : "all";
 
   const [statusFilter, setStatusFilter] = useState<FilterKey>(validInitial);
+  // Follow ?status= when a notification or banner link changes it while the page is open.
+  const [syncedStatus, setSyncedStatus] = useState(initialStatus);
+  if (initialStatus !== syncedStatus) {
+    setSyncedStatus(initialStatus);
+    setStatusFilter(validInitial);
+  }
   const [searchInput, setSearchInput] = useState("");
   const [approvingId, setApprovingId] = useState<string | null>(null);
   const [rejectTarget, setRejectTarget] = useState<RejectTarget | null>(null);
@@ -50,9 +56,9 @@ function CoordinatorOpportunitiesContent() {
       await utils.coordinator.getOpportunity.invalidate();
       await utils.coordinator.getDepartmentOverview.invalidate();
       toast.success(
-        updated?.status === "approved"
+        updated.status === "approved"
           ? `"${updated.title}" approved.`
-          : `Feedback sent for "${updated?.title ?? "the opportunity"}".`,
+          : `Feedback sent for "${updated.title}".`,
       );
       setRejectTarget(null);
     },
@@ -176,7 +182,7 @@ function CoordinatorOpportunitiesContent() {
                         type="button"
                         size="sm"
                         variant="outline"
-                        disabled={isApproving}
+                        disabled={reviewMutation.isPending}
                         onClick={() => setRejectTarget({ id: opp.id, title: opp.title })}
                         className="h-8 rounded-xl border-rose-500/30 bg-rose-500/8 px-3 text-xs text-rose-600 hover:bg-rose-500/15 hover:text-rose-700 dark:text-rose-400"
                       >
@@ -186,7 +192,7 @@ function CoordinatorOpportunitiesContent() {
                       <Button
                         type="button"
                         size="sm"
-                        disabled={isApproving}
+                        disabled={reviewMutation.isPending}
                         onClick={() => {
                           setApprovingId(opp.id);
                           reviewMutation.mutate({ id: opp.id, status: "approved" });

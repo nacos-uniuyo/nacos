@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate, opportunityTypeLabels } from "@/lib/format";
 import { trpc } from "@/lib/trpc/client";
+import { isHttpUrl } from "@/lib/utils";
 
 const QUEUE_HREF = "/dashboard/departments/opportunities";
 
@@ -42,7 +43,7 @@ export default function CoordinatorOpportunityDetailPage() {
       await utils.coordinator.getOpportunity.invalidate({ slug });
       await utils.coordinator.getDepartmentOverview.invalidate();
       toast.success(
-        updated?.status === "approved" ? "Opportunity approved." : "Feedback sent to member.",
+        updated.status === "approved" ? "Opportunity approved." : "Feedback sent to member.",
       );
       setConfirmApprove(false);
       setRejectOpen(false);
@@ -125,7 +126,7 @@ export default function CoordinatorOpportunityDetailPage() {
                   <dt className="text-xs text-muted-foreground">Submitted</dt>
                   <dd className="mt-0.5 font-medium">{formatDate(opp.createdAt)}</dd>
                 </div>
-                {opp.applyUrl ? (
+                {isHttpUrl(opp.applyUrl) ? (
                   <div>
                     <dt className="text-xs text-muted-foreground">Application</dt>
                     <dd className="mt-0.5">
@@ -140,7 +141,7 @@ export default function CoordinatorOpportunityDetailPage() {
                     </dd>
                   </div>
                 ) : null}
-                {opp.orgUrl ? (
+                {isHttpUrl(opp.orgUrl) ? (
                   <div>
                     <dt className="text-xs text-muted-foreground">Organisation</dt>
                     <dd className="mt-0.5">
